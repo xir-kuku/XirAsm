@@ -43,6 +43,24 @@ pub const LowerContext = struct {
     /// body from each copying every generated table.
     cached_module_snapshot: ?*value_mod.BindingSnapshot = null,
     cached_module_generation: u64 = 0,
+    /// Parsed conditions, keyed by a copy of the condition text.
+    ///
+    /// A condition is evaluated on every execution of its statement, and parsing
+    /// it again each time costs several times what walking the parsed tree does,
+    /// so each distinct text is parsed once and the tree is reused.
+    ///
+    /// Keys and trees are both owned here. `StringHashMapUnmanaged` does not own
+    /// its keys, so the text is copied in instead of borrowed, which leaves a
+    /// caller free to pass a slice that does not outlive this cache. The tree is
+    /// context-independent: `parseOwned` resolves no symbols, so it is safe to
+    /// evaluate one tree under different scopes.
+    ///
+    /// Each tree is a separate allocation rather than a map value on purpose:
+    /// evaluating a condition can insert another one, which may rehash this map
+    /// and move its entries. A caller holding a pointer into the map would then
+    /// be reading freed storage, so the map stores stable pointers and a lookup
+    /// copies the pointer out before evaluating.
+    condition_cache: std.StringHashMapUnmanaged(*expr.Node) = .empty,
 
     pub fn deinit(self: *LowerContext, allocator: Allocator) void {
         if (self.return_value) |*stored| {
@@ -59,6 +77,13 @@ pub const LowerContext = struct {
         self.macros.deinit(allocator);
         self.frozen_local_names.deinit(allocator);
         self.source_stack.deinit(allocator);
+        var condition_iterator = self.condition_cache.iterator();
+        while (condition_iterator.next()) |entry| {
+            allocator.free(entry.key_ptr.*);
+            entry.value_ptr.*.deinit(allocator);
+            allocator.destroy(entry.value_ptr.*);
+        }
+        self.condition_cache.deinit(allocator);
         self.* = undefined;
     }
 };
@@ -72,9 +97,18 @@ const MetaLocal = struct {
     name: []const u8,
     value: value_mod.Value,
     mutability: value_mod.Mutability,
+    /// True when `value` is a shallow view whose storage belongs to someone else
+    /// — a capture snapshot, or an alias map owned by the caller — and therefore
+    /// must not be released here.
+    ///
+    /// A borrowed local is only ever read. Nothing can write through it:
+    /// `setLocalValue` and `setCallerLocalValue` refuse anything that is not
+    /// `.let`, and `collection_mutation` requires a direct `let` binding, so the
+    /// owner's storage stays exactly as its owner left it.
+    borrowed: bool = false,
 
     fn deinit(self: *MetaLocal, allocator: Allocator) void {
-        self.value.deinit(allocator);
+        if (!self.borrowed) self.value.deinit(allocator);
         self.* = undefined;
     }
 };
@@ -138,6 +172,39 @@ pub fn defineLocalValue(
     value: value_mod.Value,
     mutability: value_mod.Mutability,
 ) contracts.LowerError!void {
+    try appendLocal(context, allocator, name, value, mutability, false);
+}
+
+/// Defines a local that *borrows* `value`'s storage instead of owning a copy.
+///
+/// The caller guarantees the storage outlives this local: a capture snapshot is
+/// refcounted and held by the capture, and an alias map lives in the caller's
+/// frame. Only a shallow copy of the value is stored, so freeing the local is a
+/// no-op and the owner keeps its storage.
+///
+/// Nothing may write through the local, which is what makes the borrow safe — a
+/// write would be visible to the owner. `mutability` therefore has to be
+/// `.@"const"`: every mutation path (`setLocalValue`, `setCallerLocalValue`,
+/// `collection_mutation`) rejects a binding that is not `.let`.
+pub fn defineBorrowedLocalValue(
+    context: *LowerContext,
+    allocator: Allocator,
+    name: []const u8,
+    value: value_mod.Value,
+    mutability: value_mod.Mutability,
+) contracts.LowerError!void {
+    if (mutability != .@"const") return error.InvalidValueDeclaration;
+    try appendLocal(context, allocator, name, value, mutability, true);
+}
+
+fn appendLocal(
+    context: *LowerContext,
+    allocator: Allocator,
+    name: []const u8,
+    value: value_mod.Value,
+    mutability: value_mod.Mutability,
+    borrowed: bool,
+) contracts.LowerError!void {
     if (context.scopes.items.len == 0) return error.InvalidMetaBlock;
     var scope = &context.scopes.items[context.scopes.items.len - 1];
     for (scope.locals.items) |local| {
@@ -147,6 +214,7 @@ pub fn defineLocalValue(
         .name = name,
         .value = value,
         .mutability = mutability,
+        .borrowed = borrowed,
     });
 }
 

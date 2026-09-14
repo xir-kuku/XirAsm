@@ -10,6 +10,7 @@ const expression_bridge = @import("expression_bridge.zig");
 const ActiveOutput = contracts.ActiveOutput;
 const LowerContext = context_mod.LowerContext;
 const LowerError = contracts.LowerError;
+const Allocator = std.mem.Allocator;
 
 pub const Callbacks = struct {
     eval_boolean_at_context: *const fn (*module_mod.Module, *LowerContext, ActiveOutput, *const expr.Node) LowerError!bool,
@@ -37,12 +38,80 @@ pub fn evaluate(
 
     if (try evalTargetCondition(module, context, active, trimmed, callbacks)) |value| return value;
 
-    var condition_expr = expr.parseOwned(module.allocator, trimmed) catch |err| return mapMetaConditionParseError(err);
-    defer condition_expr.deinit(module.allocator);
-    return callbacks.eval_boolean_at_context(module, context, active, &condition_expr) catch |err| return switch (err) {
-        error.InvalidExpression => error.InvalidMetaIf,
-        else => err,
+    const allocator = module.allocator;
+    if (context.condition_cache.getPtr(trimmed)) |cached| {
+        // The pointer is copied out of the map before evaluating: a nested insert
+        // can rehash it, but it cannot move the tree the pointer names.
+        const tree = cached.*;
+        return evalConditionNode(module, context, active, callbacks, tree);
+    }
+
+    var condition_expr = expr.parseOwned(allocator, trimmed) catch |err| return mapMetaConditionParseError(err);
+    const result = evalConditionNode(module, context, active, callbacks, &condition_expr) catch |err| {
+        condition_expr.deinit(allocator);
+        return err;
     };
+    // Ownership of the tree moves into the cache at this call; it either stores
+    // the tree or releases it, so nothing here may touch it afterwards.
+    try storeCondition(allocator, context, trimmed, &condition_expr);
+    return result;
+}
+
+/// Evaluates one parsed condition. The node is const: a cached tree is shared by
+/// every execution of its statement, so nothing may write to it.
+fn evalConditionNode(
+    module: *module_mod.Module,
+    context: *LowerContext,
+    active: ActiveOutput,
+    callbacks: Callbacks,
+    node: *const expr.Node,
+) LowerError!bool {
+    return callbacks.eval_boolean_at_context(module, context, active, node) catch |err| switch (err) {
+        error.InvalidExpression => error.InvalidMetaIf,
+        else => |other| other,
+    };
+}
+
+/// Moves a freshly parsed tree into the condition cache.
+///
+/// Ownership transfers at this call: on every path, including both allocation
+/// failures, the tree is either stored or deinitialized exactly once, so the
+/// caller must not use it afterwards. A tree already cached for the same text
+/// wins — reachable when evaluating one condition re-enters this file with an
+/// identical text — and the newer tree is then released rather than replacing
+/// the first one, which would leak it.
+fn storeCondition(
+    allocator: Allocator,
+    context: *LowerContext,
+    text: []const u8,
+    parsed: *expr.Node,
+) error{OutOfMemory}!void {
+    // The tree is moved into its own allocation before the map is touched, so a
+    // failure at any later step cannot leave a stored key with no value behind.
+    const stored = allocator.create(expr.Node) catch |err| {
+        parsed.deinit(allocator);
+        return err;
+    };
+    stored.* = parsed.*;
+
+    const owned_key = allocator.dupe(u8, text) catch |err| {
+        stored.deinit(allocator);
+        allocator.destroy(stored);
+        return err;
+    };
+    const entry = context.condition_cache.getOrPut(allocator, owned_key) catch |err| {
+        allocator.free(owned_key);
+        stored.deinit(allocator);
+        allocator.destroy(stored);
+        return err;
+    };
+    if (entry.found_existing) {
+        allocator.free(owned_key);
+        stored.deinit(allocator);
+        allocator.destroy(stored);
+        return;
+    }
+    entry.value_ptr.* = stored;
 }
 
 fn mapMetaConditionParseError(err: expr.ExpressionError) LowerError {
@@ -173,4 +242,40 @@ fn isMetaName(text: []const u8) bool {
         if (!(std.ascii.isAlphanumeric(byte) or byte == '_' or byte == '.' or byte == '$')) return false;
     }
     return true;
+}
+
+/// Stores one condition into a fresh cache. A new context per call is what makes
+/// this idempotent for `checkAllAllocationFailures`: the cache is state, and the
+/// injector calls the function once per allocation index.
+fn storeConditionOnce(allocator: Allocator, text: []const u8) !void {
+    var context: LowerContext = .{};
+    defer context.deinit(allocator);
+
+    var parsed = try expr.parseOwned(allocator, text);
+    // Ownership moves into the cache; it either stores the tree or releases it.
+    try storeCondition(allocator, &context, text, &parsed);
+    try std.testing.expectEqual(@as(usize, 1), context.condition_cache.count());
+}
+
+test "condition cache handles every allocation failure" {
+    try std.testing.checkAllAllocationFailures(std.testing.allocator, storeConditionOnce, .{"count > 0"});
+}
+
+test "condition cache keeps the first tree for a repeated text" {
+    const allocator = std.testing.allocator;
+    var context: LowerContext = .{};
+    defer context.deinit(allocator);
+
+    var first = try expr.parseOwned(allocator, "index < limit");
+    try storeCondition(allocator, &context, "index < limit", &first);
+    const stored_first = context.condition_cache.get("index < limit") orelse return error.TestUnexpectedResult;
+
+    var second = try expr.parseOwned(allocator, "index < limit");
+    try storeCondition(allocator, &context, "index < limit", &second);
+
+    // The new tree was released and the entry still holds the first one, so the
+    // cache neither grew nor lost the tree a caller may be walking.
+    try std.testing.expectEqual(@as(usize, 1), context.condition_cache.count());
+    const stored_again = context.condition_cache.get("index < limit") orelse return error.TestUnexpectedResult;
+    try std.testing.expectEqual(stored_first, stored_again);
 }

@@ -399,16 +399,20 @@ pub fn evaluateOperand(raw_context: *anyopaque, allocator: Allocator, operand: v
     // shadows, which is the single merged map this used to inject. Defining them
     // is also what keeps a nested capture made during evaluation reading the
     // values this capture saw rather than the module as it stands now.
+    //
+    // They are defined as *borrowed* locals: the snapshot and the capture's own
+    // bindings already own a copy taken when the capture was made, so cloning
+    // each entry again here only duplicates that copy — for every entry, on every
+    // `operand.eval`, including whole generated tables. The snapshot is
+    // refcounted and held by the capture, and nothing can write through a
+    // `.@"const"` local, so the storage stays valid and unchanged for as long as
+    // this evaluation reads it.
     for (environment.module_snapshot.entries.entries) |entry| {
         if (environment.bindings.entryByKey(entry.key) != null) continue;
-        var cloned = try entry.value.clone(allocator);
-        errdefer cloned.deinit(allocator);
-        context_mod.defineLocalValue(context, allocator, entry.key, cloned, .@"const") catch |err| return @import("lower/expression_bridge.zig").mapLowerErrorToExpression(err);
+        context_mod.defineBorrowedLocalValue(context, allocator, entry.key, entry.value, .@"const") catch |err| return @import("lower/expression_bridge.zig").mapLowerErrorToExpression(err);
     }
     for (environment.bindings.entries) |entry| {
-        var cloned = try entry.value.clone(allocator);
-        errdefer cloned.deinit(allocator);
-        context_mod.defineLocalValue(context, allocator, entry.key, cloned, .@"const") catch |err| return @import("lower/expression_bridge.zig").mapLowerErrorToExpression(err);
+        context_mod.defineBorrowedLocalValue(context, allocator, entry.key, entry.value, .@"const") catch |err| return @import("lower/expression_bridge.zig").mapLowerErrorToExpression(err);
     }
     var aliases: value.MapValue = .{ .entries = try allocator.alloc(value.MapEntry, 0) };
     defer aliases.deinit(allocator);
@@ -424,10 +428,10 @@ pub fn evaluateOperand(raw_context: *anyopaque, allocator: Allocator, operand: v
     defer parsed.deinit(allocator);
     captured_ctx.undefined_symbols = missing.items;
     try context.scopes.append(allocator, .{});
+    // The alias map is owned by this frame and is not touched again once parsing
+    // has finished, so these locals borrow from it just as the two loops above do.
     for (aliases.entries) |entry| {
-        var cloned = try entry.value.clone(allocator);
-        errdefer cloned.deinit(allocator);
-        context_mod.defineLocalValue(context, allocator, entry.key, cloned, .@"const") catch |err| return @import("lower/expression_bridge.zig").mapLowerErrorToExpression(err);
+        context_mod.defineBorrowedLocalValue(context, allocator, entry.key, entry.value, .@"const") catch |err| return @import("lower/expression_bridge.zig").mapLowerErrorToExpression(err);
     }
     return expr.evaluateValue(allocator, &parsed, &captured_ctx);
 }
