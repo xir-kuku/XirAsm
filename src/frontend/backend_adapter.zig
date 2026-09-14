@@ -38,7 +38,21 @@ pub const SpirvAdapterError = Allocator.Error || error{
     InstructionTooLarge,
     InstructionTextHasTerminator,
     InvalidSpirvVersion,
+    SpirvSymbolDuplicate,
+    SpirvSymbolUndefined,
     UnsupportedSpirvInstruction,
+};
+
+/// Where a SPIR-V source encoding failed.
+///
+/// `symbol` borrows `source_text`; it is empty when the failure is not about one
+/// symbolic ID. The caller reads it before the source text is released, which is
+/// the same call, so nothing here outlives its bytes.
+pub const SpirvSourceDiagnostic = struct {
+    /// Zero-based index of the failing line among the lines of `source_text`.
+    line_index: usize = 0,
+    /// The symbolic ID name without its leading `'%'`.
+    symbol: []const u8 = "",
 };
 
 pub const FixupFact = struct {
@@ -143,15 +157,24 @@ pub fn encodeSpirvSource(
     allocator: Allocator,
     source_text: []const u8,
     options: target.Target,
+    diagnostic: ?*SpirvSourceDiagnostic,
 ) SpirvAdapterError!InstructionFacts {
     if (isa_text.endsWithStatementTerminator(source_text)) return error.InstructionTextHasTerminator;
 
     const version = try spirvVersion(options);
-    const bytes = backend.spirv.text.parseSourceToOwnedBytes(
+    var backend_diagnostic: backend.spirv.text.SourceDiagnostic = .{};
+    const bytes = backend.spirv.text.parseSourceToOwnedBytesWithDiagnostic(
         allocator,
         source_text,
         .{ .version = version },
-    ) catch |err| return mapSpirvTextError(err);
+        &backend_diagnostic,
+    ) catch |err| {
+        if (diagnostic) |out| {
+            out.line_index = backend_diagnostic.line_index;
+            out.symbol = backend_diagnostic.symbol;
+        }
+        return mapSpirvTextError(err);
+    };
     errdefer allocator.free(bytes);
 
     const current_size = sizeToU32(bytes.len) catch return error.InstructionTooLarge;
@@ -183,6 +206,8 @@ fn spirvVersion(options: target.Target) SpirvAdapterError!backend.spirv.module.V
 fn mapSpirvTextError(err: backend.spirv.text.ParseError) SpirvAdapterError {
     return switch (err) {
         error.OutOfMemory => error.OutOfMemory,
+        error.UndefinedSymbolicId => error.SpirvSymbolUndefined,
+        error.DuplicateSymbolicId => error.SpirvSymbolDuplicate,
         error.EmptyOrComment,
         error.UnknownOpcode,
         error.UnknownOperand,
@@ -919,7 +944,7 @@ test "backend adapter encodes complete spirv source modules" {
         \\OpMemoryModel Logical GLSL450
         \\%1 = OpTypeVoid
     ;
-    var facts = try encodeSpirvSource(std.testing.allocator, source_text, target.Target.spv());
+    var facts = try encodeSpirvSource(std.testing.allocator, source_text, target.Target.spv(), null);
     defer facts.deinit(std.testing.allocator);
 
     try std.testing.expectEqual(@as(usize, 12 * @sizeOf(u32)), facts.bytes.len);
@@ -927,4 +952,51 @@ test "backend adapter encodes complete spirv source modules" {
     try std.testing.expectEqual(@as(u32, 0x00010600), std.mem.readInt(u32, facts.bytes[4..8], .little));
     try std.testing.expectEqual(@as(u32, 2), std.mem.readInt(u32, facts.bytes[12..16], .little));
     try std.testing.expectEqual(@as(u32, 0x00020011), std.mem.readInt(u32, facts.bytes[20..24], .little));
+}
+
+test "backend adapter accepts symbolic spirv ids and reports their failures" {
+    const source_text =
+        \\OpCapability Shader
+        \\OpMemoryModel Logical GLSL450
+        \\OpEntryPoint GLCompute %main "main"
+        \\%void = OpTypeVoid
+        \\%fnty = OpTypeFunction %void
+        \\%main = OpFunction %void None %fnty
+    ;
+
+    var facts = try encodeSpirvSource(std.testing.allocator, source_text, target.Target.spv(), null);
+    defer facts.deinit(std.testing.allocator);
+
+    // `%main` is numbered from the OpEntryPoint line, so it takes 1 and the bound
+    // is 4: three names, the largest of them 3. The width is asserted before the
+    // bound word is read, so a module that came back short fails here rather than
+    // indexing past the end of it.
+    try std.testing.expect(facts.bytes.len >= 5 * @sizeOf(u32));
+    try std.testing.expectEqual(@as(u32, 4), std.mem.readInt(u32, facts.bytes[12..16], .little));
+
+    var diagnostic: SpirvSourceDiagnostic = .{};
+    try std.testing.expectError(
+        error.SpirvSymbolUndefined,
+        encodeSpirvSource(
+            std.testing.allocator,
+            "OpCapability Shader\n%void = OpTypeVoid\n%fnty = OpTypeFunction %void\n%main = OpFunction %void None %mian",
+            target.Target.spv(),
+            &diagnostic,
+        ),
+    );
+    try std.testing.expectEqual(@as(usize, 3), diagnostic.line_index);
+    try std.testing.expectEqualStrings("mian", diagnostic.symbol);
+
+    var duplicate: SpirvSourceDiagnostic = .{};
+    try std.testing.expectError(
+        error.SpirvSymbolDuplicate,
+        encodeSpirvSource(
+            std.testing.allocator,
+            "%void = OpTypeVoid\n%bool = OpTypeBool\n%void = OpTypeInt 32 1",
+            target.Target.spv(),
+            &duplicate,
+        ),
+    );
+    try std.testing.expectEqual(@as(usize, 2), duplicate.line_index);
+    try std.testing.expectEqualStrings("void", duplicate.symbol);
 }

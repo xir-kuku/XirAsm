@@ -1445,7 +1445,7 @@ These procedures are ordinary source operations. They do not change the
 meaning of earlier instructions and are not finalizer operations.
 
 `spv.use()` begins a complete SPIR-V module. SPIR-V lines use standard `Op*`
-spelling and numeric raw IDs:
+spelling and numeric or symbolic result IDs:
 
 ```asm
 spv.use()
@@ -1457,8 +1457,17 @@ OpMemoryModel Logical GLSL450
 
 The complete output must contain only SPIR-V ISA fragments in one section and
 at one version. Mixing SPIR-V with another ISA, emitted data, reservations, or
-alignment operations is rejected. Symbolic SPIR-V result IDs are not currently
-accepted; use `%1`, `%2`, and other numeric IDs. CLI `--isa spv` and
+alignment operations is rejected.
+
+An `IdResult` may be written as a literal number or as a name. A literal keeps the
+number it was written with. A name is numbered from 1 upward in order of first
+appearance, skipping numbers literals already use; a forward reference such as
+`OpEntryPoint GLCompute %main "main"` therefore resolves even though the
+`OpFunction` line defining `%main` comes later. The module header bound covers
+both. A name that is never defined anywhere in the module, and a name defined
+more than once, are both rejected with the line that caused it; the number a name
+received is not reported, so read it from the emitted module or from the
+first-appearance rule. CLI `--isa spv` and
 `--isa spirv` (older spelling `--target`) both select version 1.6.
 
 #### Generated ISA Text

@@ -2296,7 +2296,7 @@ value.
 
 SPIR-V is encoded as one complete logical module rather than as independent
 machine instructions. Select it with `spv.use()` and write standard `Op*`
-instruction spelling with numeric result IDs:
+instruction spelling with numeric or symbolic result IDs:
 
 ```asm id=en-use
 spv.use()
@@ -2309,8 +2309,20 @@ OpMemoryModel Logical GLSL450
 The command-line names are `--isa spv`, `--isa spirv`, and the older `--target`
 spelling; all select SPIR-V 1.6. A SPIR-V output must contain only SPIR-V ISA lines in one section
 and at one module version. It cannot be mixed with x86 or RISC-V instructions,
-data emission, reservation, or alignment fragments. Use numeric `%id` spelling
-such as `%1`; symbolic SPIR-V IDs are not currently accepted.
+data emission, reservation, or alignment fragments.
+
+A result ID may be written as a number or as a name:
+
+- a literal keeps the number it was written with, so `%1` stays 1 and nothing is
+  renumbered;
+- a name is numbered from 1 upward in order of first appearance, skipping the
+  numbers literals already use.
+
+Numbering by first appearance is what makes forward references work:
+`OpEntryPoint GLCompute %main "main"` may name `%main` before the `OpFunction`
+line that defines it. The ID bound in the module header counts both kinds. A name
+that is never defined anywhere in the module is reported with its line instead of
+being allocated silently, and so is a name defined twice.
 
 ### Querying the Target
 

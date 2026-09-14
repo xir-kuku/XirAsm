@@ -7,6 +7,7 @@ const fragment = @import("fragment.zig");
 const layout = @import("layout.zig");
 const layout_cursor = @import("lower/layout_cursor.zig");
 const module_mod = @import("module.zig");
+const source = @import("source.zig");
 
 const Allocator = std.mem.Allocator;
 
@@ -362,37 +363,81 @@ fn encodeSpirvModuleFragments(
     var source_text: std.ArrayList(u8) = .empty;
     defer source_text.deinit(allocator);
 
+    // The joined text is one line per fragment, and a backend failure names the
+    // line it failed on. These two lists are the only record of which fragment
+    // contributed which line, so a diagnostic can point at the line the reader
+    // wrote instead of at the first SPIR-V line in the file.
+    var line_starts: std.ArrayList(usize) = .empty;
+    defer line_starts.deinit(allocator);
+    var line_spans: std.ArrayList(source.SourceSpan) = .empty;
+    defer line_spans.deinit(allocator);
+    var line_cursor: usize = 0;
+
     var encoded_count: usize = 0;
+    var last_instruction = first_instruction;
     for (module.fragments.items.items) |stored_fragment| {
         const instruction = switch (stored_fragment) {
             .isa_instruction => |active| active,
             else => continue,
         };
         if (instruction.target.isa() != .spirv) continue;
-        if (source_text.items.len != 0) try source_text.append(allocator, '\n');
+        if (source_text.items.len != 0) {
+            try source_text.append(allocator, '\n');
+            line_cursor += 1;
+        }
+        try line_starts.append(allocator, line_cursor);
+        try line_spans.append(allocator, instruction.span);
         try source_text.appendSlice(allocator, instruction.text);
+        // A fragment is one source line today; counting the newlines it does
+        // contain keeps the mapping right if that ever stops being true.
+        line_cursor += std.mem.count(u8, instruction.text, "\n");
+        last_instruction = instruction;
         encoded_count += 1;
     }
 
+    var spirv_diagnostic: backend_adapter.SpirvSourceDiagnostic = .{};
     var facts = backend_adapter.encodeSpirvSource(
         allocator,
         source_text.items,
         first_instruction.target,
+        &spirv_diagnostic,
     ) catch |err| switch (err) {
         error.UnsupportedSpirvInstruction => {
             try addSpirvDiagnostic(
                 allocator,
                 module,
-                first_instruction.span,
+                spirvSpanAtLine(line_starts.items, line_spans.items, spirv_diagnostic.line_index) orelse first_instruction.span,
                 "unsupported SPIR-V instruction or operand syntax",
             );
             return error.FrontendDiagnostics;
         },
+        error.SpirvSymbolUndefined => {
+            try addSpirvSymbolDiagnostic(
+                allocator,
+                module,
+                spirvSpanAtLine(line_starts.items, line_spans.items, spirv_diagnostic.line_index) orelse first_instruction.span,
+                spirv_diagnostic.symbol,
+                "SPIR-V symbolic ID %{s} is never defined in this module",
+            );
+            return error.FrontendDiagnostics;
+        },
+        error.SpirvSymbolDuplicate => {
+            try addSpirvSymbolDiagnostic(
+                allocator,
+                module,
+                spirvSpanAtLine(line_starts.items, line_spans.items, spirv_diagnostic.line_index) orelse first_instruction.span,
+                spirv_diagnostic.symbol,
+                "SPIR-V symbolic ID %{s} is defined more than once",
+            );
+            return error.FrontendDiagnostics;
+        },
         error.InstructionTextHasTerminator => {
+            // The stray `;` can only be at the very end of the joined text, so the
+            // last SPIR-V fragment is the one that carries it.
             try addSpirvDiagnostic(
                 allocator,
                 module,
-                first_instruction.span,
+                last_instruction.span,
                 "ISA text does not end with a semicolon; remove the trailing ';', which terminates Meta statements rather than instructions",
             );
             return error.FrontendDiagnostics;
@@ -461,10 +506,50 @@ fn encodeSpirvModuleFragments(
     };
 }
 
+/// The span of the SPIR-V fragment that contributed `line_index`, or null when
+/// the two lists cannot answer.
+///
+/// `line_starts` is non-decreasing, so the last entry at or before the failing
+/// line is the fragment that owns it. The lists are built from the same loop, so
+/// they always have the same length; the check is there because a mismatch would
+/// otherwise read past the end of one of them.
+fn spirvSpanAtLine(
+    line_starts: []const usize,
+    line_spans: []const source.SourceSpan,
+    line_index: usize,
+) ?source.SourceSpan {
+    if (line_starts.len != line_spans.len) return null;
+
+    var found: ?source.SourceSpan = null;
+    for (line_starts, line_spans) |start, span| {
+        if (start > line_index) break;
+        found = span;
+    }
+    return found;
+}
+
+/// Report a SPIR-V failure whose message names the symbolic ID involved.
+///
+/// The message is built with the allocator rather than a fixed buffer, because a
+/// symbolic ID has no length limit: a buffer would silently drop the name from the
+/// diagnostic instead of reporting the failure it is about. The diagnostic store
+/// copies the message, so the temporary is released here.
+fn addSpirvSymbolDiagnostic(
+    allocator: Allocator,
+    module: *module_mod.Module,
+    span: source.SourceSpan,
+    symbol: []const u8,
+    comptime format_string: []const u8,
+) Allocator.Error!void {
+    const message = try std.fmt.allocPrint(allocator, format_string, .{symbol});
+    defer allocator.free(message);
+    try addSpirvDiagnostic(allocator, module, span, message);
+}
+
 fn addSpirvDiagnostic(
     allocator: Allocator,
     module: *module_mod.Module,
-    span: @import("source.zig").SourceSpan,
+    span: source.SourceSpan,
     message: []const u8,
 ) Allocator.Error!void {
     try module.diagnostics.add(
@@ -1104,5 +1189,101 @@ test "encoding refreshes an anchored label whose position it moved" {
     try std.testing.expectEqual(
         @as(u64, 4),
         module.symbols.items.items[symbol_id.index].binding.label.offset,
+    );
+}
+
+/// A SPIR-V module whose fragments each carry a distinguishable span, so a
+/// diagnostic can be checked against the line that caused it.
+fn appendSpirvFragmentsWithSpans(
+    module: *module_mod.Module,
+    target: @import("target.zig").Target,
+    lines: []const []const u8,
+) !void {
+    // Span arithmetic stays in u32 end to end: the offsets only ever grow by 20
+    // per fragment, so no narrowing cast is needed and none is written.
+    var start: u32 = 10;
+    for (lines) |line| {
+        _ = try module.appendIsaInstruction(
+            module.default_section,
+            target,
+            line,
+            .{ .start = start, .end = start + 10 },
+        );
+        start += 20;
+    }
+}
+
+test "a spirv syntax failure points at the line that failed" {
+    const target = @import("target.zig").Target.spv();
+    var module = try module_mod.Module.init(std.testing.allocator, target);
+    defer module.deinit();
+
+    try appendSpirvFragmentsWithSpans(&module, target, &.{
+        "OpCapability Shader",
+        "OpMemoryModel Logical GLSL450",
+        "OpBogusInstruction 1",
+    });
+
+    try std.testing.expectError(
+        error.FrontendDiagnostics,
+        encodeInstructionFragments(std.testing.allocator, &module),
+    );
+
+    // The failing line is the third fragment, not the first one. Before the
+    // backend reported a line, every SPIR-V failure was blamed on fragment 0.
+    try std.testing.expectEqual(@as(usize, 1), module.diagnostics.items.items.len);
+    const reported = module.diagnostics.items.items[0];
+    try std.testing.expectEqual(@as(u32, 50), reported.span.start);
+    try std.testing.expectEqualStrings("unsupported SPIR-V instruction or operand syntax", reported.message);
+}
+
+test "an undefined spirv symbolic id is reported at its line and names it" {
+    const target = @import("target.zig").Target.spv();
+    var module = try module_mod.Module.init(std.testing.allocator, target);
+    defer module.deinit();
+
+    try appendSpirvFragmentsWithSpans(&module, target, &.{
+        "OpCapability Shader",
+        "%void = OpTypeVoid",
+        "%fnty = OpTypeFunction %void",
+        "%main = OpFunction %void None %mian",
+    });
+
+    try std.testing.expectError(
+        error.FrontendDiagnostics,
+        encodeInstructionFragments(std.testing.allocator, &module),
+    );
+
+    try std.testing.expectEqual(@as(usize, 1), module.diagnostics.items.items.len);
+    const reported = module.diagnostics.items.items[0];
+    try std.testing.expectEqual(@as(u32, 70), reported.span.start);
+    try std.testing.expectEqualStrings(
+        "SPIR-V symbolic ID %mian is never defined in this module",
+        reported.message,
+    );
+}
+
+test "a duplicate spirv symbolic id is reported at its second definition" {
+    const target = @import("target.zig").Target.spv();
+    var module = try module_mod.Module.init(std.testing.allocator, target);
+    defer module.deinit();
+
+    try appendSpirvFragmentsWithSpans(&module, target, &.{
+        "%void = OpTypeVoid",
+        "%bool = OpTypeBool",
+        "%void = OpTypeInt 32 1",
+    });
+
+    try std.testing.expectError(
+        error.FrontendDiagnostics,
+        encodeInstructionFragments(std.testing.allocator, &module),
+    );
+
+    try std.testing.expectEqual(@as(usize, 1), module.diagnostics.items.items.len);
+    const reported = module.diagnostics.items.items[0];
+    try std.testing.expectEqual(@as(u32, 50), reported.span.start);
+    try std.testing.expectEqualStrings(
+        "SPIR-V symbolic ID %void is defined more than once",
+        reported.message,
     );
 }

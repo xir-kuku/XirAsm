@@ -1,6 +1,6 @@
 .{
     .name = .xirasm_lib,
-    .version = "0.1.0",
+    .version = "0.1.4",
     .minimum_zig_version = "0.17.0",
     .fingerprint = 0x1c547ae05c667562,
     .dependencies = .{},

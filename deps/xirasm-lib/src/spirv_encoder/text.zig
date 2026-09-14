@@ -21,6 +21,24 @@ pub const ParseError = Allocator.Error || error{
     InstructionTooLong,
     InvalidHeaderBound,
     IdBoundOverflow,
+    UndefinedSymbolicId,
+    DuplicateSymbolicId,
+};
+
+/// Where a source-level parse failure happened, and which symbolic ID it was
+/// about.
+///
+/// `symbol` borrows the bytes of the `source` slice handed to the parse call: it
+/// is neither copied nor owned, so that slice must outlive this value. Every
+/// caller reads it before returning from the same call, which satisfies the rule
+/// on its own.
+pub const SourceDiagnostic = struct {
+    /// Zero-based index of the failing line, counting the `'\n'`-separated lines
+    /// of the parsed source.
+    line_index: usize = 0,
+    /// The symbolic ID name without its leading `'%'`, or empty when the failure
+    /// is not about one symbolic ID.
+    symbol: []const u8 = "",
 };
 
 pub const ParseOptions = struct {};
@@ -44,16 +62,35 @@ pub const ScalarType = union(enum) {
 pub const ParseContext = struct {
     scalar_types: std.AutoHashMapUnmanaged(Word, ScalarType) = .empty,
     ext_inst_sets: std.AutoHashMapUnmanaged(Word, tables.ExtInstSet) = .empty,
+    /// Symbolic ID name to the number the pre-scan assigned it.
+    ///
+    /// The keys borrow the bytes of the source text that was pre-scanned, so that
+    /// text must outlive this context; the context frees only its own table
+    /// storage. `parseLine` and `parseLineWithContext` never fill this table, so a
+    /// symbolic ID reaching a bare single-line parse is reported as
+    /// `UndefinedSymbolicId` instead of being numbered silently.
+    symbols: std.StringHashMapUnmanaged(Word) = .empty,
+    /// Set by `parseSourceWithDiagnostic` to report where a failure happened. Not
+    /// owned: the caller's value must outlive the context.
+    diagnostic: ?*SourceDiagnostic = null,
+    /// Zero-based index of the line currently being parsed. Mirrored into
+    /// `diagnostic` so a failure reported from deep inside a line still carries a
+    /// position.
+    line_index: usize = 0,
 
     pub fn deinit(self: *ParseContext, allocator: Allocator) void {
         self.scalar_types.deinit(allocator);
         self.ext_inst_sets.deinit(allocator);
+        self.symbols.deinit(allocator);
         self.* = undefined;
     }
 
     pub fn reset(self: *ParseContext) void {
         self.scalar_types.clearRetainingCapacity();
         self.ext_inst_sets.clearRetainingCapacity();
+        self.symbols.clearRetainingCapacity();
+        self.diagnostic = null;
+        self.line_index = 0;
     }
 };
 
@@ -81,6 +118,24 @@ pub const SourceResult = struct {
 };
 
 pub fn parseSource(allocator: Allocator, source: []const u8, options: SourceOptions) ParseError!SourceResult {
+    return parseSourceWithDiagnostic(allocator, source, options, null);
+}
+
+/// Parse a complete module, reporting where it failed when `diagnostic` is given.
+///
+/// Two passes over the source: the first collects every symbolic ID and the
+/// numbers written literally, the second parses the lines with the names already
+/// resolved. Forward references are the reason for the split: `OpEntryPoint`
+/// routinely names the entry point before its `OpFunction` line.
+///
+/// Literal IDs are never renumbered. Symbolic IDs are numbered in order of first
+/// appearance starting at 1, skipping numbers a literal already uses.
+pub fn parseSourceWithDiagnostic(
+    allocator: Allocator,
+    source: []const u8,
+    options: SourceOptions,
+    diagnostic: ?*SourceDiagnostic,
+) ParseError!SourceResult {
     var words: std.ArrayListUnmanaged(Word) = .empty;
     errdefer words.deinit(allocator);
 
@@ -93,13 +148,20 @@ pub fn parseSource(allocator: Allocator, source: []const u8, options: SourceOpti
 
     var context: ParseContext = .{};
     defer context.deinit(allocator);
+    context.diagnostic = diagnostic;
 
-    var max_id: Word = 0;
+    var max_id = try prescanSymbols(allocator, source, &context.symbols, diagnostic);
+
+    var line_index: usize = 0;
     var lines = std.mem.splitScalar(u8, source, '\n');
-    while (lines.next()) |line| {
+    while (lines.next()) |line| : (line_index += 1) {
+        context.line_index = line_index;
         var parsed = parseLineWithContext(allocator, &context, line, .{}) catch |err| switch (err) {
             error.EmptyOrComment => continue,
-            else => |leftover| return leftover,
+            else => |leftover| {
+                if (diagnostic) |out| out.line_index = line_index;
+                return leftover;
+            },
         };
         defer parsed.deinit(allocator);
 
@@ -120,9 +182,137 @@ pub fn parseSourceToOwnedWords(allocator: Allocator, source: []const u8, options
 }
 
 pub fn parseSourceToOwnedBytes(allocator: Allocator, source: []const u8, options: SourceOptions) ParseError![]u8 {
-    var parsed = try parseSource(allocator, source, options);
+    return parseSourceToOwnedBytesWithDiagnostic(allocator, source, options, null);
+}
+
+pub fn parseSourceToOwnedBytesWithDiagnostic(
+    allocator: Allocator,
+    source: []const u8,
+    options: SourceOptions,
+    diagnostic: ?*SourceDiagnostic,
+) ParseError![]u8 {
+    var parsed = try parseSourceWithDiagnostic(allocator, source, options, diagnostic);
     defer parsed.deinit(allocator);
     return try parsed.toOwnedBytes(allocator);
+}
+
+/// What the first pass learns about a module's IDs.
+///
+/// Every name stored here borrows the bytes of the scanned source, so that slice
+/// must outlive the builder; the builder frees only its own table storage.
+const SymbolScan = struct {
+    /// Symbolic ID names in order of first appearance, each stored once.
+    names: std.ArrayListUnmanaged([]const u8) = .empty,
+    /// The same names as a set, so `names` holds no duplicate.
+    seen: std.StringHashMapUnmanaged(void) = .empty,
+    /// Names that were defined as a result ID somewhere in the module.
+    defined: std.StringHashMapUnmanaged(void) = .empty,
+    /// Numbers written literally anywhere in the module, result or operand.
+    literal_ids: std.AutoHashMapUnmanaged(Word, void) = .empty,
+    /// The largest of those numbers.
+    largest_literal: Word = 0,
+
+    fn deinit(self: *SymbolScan, allocator: Allocator) void {
+        self.names.deinit(allocator);
+        self.seen.deinit(allocator);
+        self.defined.deinit(allocator);
+        self.literal_ids.deinit(allocator);
+        self.* = undefined;
+    }
+};
+
+/// Collect every symbolic ID in `source` and assign each one a number.
+///
+/// Symbolic IDs are numbered in order of first appearance, starting at 1 and
+/// skipping numbers a literal `%12` already uses. Literal IDs keep their numbers,
+/// which is the guarantee this assembler has always made: the number written is
+/// the number emitted.
+///
+/// A name that is never defined anywhere is deliberately left out of the table,
+/// so the parse pass reports it at the line that used it rather than here.
+///
+/// Returns the largest ID number the module can reach, so the caller can seed the
+/// header bound from it.
+fn prescanSymbols(
+    allocator: Allocator,
+    source: []const u8,
+    symbols: *std.StringHashMapUnmanaged(Word),
+    diagnostic: ?*SourceDiagnostic,
+) ParseError!Word {
+    var scan: SymbolScan = .{};
+    defer scan.deinit(allocator);
+
+    var line_index: usize = 0;
+    var lines = std.mem.splitScalar(u8, source, '\n');
+    while (lines.next()) |line| : (line_index += 1) {
+        try prescanLine(allocator, &scan, line, line_index, diagnostic);
+    }
+
+    var next: Word = 1;
+    var largest_assigned: Word = 0;
+    for (scan.names.items) |name| {
+        if (!scan.defined.contains(name)) continue;
+        while (scan.literal_ids.contains(next)) {
+            next = std.math.add(Word, next, 1) catch return error.IdBoundOverflow;
+        }
+        try symbols.put(allocator, name, next);
+        largest_assigned = next;
+        next = std.math.add(Word, next, 1) catch return error.IdBoundOverflow;
+    }
+
+    return @max(largest_assigned, scan.largest_literal);
+}
+
+fn prescanLine(
+    allocator: Allocator,
+    scan: *SymbolScan,
+    line: []const u8,
+    line_index: usize,
+    diagnostic: ?*SourceDiagnostic,
+) ParseError!void {
+    var tokenizer = Tokenizer.init(line);
+    var first = true;
+    var maybe_token = tokenizer.next();
+    while (maybe_token) |token| : (maybe_token = tokenizer.next()) {
+        const is_first = first;
+        first = false;
+        if (!isIdToken(token)) continue;
+
+        const body = token[1..];
+        if (literalIdValue(body)) |id| {
+            try scan.literal_ids.put(allocator, id, {});
+            if (id > scan.largest_literal) scan.largest_literal = id;
+            continue;
+        }
+        // A malformed ID such as `%12abc` is left alone here so the real parse
+        // reports it against this same line, instead of this pass inventing a
+        // name for it.
+        if (!isSymbolicIdBody(body)) continue;
+
+        // A result ID is the first token of the line followed by `=`.
+        const defines = is_first and equalsAhead(&tokenizer);
+
+        if (!scan.seen.contains(body)) {
+            try scan.seen.put(allocator, body, {});
+            try scan.names.append(allocator, body);
+        }
+        if (!defines) continue;
+
+        const entry = try scan.defined.getOrPut(allocator, body);
+        if (entry.found_existing) {
+            if (diagnostic) |out| {
+                out.line_index = line_index;
+                out.symbol = body;
+            }
+            return error.DuplicateSymbolicId;
+        }
+        entry.value_ptr.* = {};
+    }
+}
+
+fn equalsAhead(tokenizer: *Tokenizer) bool {
+    const next_token = tokenizer.peek() orelse return false;
+    return std.mem.eql(u8, next_token, "=");
 }
 
 pub fn parseLine(allocator: Allocator, line: []const u8, _: ParseOptions) ParseError!LineResult {
@@ -141,7 +331,7 @@ pub fn parseLineWithContext(
     var opcode_token = first_token;
     var result_id: ?Word = null;
     if (isIdToken(first_token)) {
-        result_id = try parseId(first_token);
+        result_id = try parseId(context, first_token);
         const equals = tokenizer.next() orelse return error.ExpectedEquals;
         if (!std.mem.eql(u8, equals, "=")) return error.ExpectedEquals;
         opcode_token = tokenizer.next() orelse return error.UnknownOpcode;
@@ -225,7 +415,7 @@ fn appendOperand(
         .id_scope,
         .id_memory_semantics,
         => {
-            const id = try parseId(tokenizer.next() orelse return error.ExpectedOperand);
+            const id = try parseId(context, tokenizer.next() orelse return error.ExpectedOperand);
             if (id > max_id.*) max_id.* = id;
             try appendWord(allocator, out, id);
         },
@@ -257,19 +447,19 @@ fn appendOperand(
         },
         .pair_literal_integer_id_ref => {
             try appendWord(allocator, out, try parseWord(tokenizer.next() orelse return error.ExpectedOperand));
-            const id = try parseId(tokenizer.next() orelse return error.ExpectedOperand);
+            const id = try parseId(context, tokenizer.next() orelse return error.ExpectedOperand);
             if (id > max_id.*) max_id.* = id;
             try appendWord(allocator, out, id);
         },
         .pair_id_ref_literal_integer => {
-            const id = try parseId(tokenizer.next() orelse return error.ExpectedOperand);
+            const id = try parseId(context, tokenizer.next() orelse return error.ExpectedOperand);
             if (id > max_id.*) max_id.* = id;
             try appendWord(allocator, out, id);
             try appendWord(allocator, out, try parseWord(tokenizer.next() orelse return error.ExpectedOperand));
         },
         .pair_id_ref_id_ref => {
-            const first = try parseId(tokenizer.next() orelse return error.ExpectedOperand);
-            const second = try parseId(tokenizer.next() orelse return error.ExpectedOperand);
+            const first = try parseId(context, tokenizer.next() orelse return error.ExpectedOperand);
+            const second = try parseId(context, tokenizer.next() orelse return error.ExpectedOperand);
             if (first > max_id.*) max_id.* = first;
             if (second > max_id.*) max_id.* = second;
             try appendWord(allocator, out, first);
@@ -535,9 +725,20 @@ fn appendFloat32(allocator: Allocator, out: *std.ArrayListUnmanaged(Word), token
     try appendWord(allocator, out, @bitCast(value));
 }
 
-fn parseId(token: []const u8) ParseError!Word {
+fn parseId(context: ?*ParseContext, token: []const u8) ParseError!Word {
     if (!isIdToken(token)) return error.ExpectedId;
-    return parseWord(token[1..]);
+    const body = token[1..];
+
+    // A literal keeps the number it was written with. Symbolic IDs are numbered
+    // by the pre-scan, so a name that reaches here without an entry was never
+    // defined anywhere in the module.
+    if (literalIdValue(body)) |id| return id;
+    if (!isSymbolicIdBody(body)) return error.ExpectedId;
+    if (context) |ctx| {
+        if (ctx.symbols.get(body)) |id| return id;
+        if (ctx.diagnostic) |out| out.symbol = body;
+    }
+    return error.UndefinedSymbolicId;
 }
 
 fn parseWord(token: []const u8) ParseError!Word {
@@ -551,6 +752,34 @@ fn parseUnsigned64(token: []const u8) ParseError!u64 {
     const digits = if (base == 16) token[2..] else token;
     if (digits.len == 0) return error.InvalidInteger;
     return std.fmt.parseUnsigned(u64, digits, base) catch return error.InvalidInteger;
+}
+
+/// The number an ID body was written with, or null when the body is not a
+/// literal number. This routes through the same `parseUnsigned64` the operand
+/// parser uses, so every body that was accepted before symbolic IDs existed
+/// still parses to exactly the same number.
+fn literalIdValue(body: []const u8) ?Word {
+    return std.math.cast(Word, parseUnsigned64(body) catch return null);
+}
+
+/// A symbolic ID body is `%` followed by an identifier-shaped name. The first
+/// character may not be a digit, so `%12abc` stays a malformed ID instead of
+/// quietly becoming a name.
+fn isSymbolicIdBody(body: []const u8) bool {
+    if (body.len == 0) return false;
+    if (!isSymbolicIdStart(body[0])) return false;
+    for (body[1..]) |byte| {
+        if (!isSymbolicIdContinue(byte)) return false;
+    }
+    return true;
+}
+
+fn isSymbolicIdStart(byte: u8) bool {
+    return std.ascii.isAlphabetic(byte) or byte == '_';
+}
+
+fn isSymbolicIdContinue(byte: u8) bool {
+    return isSymbolicIdStart(byte) or std.ascii.isDigit(byte);
 }
 
 fn parseSignedWord(token: []const u8) ParseError!Word {
@@ -899,4 +1128,184 @@ fn allocationFailureParseProbe(allocator: Allocator) !void {
 
 test "parse line handles allocation failures without leaks" {
     try std.testing.checkAllAllocationFailures(std.testing.allocator, allocationFailureParseProbe, .{});
+}
+
+test "parse source numbers symbolic ids by order of first appearance" {
+    // The same module twice: once with the numbers a reader would have to keep in
+    // their head, once with names. First appearance decides the numbers, so
+    // `main` takes 1 from the OpEntryPoint line even though its OpFunction comes
+    // later. Both spellings must produce identical bytes.
+    const numbered =
+        \\OpCapability Shader
+        \\OpMemoryModel Logical GLSL450
+        \\OpEntryPoint GLCompute %1 "main"
+        \\OpExecutionMode %1 LocalSize 1 1 1
+        \\%2 = OpTypeVoid
+        \\%3 = OpTypeFunction %2
+        \\%1 = OpFunction %2 None %3
+        \\%4 = OpLabel
+        \\OpReturn
+        \\OpFunctionEnd
+    ;
+    const named =
+        \\OpCapability Shader
+        \\OpMemoryModel Logical GLSL450
+        \\OpEntryPoint GLCompute %main "main"
+        \\OpExecutionMode %main LocalSize 1 1 1
+        \\%void = OpTypeVoid
+        \\%fnty = OpTypeFunction %void
+        \\%main = OpFunction %void None %fnty
+        \\%lbl = OpLabel
+        \\OpReturn
+        \\OpFunctionEnd
+    ;
+
+    var from_numbers = try parseSource(std.testing.allocator, numbered, .{});
+    defer from_numbers.deinit(std.testing.allocator);
+    var from_names = try parseSource(std.testing.allocator, named, .{});
+    defer from_names.deinit(std.testing.allocator);
+
+    try std.testing.expectEqualSlices(Word, from_numbers.words, from_names.words);
+}
+
+test "symbolic ids skip numbers written literally" {
+    // `%2` is taken by a literal, so the names take 1, 3, and 4. The literal keeps
+    // its own number: nothing is renumbered.
+    const source =
+        \\%2 = OpTypeVoid
+        \\%fnty = OpTypeFunction %2
+        \\%main = OpFunction %2 None %fnty
+        \\%lbl = OpLabel
+    ;
+
+    var parsed = try parseSource(std.testing.allocator, source, .{});
+    defer parsed.deinit(std.testing.allocator);
+
+    try std.testing.expectEqualSlices(Word, &.{
+        module_mod.magic_number,
+        module_mod.Version.v1_6.toWord(),
+        module_mod.default_generator,
+        5,
+        module_mod.default_schema,
+        0x00020013,
+        2,
+        0x00030021,
+        1,
+        2,
+        0x00050036,
+        2,
+        3,
+        0,
+        1,
+        0x000200f8,
+        4,
+    }, parsed.words);
+}
+
+test "a hexadecimal literal id still parses as a number" {
+    // `%0x10` was accepted before symbolic IDs existed and still parses to 16.
+    var parsed = try parseSource(std.testing.allocator, "%0x10 = OpTypeVoid", .{});
+    defer parsed.deinit(std.testing.allocator);
+    try std.testing.expectEqualSlices(Word, &.{
+        module_mod.magic_number,
+        module_mod.Version.v1_6.toWord(),
+        module_mod.default_generator,
+        17,
+        module_mod.default_schema,
+        0x00020013,
+        16,
+    }, parsed.words);
+}
+
+test "an undefined symbolic id is reported at the line that used it" {
+    const source =
+        \\OpCapability Shader
+        \\%void = OpTypeVoid
+        \\%fnty = OpTypeFunction %void
+        \\%main = OpFunction %void None %mian
+    ;
+
+    var diagnostic: SourceDiagnostic = .{};
+    try std.testing.expectError(
+        error.UndefinedSymbolicId,
+        parseSourceWithDiagnostic(std.testing.allocator, source, .{}, &diagnostic),
+    );
+    try std.testing.expectEqual(@as(usize, 3), diagnostic.line_index);
+    try std.testing.expectEqualStrings("mian", diagnostic.symbol);
+}
+
+test "a path-like symbolic id is not confused with a literal" {
+    // `_ptr_Uniform_float` is the spelling spirv-dis prints, so it has to be
+    // accepted as a name rather than rejected as a malformed number.
+    const source =
+        \\%float = OpTypeFloat 32
+        \\%_ptr_Uniform_float = OpTypePointer Uniform %float
+    ;
+
+    var diagnostic: SourceDiagnostic = .{};
+    var parsed = try parseSourceWithDiagnostic(std.testing.allocator, source, .{}, &diagnostic);
+    defer parsed.deinit(std.testing.allocator);
+
+    try std.testing.expectEqualSlices(Word, &.{
+        module_mod.magic_number,
+        module_mod.Version.v1_6.toWord(),
+        module_mod.default_generator,
+        3,
+        module_mod.default_schema,
+        0x00030016,
+        1,
+        32,
+        0x00040020,
+        2,
+        2,
+        1,
+    }, parsed.words);
+}
+
+test "a duplicate symbolic id is reported at the second definition" {
+    const source =
+        \\%void = OpTypeVoid
+        \\%bool = OpTypeBool
+        \\%void = OpTypeInt 32 1
+    ;
+
+    var diagnostic: SourceDiagnostic = .{};
+    try std.testing.expectError(
+        error.DuplicateSymbolicId,
+        parseSourceWithDiagnostic(std.testing.allocator, source, .{}, &diagnostic),
+    );
+    try std.testing.expectEqual(@as(usize, 2), diagnostic.line_index);
+    try std.testing.expectEqualStrings("void", diagnostic.symbol);
+}
+
+test "a malformed symbolic id is not turned into a name" {
+    // A digit may not start a name, so `%12abc` is a bad ID rather than a new
+    // symbol that silently gets a number.
+    try std.testing.expectError(
+        error.ExpectedId,
+        parseSource(std.testing.allocator, "%12abc = OpTypeVoid", .{}),
+    );
+}
+
+fn allocationFailureSourceParseProbe(allocator: Allocator) !void {
+    const source =
+        \\OpCapability Shader
+        \\OpMemoryModel Logical GLSL450
+        \\OpEntryPoint GLCompute %main "main"
+        \\OpDecorate %buf DescriptorSet 0
+        \\%void = OpTypeVoid
+        \\%fnty = OpTypeFunction %void
+        \\%buf = OpVariable %void Uniform
+        \\%main = OpFunction %void None %fnty
+        \\%lbl = OpLabel
+        \\OpReturn
+        \\OpFunctionEnd
+    ;
+
+    var parsed = try parseSource(allocator, source, .{});
+    defer parsed.deinit(allocator);
+}
+
+test "parse source with symbolic ids handles allocation failures without leaks" {
+    try std.testing.checkAllAllocationFailures(std.testing.allocator, allocationFailureSourceParseProbe, .{});
 }
