@@ -1,6 +1,7 @@
 import("format/format.inc");
 
-let image: map = format_elf64(
+// PIE accepts imports; AArch64 requires eager GOT slots rather than x86 PLT.
+let image: map = format_elf64_aarch64(
     format_elf_pie,
     list.of(
         format_segment(".text", format_load | format_readable | format_executable)
