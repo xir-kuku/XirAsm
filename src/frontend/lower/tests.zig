@@ -168,6 +168,121 @@ test "value functions may update local let bindings only" {
     );
 }
 
+test "value functions cannot mutate caller locals or pass them for procedure writeback" {
+    for ([_][]const u8{
+        "scalar = 7",
+        "list.push_mut(items, 8)",
+        "list.set_mut(items, 0, 8)",
+        "map.set_mut(cfg, \"entry\", 8)",
+        "replace(scalar)",
+    }) |mutation| {
+        for ([_][]const u8{ "fn caller()", "fn caller() -> u64", "macro caller()" }) |caller| {
+            const text = try std.fmt.allocPrint(
+                std.testing.allocator,
+                "fn replace(let target: u64) {{\n target = 7\n}}\n" ++
+                    "fn inner() -> u64 {{\n {s}\n return 0\n}}\n" ++
+                    "{s} {{\n let scalar: u64 = 1\n let items: list = list.of(2)\n" ++
+                    " let cfg: map = map.new()\n const result = inner()\n {s}\n}}\n{s}\n",
+                .{
+                    mutation,
+                    caller,
+                    if (std.mem.eql(u8, caller, "fn caller() -> u64")) "return 0" else "",
+                    if (std.mem.eql(u8, caller, "macro caller()")) "caller" else if (std.mem.eql(u8, caller, "fn caller() -> u64")) "const result = caller()" else "caller()",
+                },
+            );
+            defer std.testing.allocator.free(text);
+            try std.testing.expectError(error.InvalidExpression, lowerSource(std.testing.allocator, text, .{}));
+        }
+    }
+    try std.testing.expectError(error.InvalidExpression, lowerSource(std.testing.allocator,
+        \\let scalar: u64 = 1
+        \\fn replace(let target: u64) {
+        \\    target = 7
+        \\}
+        \\fn inner() -> u64 {
+        \\    replace(scalar)
+        \\    return 0
+        \\}
+        \\const result = inner()
+    , .{}));
+}
+
+fn checkValueFunctionMutationScopes(allocator: Allocator) !void {
+    var module = try lowerSource(allocator,
+        \\fn append(let items: list) {
+        \\    list.push_mut(items, 4)
+        \\}
+        \\fn inner() -> u64 {
+        \\    let count: u64 = 1
+        \\    count = count + 1
+        \\    return count
+        \\}
+        \\fn build() -> list {
+        \\    let items: list = list.of(1)
+        \\    let cfg: map = map.new()
+        \\    if true {
+        \\        list.push_mut(items, inner())
+        \\        list.set_mut(items, 0, 3)
+        \\        map.set_mut(cfg, "size", len(items))
+        \\    }
+        \\    append(items)
+        \\    assert(map.get(cfg, "size") == 2)
+        \\    return items
+        \\}
+        \\fn caller() {
+        \\    let scalar: u64 = 5
+        \\    let items: list = build()
+        \\    assert(list.eq(items, list.of(3, 2, 4)))
+        \\    scalar = scalar + 1
+        \\    list.push_mut(items, scalar)
+        \\    assert(list.get(items, 3) == 6)
+        \\}
+        \\caller()
+    , .{});
+    defer module.deinit();
+}
+
+test "value function mutation waterlines preserve nested blocks and procedure parameters" {
+    try checkValueFunctionMutationScopes(std.testing.allocator);
+}
+
+test "value function mutation waterlines clean up every allocation failure" {
+    var no_resize = std.testing.FailingAllocator.init(std.testing.allocator, .{ .resize_fail_index = 0 });
+    try std.testing.checkAllAllocationFailures(no_resize.allocator(), checkValueFunctionMutationScopes, .{});
+}
+
+test "value functions reject state changing APIs before their arguments run" {
+    for ([_][]const u8{
+        "origin(0x1000)",
+        "output.section(\"section\", 0x1000)",
+        "output.org(\"org\", 0x1000)",
+        "x86.use16()",
+        "x86.use32()",
+        "x86.use64()",
+        "riscv.use32()",
+        "riscv.use64()",
+        "spv.use()",
+        "include(\"unread.inc\")",
+        "import(\"unread.inc\")",
+    }) |operation| {
+        for ([_]bool{ false, true }) |indirect| {
+            const text = try std.fmt.allocPrint(
+                std.testing.allocator,
+                "fn change_state() {{\n {s}\n}}\n" ++
+                    "fn calculate() -> u64 {{\n {s}\n return 0\n}}\n" ++
+                    "const result = calculate()\n",
+                .{ operation, if (indirect) "change_state()" else operation },
+            );
+            defer std.testing.allocator.free(text);
+            var module = try module_mod.Module.init(std.testing.allocator, target.Target.default);
+            defer module.deinit();
+            try std.testing.expectError(error.InvalidExpression, lowerSourceIntoModule(std.testing.allocator, &module, text));
+            try std.testing.expect(module.diagnostics.items.items.len > 0);
+            try std.testing.expect(std.mem.indexOf(u8, module.diagnostics.items.items[0].message, "SideEffectInValueFunction") != null);
+        }
+    }
+}
+
 test "collection mutation updates let bindings without aliasing" {
     var module = try lowerSource(
         std.testing.allocator,

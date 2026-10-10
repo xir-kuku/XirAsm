@@ -32,6 +32,8 @@ pub const Section = struct {
     origin: u64 = 0,
     file_offset: u64 = 0,
     file_size_alignment: u64 = 1,
+    /// Raw-size alignment closes the region, including for later phases.
+    file_aligned: bool = false,
 
     /// Prefix cursor cache, maintained by `layout_cursor`.
     ///
@@ -107,6 +109,7 @@ pub const SectionStore = struct {
     pub fn setFileSizeAlignment(self: *SectionStore, section_id: SectionId, alignment: u64) !void {
         const section = try self.getMut(section_id);
         section.file_size_alignment = alignment;
+        section.file_aligned = true;
     }
 
     /// Used to promote a virtual region into a real one: the section keeps its

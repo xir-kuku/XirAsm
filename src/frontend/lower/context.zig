@@ -25,6 +25,9 @@ pub const LowerContext = struct {
     scopes: std.ArrayList(MetaScope) = .empty,
     call_depth: u32 = 0,
     value_function_depth: u32 = 0,
+    /// Scopes below this waterline belong to the caller. Value functions may
+    /// read them, but only their own invocation's scopes may be written.
+    value_function_scope_start: usize = 0,
     in_meta_loop: bool = false,
     return_value: ?value_mod.Value = null,
     /// Span of the `return` statement that produced `return_value`. The value
@@ -225,6 +228,7 @@ pub fn setLocalValue(
     new_value: value_mod.Value,
 ) contracts.LowerError!bool {
     const position = findLocalPosition(context, name) orelse return false;
+    if (!localIsWritable(context, position)) return error.SideEffectInValueFunction;
     const local = &context.scopes.items[position.scope_index].locals.items[position.local_index];
     if (local.mutability != .let) return error.InvalidValueDeclaration;
     local.value.deinit(allocator);
@@ -240,6 +244,7 @@ pub fn setCallerLocalValue(
 ) contracts.LowerError!bool {
     if (context.scopes.items.len <= 1) return false;
     const position = findCallerLocalPosition(context, name) orelse return false;
+    if (!localIsWritable(context, position)) return error.SideEffectInValueFunction;
     const local = &context.scopes.items[position.scope_index].locals.items[position.local_index];
     if (local.mutability != .let) return error.InvalidValueDeclaration;
     local.value.deinit(allocator);
@@ -254,9 +259,15 @@ pub fn lookupLocalValue(context: *const LowerContext, name: []const u8) ?*const 
 
 pub fn lookupMutableLocalValue(context: *LowerContext, name: []const u8) value_mod.MutableValueLookup {
     const position = findLocalPosition(context, name) orelse return .missing;
+    if (!localIsWritable(context, position)) return .missing;
     const local = &context.scopes.items[position.scope_index].locals.items[position.local_index];
     if (local.mutability != .let) return .immutable;
     return .{ .value = &local.value };
+}
+
+fn localIsWritable(context: *const LowerContext, position: LocalPosition) bool {
+    return context.value_function_depth == 0 or
+        position.scope_index >= context.value_function_scope_start;
 }
 
 fn findLocalPosition(context: *const LowerContext, name: []const u8) ?LocalPosition {

@@ -104,7 +104,9 @@ fn validateMutableArguments(
         switch (context_mod.lookupMutableLocalValue(context, name)) {
             .value => {},
             .immutable => return fail(module, call, "mutable function argument must resolve to a let binding"),
-            .missing => switch (module.symbols.lookupMutableValue(name)) {
+            .missing => if (context.value_function_depth != 0)
+                return fail(module, call, "mutable function argument must resolve to a local let binding")
+            else switch (module.symbols.lookupMutableValue(name)) {
                 .value => {},
                 .immutable => return fail(module, call, "mutable function argument must resolve to a let binding"),
                 .missing => return fail(module, call, "mutable function argument must resolve to a let binding"),
@@ -270,6 +272,9 @@ pub fn evalValueFunctionAt(
         initialized += 1;
     }
 
+    const previous_scope_start = context.value_function_scope_start;
+    context.value_function_scope_start = context.scopes.items.len;
+    defer context.value_function_scope_start = previous_scope_start;
     try context.scopes.append(allocator, .{});
     defer context_mod.discardLastScope(context, allocator);
     for (function.params, 0..) |param, index| {

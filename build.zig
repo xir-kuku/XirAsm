@@ -569,6 +569,13 @@ pub fn build(b: *std.Build) void {
     release_boundary_step.dependOn(&run_release_boundary.step);
 
     const fixture_step = b.step("test-fixtures", "Assemble source fixtures with the compiled CLI");
+    addAsmFixture(b, fixture_step, exe, fixture_checker, "tests/audit/layout_zero_length_tail.asm", "layout-zero-length-tail.bin", "x64", "aabb");
+    addAsmFixture(b, fixture_step, exe, fixture_checker, "tests/audit/layout_initialized_zero_tail.asm", "layout-initialized-zero-tail.bin", "x64", "aa000000000000ccbb");
+    addAsmFixture(b, fixture_step, exe, fixture_checker, "tests/audit/layout_late_closed_new_region.asm", "layout-late-closed-new-region.bin", "x64", "aa00000000000000bb");
+    addFailingAsmFixtureWithInputs(b, fixture_step, exe, "tests/audit/layout_late_closed_emit.asm", "x64", &.{}, "OutputRegionClosed");
+    addFailingAsmFixtureWithInputs(b, fixture_step, exe, "tests/audit/layout_late_closed_reserve.asm", "x64", &.{}, "OutputRegionClosed");
+    addFailingAsmFixtureWithInputs(b, fixture_step, exe, "tests/audit/layout_placed_closed_emit.asm", "x64", &.{}, "OutputRegionClosed");
+    addAsmFixture(b, fixture_step, exe, fixture_checker, "tests/meta/audit_dsl_scope.asm", "dsl-invocation-scope.bin", "x64", "0607");
     const macro_step = b.step("test-macros", "Validate statement macros");
     macro_step.dependOn(&run_mod_tests.step);
     fixture_step.dependOn(macro_step);

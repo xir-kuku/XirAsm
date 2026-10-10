@@ -239,7 +239,7 @@ pub fn lowerApiCall(
             .section_id = label.section,
             .offset = try layout_cursor.sectionCursor(module, label.section),
             .file_offset = try layout_cursor.sectionFileCursor(module, label.section),
-            .file_aligned = false,
+            .file_aligned = placed.file_aligned,
             .target = active.target,
         };
         return;
@@ -533,6 +533,17 @@ pub fn lowerApiCall(
 
 pub fn apiCallHasOutputSideEffect(callee: []const u8) bool {
     return std.mem.eql(u8, callee, "isa") or
+        std.mem.eql(u8, callee, "include") or
+        std.mem.eql(u8, callee, "import") or
+        std.mem.eql(u8, callee, "origin") or
+        std.mem.eql(u8, callee, "output.org") or
+        std.mem.eql(u8, callee, "output.section") or
+        std.mem.eql(u8, callee, "x86.use16") or
+        std.mem.eql(u8, callee, "x86.use32") or
+        std.mem.eql(u8, callee, "x86.use64") or
+        std.mem.eql(u8, callee, "riscv.use32") or
+        std.mem.eql(u8, callee, "riscv.use64") or
+        std.mem.eql(u8, callee, "spv.use") or
         std.mem.eql(u8, callee, "emit.u8") or
         std.mem.eql(u8, callee, "emit.u16") or
         std.mem.eql(u8, callee, "emit.u32") or

@@ -63,10 +63,12 @@ fn runBlocksOnce(
     var context: LowerContext = .{};
     defer context.deinit(allocator);
 
+    const default_section = try module.sections.get(module.default_section);
     var active: ActiveOutput = .{
         .section_id = module.default_section,
         .offset = try callbacks.section_cursor(module, module.default_section),
         .file_offset = try callbacks.section_file_cursor(module, module.default_section),
+        .file_aligned = default_section.file_aligned,
         .target = module.target,
     };
     var output_stack: std.ArrayList(ActiveOutput) = .empty;

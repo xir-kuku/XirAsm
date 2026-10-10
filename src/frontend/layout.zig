@@ -122,6 +122,9 @@ pub fn layoutSection(
     var reverse_index = entries.len;
     while (reverse_index > 0) {
         reverse_index -= 1;
+        // Empty emission or an already-satisfied alignment does not initialize
+        // bytes, so it cannot turn the preceding reserve into a file gap.
+        if (entries[reverse_index].logical_size == 0) continue;
         const stored_fragment = try getFragment(module, entries[reverse_index].fragment);
         switch (stored_fragment) {
             .reserve => {
@@ -223,6 +226,25 @@ test "layout accounts for alignment fragments" {
     try std.testing.expectEqual(@as(u64, 3), text.fragments[1].offset);
     try std.testing.expectEqual(@as(u64, 5), text.fragments[1].logical_size);
     try std.testing.expectEqual(@as(u64, 8), text.fragments[2].offset);
+}
+
+test "layout leaves reserve tails unmaterialized across empty fragments" {
+    var module = try module_mod.Module.init(std.testing.allocator, target.Target.default);
+    defer module.deinit();
+
+    _ = try module.emitBytes(module.default_section, &.{0xaa}, source.unknown_span);
+    _ = try module.reserve(module.default_section, 3, 1, source.unknown_span);
+    _ = try module.emitBytes(module.default_section, &.{}, source.unknown_span);
+    _ = try module.addAlignment(module.default_section, 4, 0xbb, source.unknown_span);
+    _ = try module.reserve(module.default_section, 0, 1, source.unknown_span);
+
+    var result = try layoutModule(std.testing.allocator, &module);
+    defer result.deinit(std.testing.allocator);
+
+    const text = result.sectionLayout(module.default_section) orelse return error.MissingSectionLayout;
+    try std.testing.expectEqual(@as(u64, 4), text.logical_size);
+    try std.testing.expectEqual(@as(u64, 1), text.file_size);
+    try std.testing.expect(text.fragments[1].trim_tail);
 }
 
 test "layout aligns file size without materializing tail reserve" {

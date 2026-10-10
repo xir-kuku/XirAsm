@@ -34,10 +34,18 @@ pub fn nextFileOffsetFromFragment(
     current_file_offset: u64,
 ) Error!u64 {
     return switch (stored_fragment) {
-        .bytes => |bytes| checkedAdd(try materializedOffset(current_offset, current_file_offset), @intCast(bytes.data.len)),
-        .isa_instruction => |instruction| checkedAdd(try materializedOffset(current_offset, current_file_offset), instruction.current_size),
+        .bytes => |bytes| if (bytes.data.len == 0)
+            current_file_offset
+        else
+            checkedAdd(try materializedOffset(current_offset, current_file_offset), @intCast(bytes.data.len)),
+        .isa_instruction => |instruction| if (instruction.current_size == 0)
+            current_file_offset
+        else
+            checkedAdd(try materializedOffset(current_offset, current_file_offset), instruction.current_size),
         .reserve => current_file_offset,
         .alignment => |alignment| {
+            const aligned_offset = try alignForward(current_offset, alignment.alignment);
+            if (aligned_offset == current_offset) return current_file_offset;
             const materialized = try materializedOffset(current_offset, current_file_offset);
             return alignForward(materialized, alignment.alignment);
         },
@@ -140,4 +148,32 @@ pub fn activeFragmentPosition(module: *const module_mod.Module, section_id: frag
 
 test "layout cursor rejects invalid alignment" {
     try std.testing.expectError(error.InvalidAlignment, alignForward(1, 3));
+}
+
+test "layout file cursor materializes reserve only when bytes follow" {
+    const section_id: fragment.SectionId = .{ .index = 0 };
+    const span = @import("../source.zig").unknown_span;
+    const empty: fragment.Fragment = .{ .bytes = .{
+        .section = section_id,
+        .data = &.{},
+        .span = span,
+    } };
+    try std.testing.expectEqual(@as(u64, 1), try nextFileOffsetFromFragment(empty, 4, 1));
+
+    const aligned: fragment.Fragment = .{ .alignment = .{
+        .section = section_id,
+        .alignment = 4,
+        .fill = 0,
+        .span = span,
+    } };
+    try std.testing.expectEqual(@as(u64, 1), try nextFileOffsetFromFragment(aligned, 4, 1));
+    try std.testing.expectEqual(@as(u64, 4), try nextFileOffsetFromFragment(aligned, 3, 1));
+
+    var zero = [_]u8{0};
+    const initialized: fragment.Fragment = .{ .bytes = .{
+        .section = section_id,
+        .data = &zero,
+        .span = span,
+    } };
+    try std.testing.expectEqual(@as(u64, 5), try nextFileOffsetFromFragment(initialized, 4, 1));
 }
