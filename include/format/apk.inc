@@ -89,10 +89,50 @@ fn apk_dex_entry() {
 
 // Native library entry, uncompressed and 16 KB-aligned for Android 15+.
 fn apk_lib(abi_dir: bytes, so_name: bytes, path: string) {
+    assert(abi_dir == b"arm64-v8a" || abi_dir == b"x86_64", "apk native ELF requires arm64-v8a or x86_64");
+    assert(len(so_name) > 6 && !contains(so_name, b"/") && !contains(so_name, b"\\") && !contains(so_name, b":") && !contains(so_name, b"\0"), "apk native library filename is invalid");
+    virtual.begin();
+    const name_start: u64 = here()
+    emit.bytes(so_name);
+    assert(load.u8(name_start) == 108 && load.u8(name_start + 1) == 105 && load.u8(name_start + 2) == 98, "apk native library filename must start with lib");
+    assert(load.u8(name_start + len(so_name) - 3) == 46 && load.u8(name_start + len(so_name) - 2) == 115 && load.u8(name_start + len(so_name) - 1) == 111, "apk native library filename must end with .so");
+    virtual.end();
     assert(fs.exists(path), "apk_lib input file does not exist");
     const prefix: bytes = bytes.concat(b"lib/", abi_dir)
     const entry_name: bytes = bytes.concat(prefix, bytes.concat(b"/", so_name))
     const payload: bytes = fs.read_bytes(path)
+    assert(len(payload) >= 64, "apk native ELF header is truncated");
+    virtual.begin();
+    const base: u64 = here()
+    emit.bytes(payload);
+    assert(load.u32(base) == 0x464c457f && load.u8(base + 4) == 2 && load.u8(base + 5) == 1 && load.u16(base + 16) == 3, "apk native ELF must be a little-endian ELF64 shared object");
+    let machine: u64 = 62
+    if abi_dir == b"arm64-v8a" {
+        machine = 183
+    }
+    assert(load.u16(base + 18) == machine, "apk native ELF machine does not match its ABI directory");
+    const phoff: u64 = load.u64(base + 32)
+    const phsize: u64 = load.u16(base + 54)
+    const phcount: u64 = load.u16(base + 56)
+    assert(phsize == 56 && phcount > 0 && phoff >= 64 && phoff <= len(payload), "apk native ELF program header table is invalid");
+    assert(phcount <= (len(payload) - phoff) / phsize, "apk native ELF program header table is truncated");
+    let loads: u64 = 0
+    for i in range(0, phcount) {
+        const row: u64 = base + phoff + i * phsize
+        if load.u32(row) == 1 {
+            const offset: u64 = load.u64(row + 8)
+            const address: u64 = load.u64(row + 16)
+            const filesz: u64 = load.u64(row + 32)
+            const memsz: u64 = load.u64(row + 40)
+            const alignment: u64 = load.u64(row + 48)
+            assert(alignment >= 16384 && (alignment & (alignment - 1)) == 0, "apk native ELF LOAD alignment must be a power of two at least 16384");
+            assert(offset % alignment == address % alignment, "apk native ELF LOAD address and file offset are not congruent");
+            assert(offset <= len(payload) && filesz <= len(payload) - offset && filesz <= memsz, "apk native ELF LOAD range is invalid");
+            loads = loads + 1
+        }
+    }
+    assert(loads > 0, "apk native ELF has no LOAD segments");
+    virtual.end();
     zip_entry_aligned(
         entry_name,
         payload,

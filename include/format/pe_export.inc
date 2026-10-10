@@ -93,6 +93,7 @@ fn pe_export_use(exports: list, target_label: string, export_name: string) -> li
 }
 
 fn pe_export_entry(target_label: string, export_name: string) -> map {
+    assert(!contains(export_name, "\0"), "PE export name contains an embedded NUL");
     let entry: map = map.new()
     map.set_mut(entry, "target", target_label);
     map.set_mut(entry, "name", export_name);
@@ -110,6 +111,8 @@ fn pe_export_emit64(exports: list, dll_name: string, edata_rva: u64, edata_start
 fn pe_export_emit(exports: list, dll_name: string, edata_rva: u64, edata_start: u64, image_base: u64) {
     assert(len(exports) > 0, "PE export table requires at least one export");
     assert(len(dll_name) > 0, "PE export DLL name is empty");
+    assert(!contains(dll_name, "\0"), "PE export DLL name contains an embedded NUL");
+    assert(len(exports) <= 0x10000, "PE export name ordinal exceeds 16 bits");
 
     virtual.begin(0);
     let sortable_exports = list.new()

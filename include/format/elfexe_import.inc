@@ -78,6 +78,7 @@ fn elfexe_import_use64_pairs_from(imports: list, library: string, pairs: list, i
 }
 
 fn elfexe_import_use64_as(imports: list, library: string, name: string, slot: string) -> list {
+    assert(elf_validate_c_name(library) && elf_validate_c_name(name), "invalid ELF executable import name");
     assert(len(library) > 0, "ELF executable import library name is empty");
     assert(len(name) > 0, "ELF executable import symbol name is empty");
     assert(len(slot) > 0, "ELF executable import slot label is empty");

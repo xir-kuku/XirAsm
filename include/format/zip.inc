@@ -69,6 +69,8 @@ let zip_dos_date: u64 = 0x5c21
 // (uncompressed), csize (stored size), lfh_foa, data_foa, flags, extra_len,
 // alignment.
 let zip_entries: list = list.new()
+let zip_finished: bool = false
+let zip_expected: u64 = 0
 
 // CRC-32 (IEEE 802.3, reflected, polynomial 0xedb88320) via the engine
 // crypto builtin, which is native-speed: any payload size hashes in
@@ -91,7 +93,7 @@ fn zip_crc32_range(begin: u64, end: u64) -> u64 {
 // (the id/size header) and even otherwise.
 fn zip_align_extra_len(foa: u64, alignment: u64) -> u64 {
     assert(alignment >= 4, "zip data alignment must be at least 4 (zipalign rule)");
-    assert(alignment <= 0x10000, "zip alignment is out of range");
+    assert(alignment <= 0x8000 && (alignment & (alignment - 1)) == 0, "zip alignment must be a power of two no greater than 32768");
     const raw: u64 = (alignment - (foa % alignment)) % alignment
     let total = 0
     if raw > 0 {
@@ -108,10 +110,18 @@ fn zip_align_extra_len(foa: u64, alignment: u64) -> u64 {
 // every entry (not only shared libraries). Larger values (e.g. 16384 for
 // Android 15+ shared libraries) imply the 4-byte rule.
 fn zip_entry_method(name: bytes, data: bytes, flags: u64, data_alignment: u64, method: u64, level: u64) {
+    assert(!zip_finished, "zip archive is already finished");
+    assert(here() == file_offset(), "zip output address must equal its file offset");
+    if len(zip_entries) > 0 {
+        assert(file_offset() == zip_expected, "zip output changed between entries");
+    }
     assert(len(name) > 0, "zip entry name must not be empty");
     assert(len(name) <= 0xffff, "zip entry name is too long");
-    assert(len(data) <= 0xffffffff, "zip entry size exceeds the ZIP u32 limit");
+    assert(len(zip_entries) < 0xfffe, "zip entry count requires ZIP64");
+    assert(len(data) < 0xffffffff, "zip entry size requires ZIP64");
     assert(method == zip_method_store || method == zip_method_deflate, "zip entry method is not supported");
+    assert((flags & ~zip_flag_utf8) == 0, "zip entry flags request an unsupported ZIP feature");
+    assert(zip_dos_time <= 0xffff && zip_dos_date <= 0xffff, "zip timestamp exceeds its 16-bit field");
 
     let entry_align: u64 = data_alignment
     if entry_align <= 1 {
@@ -123,14 +133,47 @@ fn zip_entry_method(name: bytes, data: bytes, flags: u64, data_alignment: u64, m
     const scan_base: u64 = here()
     emit.bytes(name);
     let high_byte = 0
+    let remaining: u64 = 0
+    let scalar: u64 = 0
+    let minimum: u64 = 0
     let p = scan_base
     const name_end: u64 = scan_base + len(name)
     while p < name_end {
-        if load.u8(p) >= 0x80 {
+        const byte: u64 = load.u8(p)
+        assert(byte != 0 && byte != 92, "zip entry name contains NUL or a backslash");
+        assert(p != scan_base || byte != 47, "zip entry name is an absolute path");
+        assert(p != scan_base + 1 || byte != 58, "zip entry name contains a drive prefix");
+        if byte >= 0x80 {
             high_byte = 1
+        }
+        if remaining == 0 {
+            if byte < 0x80 {
+            } else if byte >= 0xc2 && byte <= 0xdf {
+                remaining = 1
+                scalar = byte & 31
+                minimum = 0x80
+            } else if byte >= 0xe0 && byte <= 0xef {
+                remaining = 2
+                scalar = byte & 15
+                minimum = 0x800
+            } else if byte >= 0xf0 && byte <= 0xf4 {
+                remaining = 3
+                scalar = byte & 7
+                minimum = 0x10000
+            } else {
+                assert(false, "zip entry name is invalid UTF-8");
+            }
+        } else {
+            assert(byte >= 0x80 && byte <= 0xbf, "zip entry name is invalid UTF-8");
+            scalar = (scalar << 6) | (byte & 63)
+            remaining = remaining - 1
+            if remaining == 0 {
+                assert(scalar >= minimum && scalar <= 0x10ffff && (scalar < 0xd800 || scalar > 0xdfff), "zip entry name is invalid UTF-8");
+            }
         }
         p = p + 1
     }
+    assert(remaining == 0, "zip entry name is truncated UTF-8");
     virtual.end();
 
     const use_flags: u64 = flags | high_byte * zip_flag_utf8
@@ -144,10 +187,13 @@ fn zip_entry_method(name: bytes, data: bytes, flags: u64, data_alignment: u64, m
     const crc: u64 = crypto.crc32(data)
     const csize: u64 = len(payload)
     const usize: u64 = len(data)
+    assert(csize < 0xffffffff, "zip compressed size requires ZIP64");
 
     const lfh_foa: u64 = file_offset()
     const name_len: u64 = len(name)
     const extra_len: u64 = zip_align_extra_len(lfh_foa + zip_lfh_fixed_size + name_len, entry_align)
+    assert(extra_len <= 0xffff, "zip alignment extra field exceeds 16 bits");
+    assert(lfh_foa + zip_lfh_fixed_size + name_len + extra_len + csize < 0xffffffff, "zip entry offset requires ZIP64");
 
     emit.u32(zip_lfh_sig);
     emit.u16(zip_version_needed);
@@ -182,7 +228,10 @@ fn zip_entry_method(name: bytes, data: bytes, flags: u64, data_alignment: u64, m
     map.set_mut(entry, "flags", use_flags);
     map.set_mut(entry, "extra_len", extra_len);
     map.set_mut(entry, "alignment", entry_align);
+    map.set_mut(entry, "time", zip_dos_time);
+    map.set_mut(entry, "date", zip_dos_date);
     list.push_mut(zip_entries, entry);
+    zip_expected = file_offset()
 }
 
 // Stored entry with the zipalign-default 4-byte data alignment.
@@ -215,18 +264,22 @@ fn zip_entry_compressed(name: bytes, data: bytes) {
 // Emit the central directory and the end-of-central-directory record, then
 // register the integrity verifier. The archive is complete after this call.
 fn zip_finish() {
+    assert(!zip_finished, "zip archive is already finished");
+    assert(here() == file_offset(), "zip output address must equal its file offset");
     const entry_count: u64 = len(zip_entries)
-    assert(entry_count > 0, "zip_finish requires at least one entry");
-    assert(entry_count <= 0xffff, "zip entry count exceeds the ZIP u16 limit; ZIP64 is not supported");
+    assert(entry_count < 0xffff, "zip entry count requires ZIP64");
+    if entry_count > 0 {
+        assert(file_offset() == zip_expected, "zip output changed between entries");
+    }
 
     let cd_size = 0
     for entry in zip_entries {
         cd_size = cd_size + zip_cd_fixed_size + len(map.get(entry, "name"));
     }
-    assert(cd_size <= 0xffffffff, "zip central directory exceeds the ZIP u32 limit");
+    assert(cd_size < 0xffffffff, "zip central directory requires ZIP64");
 
     const cd_foa: u64 = file_offset()
-    assert(cd_foa + cd_size + zip_eocd_fixed_size <= 0xffffffff, "zip archive exceeds the ZIP u32 limit; ZIP64 is not supported");
+    assert(cd_foa + cd_size + zip_eocd_fixed_size < 0xffffffff, "zip archive requires ZIP64");
 
     for entry in zip_entries {
         emit.u32(zip_cd_sig);
@@ -234,8 +287,8 @@ fn zip_finish() {
         emit.u16(zip_version_needed);
         emit.u16(map.get(entry, "flags"));
         emit.u16(map.get(entry, "method"));
-        emit.u16(zip_dos_time);
-        emit.u16(zip_dos_date);
+        emit.u16(map.get(entry, "time"));
+        emit.u16(map.get(entry, "date"));
         emit.u32(map.get(entry, "crc"));
         emit.u32(map.get(entry, "csize"));
         emit.u32(map.get(entry, "size"));
@@ -258,13 +311,16 @@ fn zip_finish() {
     emit.u32(cd_size);
     emit.u32(cd_foa);
     emit.u16(0);
+    zip_finished = true
 
     defer {
         assert(region_file_size(0) == eocd_foa + zip_eocd_fixed_size, "zip archive has trailing bytes after the EOCD");
         assert(load.u32(eocd_foa) == zip_eocd_sig, "zip EOCD signature mismatch");
         assert(load.u32(eocd_foa + zip_eocd_cd_size_foa) == cd_size, "zip EOCD central directory size mismatch");
         assert(load.u32(eocd_foa + zip_eocd_cd_off_foa) == cd_foa, "zip EOCD central directory offset mismatch");
-        assert(load.u32(cd_foa) == zip_cd_sig, "zip central directory signature mismatch");
+        if entry_count > 0 {
+            assert(load.u32(cd_foa) == zip_cd_sig, "zip central directory signature mismatch");
+        }
 
         let index = 0
         while index < entry_count {

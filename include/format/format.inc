@@ -1020,9 +1020,10 @@ fn format_elfexe_tables_mut(let plan: map, imports: list) {
     map.set_mut(plan, "imports", imports);
 }
 
-// ELF64 shared object for a chosen machine. x86-64 imports use PLT entries;
-// AArch64 imports use bionic-friendly GLOB_DAT slots.
+// ELF64 shared object for a chosen machine. x86-64 accepts PLT and GOT
+// imports; AArch64 uses GLOB_DAT slots.
 fn format_elf64_so_machine(soname: string, segments: list, machine: u16) -> map {
+    assert(elf_validate_c_name(soname), "invalid ELF shared-object SONAME");
     assert(len(soname) > 0, "ELF shared object SONAME is empty");
     assert(format_validate_segments(segments), "invalid ELF shared-object segment list");
     assert(machine == elf_machine_x86_64 || machine == elf_machine_aarch64, "unsupported ELF shared-object machine");
@@ -1113,9 +1114,17 @@ fn format_validate_elfso_tables(plan: map, exports: list, imports: list) -> bool
     assert(map.get(plan, "kind") == format_kind_elfso64, "format plan is not an ELF64 shared object");
     assert(len(exports) > 0, "ELF shared-object format API requires at least one export");
 
+    for segment in map.get(plan, "segments") {
+        const name: string = map.get(segment, "name")
+        for reserved in list.of(".elfso.plt", ".elfso.metadata", ".plt", ".got", ".got.plt", ".rela.dyn", ".rela.plt", ".dynsym", ".dynstr", ".hash", ".dynamic", ".shstrtab") {
+            assert(name != reserved, "ELF shared-object segment uses a reserved internal name");
+        }
+    }
+
     for i in range(0, len(exports)) {
         const export0: map = list.get(exports, i)
         const export_name: string = map.get(export0, "name")
+        assert(elf_validate_c_name(export_name), "invalid ELF shared-object export name");
         const segment_row: u64 = format_segment_row(plan, map.get(export0, "segment"))
         assert(segment_row < len(map.get(plan, "segments")), "ELF shared-object export segment is invalid");
         for j in range(i + 1, len(exports)) {
@@ -1129,6 +1138,9 @@ fn format_validate_elfso_tables(plan: map, exports: list, imports: list) -> bool
         const import_name: string = map.get(import0, "name")
         const slot_name: string = map.get(import0, "slot")
         const plt_name: string = map.get_or(import0, "plt", "")
+        if map.get(plan, "machine") == elf_machine_aarch64 {
+            assert(plt_name == "", "AArch64 shared-object imports require GOT slots");
+        }
         for export0 in exports {
             assert(map.get(export0, "name") != import_name, "ELF shared-object symbol cannot be both imported and exported");
         }
@@ -1237,7 +1249,7 @@ fn format_segment_row(plan: map, name: string) -> u64 {
 // declares, so the page size is a parameter rather than the 4 KiB default: a
 // 16 KiB target (Android on AArch64) needs the same relation modulo 16 KiB.
 fn format_elf_logical_offset_page(file_offset: u64, potential_offset: u64, page: u64) -> u64 {
-    assert(page >= 1, "ELF page alignment is zero");
+    assert(page >= 1 && (page & (page - 1)) == 0, "ELF page alignment must be a power of two");
     const file_mod: u64 = file_offset % page
     const potential_mod: u64 = potential_offset % page
     let delta = 0
@@ -1763,7 +1775,7 @@ fn format_elfso_begin64(plan: map) {
     const machine: u64 = map.get(plan, "machine")
     assert(machine == elf_machine_x86_64 || machine == elf_machine_aarch64, "unsupported ELF shared-object machine");
     let ph_count = len(segments) + 2
-    if len(imports) > 0 && machine == elf_machine_x86_64 {
+    if len(imports) > 0 && format_elfso_uses_plt(plan) {
         ph_count = ph_count + 1
     }
     if machine == elf_machine_x86_64 {
@@ -2030,6 +2042,7 @@ fn format_section_begin_row(let plan: map, row: u64) {
     if kind == format_kind_coff32 || kind == format_kind_coff64 {
         const chars: u64 = format_coff_section_chars(attributes)
         region.begin(name, file_cursor_potential(), file_cursor_real());
+        label.define(format_elfobj_section_start_label(name));
         format_coff_finalize_section_row(row, here(), chars, purpose);
     }
     if kind == format_kind_elfobj32 || kind == format_kind_elfobj64 {
@@ -2101,6 +2114,7 @@ fn format_section_end_row(let plan: map, row: u64) {
         pe64_end_section(row);
     }
     if kind == format_kind_coff32 || kind == format_kind_coff64 {
+        label.define(format_elfobj_section_end_label(name));
         coff_align_section_file();
     }
     if kind == format_kind_elfobj32 || kind == format_kind_elfobj64 {
@@ -2109,6 +2123,10 @@ fn format_section_end_row(let plan: map, row: u64) {
         const attributes: u64 = map.get(section, "attributes")
         assert(format_elfobj_section_alignment(kind, attributes) <= 16, "ELF object section alignment exceeds format.inc layer limit");
         label.define(format_elfobj_section_end_label(name));
+        if format_elfobj_section_type(attributes) != elf_sht_nobits && file_cursor_potential() > file_cursor_real() {
+            // Initialized padding commits the reserved tail of PROGBITS.
+            db(0);
+        }
         region.file_align(16);
     }
     if kind == format_kind_macho64_object || kind == format_kind_macho64_execute || kind == format_kind_macho64_dylib {
@@ -2356,6 +2374,9 @@ fn format_segment_begin(plan: map, name: string) {
         }
         if len(imports) > 0 && row == 0 {
             format_elfexe_finalize_first_load64(here(), flags);
+            defer {
+                store.u64(region_base() + elf64_phdr_foa(0) + elf64_phdr_align_foa, load_page);
+            }
         }
         if len(imports) == 0 || row > 0 {
             format_elf_finalize_load64_page(row, here(), flags, load_page);
@@ -2401,6 +2422,12 @@ fn format_segment_end(plan: map, name: string) {
     }
     if kind == format_kind_elfso64 {
         label.define(format_elfso_segment_end_label(name));
+        const tail: u64 = file_cursor_potential() - file_cursor_real()
+        const size: u64 = label_addr(format_elfso_segment_end_label(name)) - label_addr(format_elfso_segment_start_label(name))
+        if tail > 0 && tail < size {
+            // Preserve mixed initialized/reserved bytes; pure BSS stays NOBITS.
+            db(0);
+        }
         region.file_align(1);
     }
     assert(
@@ -2664,10 +2691,16 @@ fn format_coff_finish_tables(plan: map) {
         const section: map = list.get(sections, row)
         const section_name: string = map.get(section, "name")
         const reloc_count: u64 = format_coff_reloc_count_for_section(relocs, section_name)
+        assert(reloc_count <= 0xffff, "COFF relocation count requires the overflow format");
         if reloc_count > 0 {
             const reloc_ptr: u64 = file_cursor_real()
             for reloc in relocs {
                 if map.get(reloc, "section") == section_name {
+                    const start: u64 = label_addr(format_elfobj_section_start_label(section_name))
+                    const end: u64 = label_addr(format_elfobj_section_end_label(section_name))
+                    const offset: u64 = map.get(reloc, "offset")
+                    const width: u64 = format_coff_reloc_width(map.get(plan, "machine"), map.get(reloc, "type"))
+                    assert(offset <= end - start && width <= end - start - offset, "COFF relocation offset is outside its section");
                     const symbol_index: u64 = format_coff_symbol_index(symbols, map.get(reloc, "symbol"))
                     emit.struct(CoffRelocation {
                         virtual_address: map.get(reloc, "offset"),
@@ -2721,6 +2754,57 @@ fn format_elfobj_reloc_section_name(kind: u64, section_name: string) -> string {
     }
     assert(kind == format_kind_elfobj64, "invalid ELF object relocation section kind");
     return sym.join(".rela", section_name);
+}
+
+fn format_coff_reloc_width(machine: u64, kind: u64) -> u64 {
+    if kind == 0 {
+        return 0;
+    }
+    if machine == coff_machine_amd64 && kind == coff_rel_amd64_addr64 {
+        return 8;
+    }
+    if machine == coff_machine_arm64 && kind == coff_rel_arm64_addr64 {
+        return 8;
+    }
+    if machine == coff_machine_i386 && (kind == coff_rel_i386_dir32 || kind == coff_rel_i386_dir32nb || kind == coff_rel_i386_rel32) {
+        return 4;
+    }
+    if machine == coff_machine_amd64 && kind >= 2 && kind <= 9 {
+        return 4;
+    }
+    if machine == coff_machine_arm64 && kind >= 1 && kind <= 11 {
+        return 4;
+    }
+    return 1;
+}
+
+fn format_elfobj_reloc_width(machine: u64, kind: u64) -> u64 {
+    if kind == 0 {
+        return 0;
+    }
+    if machine == elf_machine_386 && (kind == elf_r_386_32 || kind == elf_r_386_pc32) {
+        return 4;
+    }
+    if machine == elf_machine_x86_64 {
+        if kind == elf_r_x86_64_64 || kind == elf_r_x86_64_pc64 {
+            return 8;
+        }
+        if kind == elf_r_x86_64_pc32 || kind == elf_r_x86_64_plt32 || kind == elf_r_x86_64_gotpcrel || kind == elf_r_x86_64_32 || kind == elf_r_x86_64_32s {
+            return 4;
+        }
+    }
+    if machine == elf_machine_aarch64 {
+        if kind == elf_r_aarch64_abs64 || kind == elf_r_aarch64_prel64 {
+            return 8;
+        }
+        if kind == elf_r_aarch64_abs16 || kind == elf_r_aarch64_prel16 {
+            return 2;
+        }
+        if kind >= elf_r_aarch64_abs32 && kind <= elf_r_aarch64_ld64_got_lo12_nc {
+            return 4;
+        }
+    }
+    return 1;
 }
 
 fn format_elfobj_finalize_rel32_addend(address: u64, addend: u64) {
@@ -2811,6 +2895,11 @@ fn format_elfobj_finish_tables(plan: map) {
             const relocation_foa: u64 = file_cursor_real()
             for reloc in relocs {
                 if map.get(reloc, "section") == section_name {
+                    const start: u64 = label_addr(format_elfobj_section_start_label(section_name))
+                    const end: u64 = label_addr(format_elfobj_section_end_label(section_name))
+                    const offset: u64 = map.get(reloc, "offset")
+                    const width: u64 = format_elfobj_reloc_width(map.get(plan, "machine"), map.get(reloc, "type"))
+                    assert(offset <= end - start && width <= end - start - offset, "ELF object relocation offset is outside its section");
                     const symbol_index: u64 = format_elfobj_symbol_index(plan, symbols, map.get(reloc, "symbol"))
                     if kind == format_kind_elfobj32 {
                         format_elfobj_finalize_rel32_addend(map.get(reloc, "address"), map.get(reloc, "addend"));
@@ -3078,34 +3167,60 @@ fn format_elfso_exports64(plan: map, exports: list) -> list {
         const segment: string = map.get(export0, "segment")
         const size: u64 = map.get(export0, "size")
         const section_index: u64 = format_segment_row(plan, segment) + 1
-        values = elf_export_use64_pairs(values, list.of(target, name), section_index, size)
+        const start: u64 = label_addr(format_elfso_segment_start_label(segment))
+        const end: u64 = label_addr(format_elfso_segment_end_label(segment))
+        const address: u64 = label_addr(target)
+        assert(address >= start && address <= end, "ELF shared-object export range is outside its segment");
+        assert(size <= end - address, "ELF shared-object export range exceeds its segment");
+        let value: map = elf_export_entry(target, name, section_index, size)
+        const symbol_type: u64 = map.get_or(export0, "type", elf_stt_func)
+        assert(symbol_type == elf_stt_func || symbol_type == elf_stt_object, "ELF shared-object export type must be function or object");
+        map.set_mut(value, "type", symbol_type);
+        list.push_mut(values, value);
     }
     return values;
 }
 
+fn format_elfso_uses_plt(plan: map) -> bool {
+    const imports: list = map.get(plan, "imports")
+    for entry in imports {
+        if map.get_or(entry, "plt", "") != "" {
+            return true;
+        }
+    }
+    return false;
+}
+
+fn format_elfso_import_group(plan: map, plt: bool) -> list {
+    let entries = list.new()
+    for entry in map.get(plan, "imports") {
+        if (map.get_or(entry, "plt", "") != "") == plt {
+            list.push_mut(entries, entry);
+        }
+    }
+    return entries;
+}
+
 fn format_elfso_section_names(plan: map, has_imports: bool) -> list {
-    const machine: u64 = map.get(plan, "machine")
+    const uses_plt: bool = format_elfso_uses_plt(plan)
+    const uses_slots: bool = len(format_elfso_import_group(plan, false)) > 0
     let names = list.new()
     for segment in map.get(plan, "segments") {
         list.push_mut(names, map.get(segment, "name"));
     }
-    if has_imports && machine == elf_machine_aarch64 {
-        list.push_mut(names, ".got");
-    }
-    if has_imports && machine == elf_machine_x86_64 {
+    if has_imports && uses_plt {
         list.push_mut(names, ".plt");
         list.push_mut(names, ".got.plt");
     }
-    // This list decides section indices, so it has to hold the sections in the
-    // order the section table emits them. The AArch64 relocation table comes
-    // before the symbol table, which is where the table writes it.
-    if has_imports && machine == elf_machine_aarch64 {
+    // Match the section-header emission order to keep symbol links valid.
+    if uses_slots {
+        list.push_mut(names, ".got");
         list.push_mut(names, ".rela.dyn");
     }
     list.push_mut(names, ".dynsym");
     list.push_mut(names, ".dynstr");
     list.push_mut(names, ".hash");
-    if has_imports && machine == elf_machine_x86_64 {
+    if has_imports && uses_plt {
         list.push_mut(names, ".rela.plt");
     }
     list.push_mut(names, ".dynamic");
@@ -3129,7 +3244,7 @@ fn format_elfso_emit_dynsym64(imports: list, exports: list, export_name_start: u
         const export0: map = list.get(exports, i)
         elfso_sym64(
             export_name_start + elf_export_name_offset(exports, i),
-            elfso_st_info(elf_stb_global, elf_stt_func),
+            elfso_st_info(elf_stb_global, map.get_or(export0, "type", elf_stt_func)),
             map.get(export0, "section"),
             label_addr(map.get(export0, "target")),
             map.get(export0, "size")
@@ -3263,14 +3378,17 @@ fn format_elfso_emit_user_section_headers(plan: map, section_names: list) {
 fn format_elfso_finish_tables(plan: map) {
     const segments: list = map.get(plan, "segments")
     const exports: list = format_elfso_exports64(plan, map.get(plan, "exports"))
+    const plts: list = format_elfso_import_group(plan, true)
+    const slots: list = format_elfso_import_group(plan, false)
+    // Preserve declaration order in dynsym and DT_NEEDED when grouping slots.
     const imports: list = map.get(plan, "imports")
     const soname: string = map.get(plan, "soname")
     const has_imports: bool = len(imports) > 0
     const machine: u64 = map.get(plan, "machine")
     const load_align: u64 = map.get(plan, "load_align")
     assert(machine == elf_machine_x86_64 || machine == elf_machine_aarch64, "unsupported ELF shared-object machine");
-    const plt_imports: bool = has_imports && machine == elf_machine_x86_64
-    const slots_imports: bool = has_imports && machine == elf_machine_aarch64
+    const plt_imports: bool = has_imports && format_elfso_uses_plt(plan)
+    const slots_imports: bool = len(slots) > 0
     const section_names: list = format_elfso_section_names(plan, has_imports)
     const section_count: u64 = len(section_names) + 1
     const shstrndx: u64 = format_elfso_section_index(section_names, ".shstrtab")
@@ -3292,16 +3410,16 @@ fn format_elfso_finish_tables(plan: map) {
     let metadata_vaddr = format_elf_next_load_logical_offset_page(0, metadata_foa, 1, load_align)
     if plt_imports {
         plt_foa = elfso_align_up(file_cursor_real(), 16)
-        plt_size = elfso_import_plt_size(imports)
+        plt_size = elfso_import_plt_size(plts)
         metadata_foa = elfso_align_up(plt_foa + plt_size, 8)
-        plt_vaddr = format_elf_next_load_logical_offset(0, plt_foa, 1)
-        metadata_vaddr = format_elf_logical_offset(metadata_foa, plt_vaddr + plt_size)
-        const plt_last_page: u64 = (plt_vaddr + plt_size - 1) / elf_default_page_align
-        if metadata_vaddr / elf_default_page_align <= plt_last_page {
-            metadata_vaddr = metadata_vaddr + elf_default_page_align
+        plt_vaddr = format_elf_next_load_logical_offset_page(0, plt_foa, 1, load_align)
+        metadata_vaddr = format_elf_logical_offset_page(metadata_foa, plt_vaddr + plt_size, load_align)
+        const plt_last_page: u64 = (plt_vaddr + plt_size - 1) / load_align
+        if metadata_vaddr / load_align <= plt_last_page {
+            metadata_vaddr = metadata_vaddr + load_align
         }
     }
-    if slots_imports {
+    if slots_imports && !plt_imports {
         metadata_foa = elfso_align_up(file_cursor_real(), 16)
         metadata_vaddr = format_elf_next_load_logical_offset_page(0, metadata_foa, 1, load_align)
     }
@@ -3311,14 +3429,12 @@ fn format_elfso_finish_tables(plan: map) {
     let dynsym_foa = elfso_align_up(metadata_foa, 8)
     if plt_imports {
         gotplt_foa = metadata_foa
-        gotplt_size = elfso_import_gotplt_size(imports)
+        gotplt_size = elfso_import_gotplt_size(plts)
         dynsym_foa = elfso_align_up(gotplt_foa + gotplt_size, 8)
     }
-    if slots_imports {
-        gotplt_foa = metadata_foa
-        gotplt_size = len(imports) * elfso_import_gotplt_entry_size
-        dynsym_foa = elfso_align_up(gotplt_foa + gotplt_size, 8)
-    }
+    const got_foa: u64 = dynsym_foa
+    const got_size: u64 = len(slots) * elfso_import_gotplt_entry_size
+    dynsym_foa = dynsym_foa + got_size
     const dynsym_size: u64 = symbol_count * elfso_sym64_size
     const dynstr_foa: u64 = dynsym_foa + dynsym_size
     const dynstr_size: u64 = format_elfso_dynstr_size(imports, exports, soname)
@@ -3327,26 +3443,28 @@ fn format_elfso_finish_tables(plan: map) {
     let rela_plt_foa = 0
     let rela_plt_size = 0
     let dynamic_foa = elfso_align_up(hash_foa + hash_size, 8)
+    const rela_dyn_foa: u64 = dynamic_foa
+    const rela_dyn_size: u64 = len(slots) * elfso_import_rela64_size
+    dynamic_foa = dynamic_foa + rela_dyn_size
     if plt_imports {
-        rela_plt_foa = elfso_align_up(hash_foa + hash_size, 8)
-        rela_plt_size = elfso_import_rela_plt_size(imports)
+        rela_plt_foa = dynamic_foa
+        rela_plt_size = elfso_import_rela_plt_size(plts)
         dynamic_foa = elfso_align_up(rela_plt_foa + rela_plt_size, 8)
     }
-    if slots_imports {
-        rela_plt_foa = elfso_align_up(hash_foa + hash_size, 8)
-        rela_plt_size = len(imports) * elfso_import_rela64_size
-        dynamic_foa = elfso_align_up(rela_plt_foa + rela_plt_size, 8)
+    let dynamic_rows: u64 = 7 + len(elfso_import_libraries(imports))
+    if plt_imports {
+        dynamic_rows = dynamic_rows + 4
     }
-    let dynamic_size = format_elfso_dynamic_size(imports)
     if slots_imports {
-        dynamic_size = format_elfso_dynamic_size_slots(imports)
+        dynamic_rows = dynamic_rows + 3
     }
+    const dynamic_size: u64 = dynamic_rows * elfso_dyn64_size
     const shstrtab_foa: u64 = dynamic_foa + dynamic_size
     const shstrtab_size: u64 = format_string_table_size(section_names)
     const section_table_foa: u64 = elfso_align_up(shstrtab_foa + shstrtab_size, 8)
     let gotplt_vaddr = 0
     let rela_plt_vaddr = 0
-    if has_imports {
+    if plt_imports {
         gotplt_vaddr = metadata_vaddr + (gotplt_foa - metadata_foa)
         rela_plt_vaddr = metadata_vaddr + (rela_plt_foa - metadata_foa)
     }
@@ -3354,13 +3472,15 @@ fn format_elfso_finish_tables(plan: map) {
     const dynstr_vaddr: u64 = metadata_vaddr + (dynstr_foa - metadata_foa)
     const hash_vaddr: u64 = metadata_vaddr + (hash_foa - metadata_foa)
     const dynamic_vaddr: u64 = metadata_vaddr + (dynamic_foa - metadata_foa)
+    const got_vaddr: u64 = metadata_vaddr + (got_foa - metadata_foa)
+    const rela_dyn_vaddr: u64 = metadata_vaddr + (rela_dyn_foa - metadata_foa)
 
     let plt_start = 0
     if plt_imports {
         region.begin(".elfso.plt", plt_vaddr, plt_foa);
         plt_start = here()
         assert(file_cursor_real() == plt_foa, "ELF shared-object PLT layout mismatch");
-        elfso_import_emit_plt64(imports, plt_vaddr, gotplt_vaddr);
+        elfso_import_emit_plt64(plts, plt_vaddr, gotplt_vaddr);
         region.file_align(1);
     }
 
@@ -3369,12 +3489,12 @@ fn format_elfso_finish_tables(plan: map) {
     if plt_imports {
         align(8);
         assert(file_cursor_real() == gotplt_foa, "ELF shared-object GOTPLT layout mismatch");
-        elfso_import_emit_gotplt64(imports, dynamic_vaddr, plt_vaddr);
+        elfso_import_emit_gotplt64(plts, dynamic_vaddr, plt_vaddr);
     }
     if slots_imports {
         align(8);
-        assert(file_cursor_real() == gotplt_foa, "ELF shared-object GOT layout mismatch");
-        elfso_import_emit_slots64(imports);
+        assert(file_cursor_real() == got_foa, "ELF shared-object GOT layout mismatch");
+        elfso_import_emit_slots64(slots);
     }
 
     align(8);
@@ -3388,45 +3508,56 @@ fn format_elfso_finish_tables(plan: map) {
     assert(file_cursor_real() == hash_foa, "ELF shared-object HASH layout mismatch");
     format_elfso_emit_hash(symbol_count);
 
+    if slots_imports {
+        align(8);
+        assert(file_cursor_real() == rela_dyn_foa, "ELF shared-object RELA.DYN layout mismatch");
+        let relocation: u64 = elf_r_x86_64_glob_dat
+        if machine == elf_machine_aarch64 {
+            relocation = elf_r_aarch64_glob_dat
+        }
+        for i in range(0, len(imports)) {
+            const entry: map = list.get(imports, i)
+            if map.get_or(entry, "plt", "") == "" {
+                elfso_import_rela64(label_addr(map.get(entry, "slot")), first_import_symbol + i, relocation, 0);
+            }
+        }
+    }
     if plt_imports {
         align(8);
         assert(file_cursor_real() == rela_plt_foa, "ELF shared-object RELA.PLT layout mismatch");
-        elfso_import_emit_rela_plt64(imports, first_import_symbol);
-    }
-    if slots_imports {
-        align(8);
-        assert(file_cursor_real() == rela_plt_foa, "ELF shared-object RELA.DYN layout mismatch");
-        elfso_import_emit_rela64_type(imports, first_import_symbol, elf_r_aarch64_glob_dat);
+        for i in range(0, len(imports)) {
+            const entry: map = list.get(imports, i)
+            if map.get_or(entry, "plt", "") != "" {
+                elfso_import_rela64(label_addr(map.get(entry, "slot")), first_import_symbol + i, elf_r_x86_64_jump_slot, 0);
+            }
+        }
     }
 
     align(8);
     assert(file_cursor_real() == dynamic_foa, "ELF shared-object DYNAMIC layout mismatch");
+    elfso_dyn64(elf_dt_hash, hash_vaddr);
+    elfso_dyn64(elf_dt_strtab, dynstr_vaddr);
+    elfso_dyn64(elf_dt_strsz, dynstr_size);
+    elfso_dyn64(elf_dt_symtab, dynsym_vaddr);
+    elfso_dyn64(elf_dt_syment, elfso_sym64_size);
     if slots_imports {
-        format_elfso_emit_dynamic64_slots(
-            imports,
-            dynstr_vaddr,
-            dynstr_size,
-            dynsym_vaddr,
-            hash_vaddr,
-            rela_plt_vaddr,
-            rela_plt_size,
-            soname_offset,
-            first_needed_offset
-        );
-    } else {
-        format_elfso_emit_dynamic64(
-            imports,
-            dynstr_vaddr,
-            dynstr_size,
-            dynsym_vaddr,
-            hash_vaddr,
-            gotplt_vaddr,
-            rela_plt_vaddr,
-            rela_plt_size,
-            soname_offset,
-            first_needed_offset
-        );
+        elfso_dyn64(elf_dt_rela, rela_dyn_vaddr);
+        elfso_dyn64(elf_dt_relasz, rela_dyn_size);
+        elfso_dyn64(elf_dt_relaent, elfso_import_rela64_size);
     }
+    if plt_imports {
+        elfso_dyn64(elf_dt_pltgot, gotplt_vaddr);
+        elfso_dyn64(elf_dt_pltrelsz, rela_plt_size);
+        elfso_dyn64(elf_dt_pltrel, elf_dt_rela);
+        elfso_dyn64(elf_dt_jmprel, rela_plt_vaddr);
+    }
+    elfso_dyn64(elf_dt_soname, soname_offset);
+    const libraries: list = elfso_import_libraries(imports)
+    const needed_offsets: list = elfso_import_library_offsets(libraries)
+    for i in range(0, len(libraries)) {
+        elfso_dyn64(elf_dt_needed, first_needed_offset + list.get(needed_offsets, i));
+    }
+    elfso_dyn64(elf_dt_null, 0);
 
     assert(file_cursor_real() == shstrtab_foa, "ELF shared-object SHSTRTAB layout mismatch");
     format_emit_string_table(section_names);
@@ -3471,9 +3602,9 @@ fn format_elfso_finish_tables(plan: map) {
             format_string_table_offset(section_names, got_index - 1),
             elf_sht_progbits,
             elf_shf_alloc | elf_shf_write,
-            gotplt_vaddr,
-            gotplt_foa,
-            gotplt_size,
+            got_vaddr,
+            got_foa,
+            got_size,
             0,
             0,
             8,
@@ -3483,9 +3614,9 @@ fn format_elfso_finish_tables(plan: map) {
             format_string_table_offset(section_names, rela_dyn_index - 1),
             elf_sht_rela,
             elf_shf_alloc,
-            rela_plt_vaddr,
-            rela_plt_foa,
-            rela_plt_size,
+            rela_dyn_vaddr,
+            rela_dyn_foa,
+            rela_dyn_size,
             dynsym_index,
             0,
             8,
@@ -3594,6 +3725,7 @@ fn format_elfso_finish_tables(plan: map) {
 fn format_elfexe_finish_tables(plan: map) {
     const segments: list = map.get(plan, "segments")
     const imports: list = map.get(plan, "imports")
+    const load_align: u64 = map.get(plan, "load_align")
     assert(len(imports) > 0, "ELF executable import table is empty");
 
     const first_import_symbol: u64 = 1
@@ -3604,12 +3736,12 @@ fn format_elfexe_finish_tables(plan: map) {
     const plt_size: u64 = elfexe_import_plt_size(imports)
     const metadata_foa: u64 = elfexe_align_up(plt_foa + plt_size, 8)
 
-    const plt_logical_offset: u64 = format_elf_next_load_logical_offset(elf_default_base64, plt_foa, 1)
+    const plt_logical_offset: u64 = format_elf_next_load_logical_offset_page(elf_default_base64, plt_foa, 1, load_align)
     const plt_vaddr: u64 = elf_default_base64 + plt_logical_offset
-    let metadata_logical_offset = format_elf_logical_offset(metadata_foa, plt_logical_offset + plt_size)
-    const plt_last_page: u64 = (plt_logical_offset + plt_size - 1) / elf_default_page_align
-    if metadata_logical_offset / elf_default_page_align <= plt_last_page {
-        metadata_logical_offset = metadata_logical_offset + elf_default_page_align
+    let metadata_logical_offset = format_elf_logical_offset_page(metadata_foa, plt_logical_offset + plt_size, load_align)
+    const plt_last_page: u64 = (plt_logical_offset + plt_size - 1) / load_align
+    if metadata_logical_offset / load_align <= plt_last_page {
+        metadata_logical_offset = metadata_logical_offset + load_align
     }
     const metadata_vaddr: u64 = elf_default_base64 + metadata_logical_offset
 
@@ -3671,8 +3803,8 @@ fn format_elfexe_finish_tables(plan: map) {
 
     const plt_row: u64 = len(segments)
     const metadata_row: u64 = plt_row + 1
-    format_elf_finalize_load64(plt_row, plt_start, elf_pf_r | elf_pf_x);
-    format_elf_finalize_load64(metadata_row, metadata_start, elf_pf_r | elf_pf_w);
+    format_elf_finalize_load64_page(plt_row, plt_start, elf_pf_r | elf_pf_x, load_align);
+    format_elf_finalize_load64_page(metadata_row, metadata_start, elf_pf_r | elf_pf_w, load_align);
     elfexe_finalize_phdr64(metadata_row + 1, elf_pt_interp, elf_pf_r, interp_foa, interp_vaddr, interp_size, interp_size, 1);
     elfexe_finalize_phdr64(metadata_row + 2, elf_pt_dynamic, elf_pf_r | elf_pf_w, dynamic_foa, dynamic_vaddr, dynamic_size, dynamic_size, 8);
 }

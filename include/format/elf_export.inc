@@ -53,6 +53,7 @@ fn elf_export_use64_pairs_from(exports: list, pairs: list, section_index: u64, s
 }
 
 fn elf_export_entry(target_label: string, export_name: string, section_index: u64, symbol_size: u64) -> map {
+    assert(elf_validate_c_name(export_name), "invalid ELF export name");
     let entry: map = map.new()
     map.set_mut(entry, "target", target_label);
     map.set_mut(entry, "name", export_name);

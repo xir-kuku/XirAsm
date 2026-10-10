@@ -368,10 +368,14 @@ format_elfso_tables_mut(image, exports, imports)
 | 差别 | x86-64 | AArch64 |
 | --- | --- | --- |
 | LOAD 段页对齐 | 4 KiB，Linux 默认值 | **16 KiB**，Android 15 及以后设备的要求 |
-| 导入方式 | PLT 条目 | GLOB_DAT 槽位，用 `format_elfso_import_slots_mut` 声明 |
+| 导入方式 | PLT 条目和 GLOB_DAT 槽位，可以混用 | GLOB_DAT 槽位，用 `format_elfso_import_slots_mut` 声明 |
 | 可执行文件导入 | 支持 | 不支持，改由共享库导入 |
 
 页对齐调大只在装载段必须挪到下一个页边界时才多占文件字节：虚拟地址按整页前进，文件布局仍然紧凑。要换别的页大小，在 `format_begin` 之前给配置设置 `"load_align"`。
+
+`"load_align"` 必须是非零的二次幂。它同时控制用户 LOAD 段、PLT 和动态表的页对齐。为 Android 打包 x86-64 共享库时，把该值设置为 `elf_android_page_align`，使库内 LOAD 段和 APK 中的文件数据都按 16 KiB 对齐。
+
+x86-64 共享库通过 `format_elfso_import_slots_mut` 声明 GOT 槽位，可以与 PLT 导入一起使用。动态符号的 `"type"` 默认为 `elf_stt_func`；在导入或导出记录中设置 `"type"` 为 `elf_stt_object`，即可声明数据符号。数据导入必须使用 GOT 槽位。导出地址和大小必须完全位于声明的段内，库名和动态符号名不得包含 NUL。`.dynsym`、`.dynamic` 等生成表名由格式层保留。
 
 每个装载段还会遵守所属节声明的对齐：`format_executable` 段是 16 字节，其余是 8 字节。这个对齐**同时作用在文件偏移上**，因为加载器要求 `p_vaddr == p_offset (mod p_align)`——地址低位由文件偏移决定，只调地址会破坏这个关系。结果是每个节都满足 `sh_addr % sh_addralign == 0`，做对齐访问的代码依赖的正是这条保证；代价是装载段原本会落在页内进位处时，文件里多几个填充字节。
 
@@ -398,5 +402,5 @@ format_elfso_tables_mut(image, exports, imports)
 | `format_elfso_import_new()` | 创建共享库导入列表 |
 | `format_elfso_import_many_mut(imports, library, names)` | 从同一个库批量加入共享库导入 |
 | `format_elfso_import_pairs_mut(imports, library, pairs)` | 加入共享库「本地前缀, 真实符号名」成对导入 |
-| `format_elfso_import_slots_mut(imports, library, names)` | AArch64 共享库 GLOB_DAT 导入槽位 |
+| `format_elfso_import_slots_mut(imports, library, names)` | x86-64/AArch64 共享库 GLOB_DAT 导入槽位 |
 | `format_elfso_tables_mut(plan, exports, imports)` | 把共享库动态元数据挂到配置上 |

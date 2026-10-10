@@ -43,6 +43,13 @@ fn pe_reloc_add_dir64_at(relocs: list, section_rva: u64, label_address: u64, sec
 
 fn pe_reloc_add(relocs: list, rva: u64, kind: u64) -> list {
     assert(kind <= 0xf, "PE relocation type is out of range");
+    assert(rva < 0x100000000, "PE relocation RVA exceeds 32 bits");
+    for previous in relocs {
+        if map.get(previous, "rva") == rva {
+            assert(map.get(previous, "kind") == kind, "PE relocation location has conflicting types");
+            return relocs;
+        }
+    }
     let entry: map = map.new()
     map.set_mut(entry, "rva", rva);
     map.set_mut(entry, "kind", kind);

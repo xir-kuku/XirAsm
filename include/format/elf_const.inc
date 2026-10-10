@@ -119,6 +119,7 @@ const elf_r_x86_64_relative: u32 = 8
 const elf_r_x86_64_gotpcrel: u32 = 9
 const elf_r_x86_64_32: u32 = 10
 const elf_r_x86_64_32s: u32 = 11
+const elf_r_x86_64_pc64: u32 = 24
 
 const elf_r_386_none: u32 = 0
 const elf_r_386_32: u32 = 1
@@ -128,6 +129,10 @@ const elf_r_386_relative: u32 = 8
 // AArch64 relocation type numbers verified against llvm-readobj output.
 const elf_r_aarch64_abs64: u32 = 257
 const elf_r_aarch64_abs32: u32 = 258
+const elf_r_aarch64_abs16: u32 = 259
+const elf_r_aarch64_prel64: u32 = 260
+const elf_r_aarch64_prel32: u32 = 261
+const elf_r_aarch64_prel16: u32 = 262
 const elf_r_aarch64_adr_prel_lo21: u32 = 274
 const elf_r_aarch64_adr_prel_pg_hi21: u32 = 275
 const elf_r_aarch64_add_abs_lo12_nc: u32 = 277
@@ -148,3 +153,9 @@ const elf_default_page_align: u64 = 0x1000
 const elf_android_page_align: u64 = 0x4000
 const elf_default_base64: u64 = 0x400000
 const elf_default_base32: u64 = 0x08048000
+
+fn elf_validate_c_name(name: string) -> bool {
+    assert(len(name) > 0, "ELF name is empty");
+    assert(!contains(name, "\0"), "ELF name contains an embedded NUL");
+    return true;
+}

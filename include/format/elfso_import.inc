@@ -62,6 +62,7 @@ fn elfso_import_use64_pairs_from(imports: list, library: string, pairs: list, in
 }
 
 fn elfso_import_use64_as(imports: list, library: string, name: string, slot: string) -> list {
+    assert(elf_validate_c_name(library) && elf_validate_c_name(name), "invalid ELF SO import name");
     assert(len(library) > 0, "ELF SO import library name is empty");
     assert(len(name) > 0, "ELF SO import symbol name is empty");
     assert(len(slot) > 0, "ELF SO import slot label is empty");
@@ -226,7 +227,11 @@ fn elfso_import_emit_dynsym64(imports: list, first_import_name_offset: u64) {
     elfso_sym64(0, 0, elf_shn_undef, 0, 0);
     const offsets: list = elfso_import_name_offsets(imports);
     for i in range(0, len(imports)) {
-        elfso_sym64(first_import_name_offset + list.get(offsets, i), elfso_st_info(elf_stb_global, elf_stt_func), elf_shn_undef, 0, 0);
+        const entry: map = list.get(imports, i)
+        const symbol_type: u64 = map.get_or(entry, "type", elf_stt_func)
+        assert(symbol_type == elf_stt_func || symbol_type == elf_stt_object, "ELF SO import type must be function or object");
+        assert(symbol_type == elf_stt_func || map.get_or(entry, "plt", "") == "", "ELF SO object import requires a GOT slot");
+        elfso_sym64(first_import_name_offset + list.get(offsets, i), elfso_st_info(elf_stb_global, symbol_type), elf_shn_undef, 0, 0);
     }
 }
 

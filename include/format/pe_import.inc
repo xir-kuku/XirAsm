@@ -206,6 +206,7 @@ fn pe_import_use64_ordinal_as(imports: map, dll: string, ordinal: u64, slot: str
 }
 
 fn pe_import_name_entry(slot: string, name: string) -> map {
+    assert(!contains(name, "\0"), "PE import name contains an embedded NUL");
     let entry: map = map.new()
     map.set_mut(entry, "slot", slot);
     map.set_mut(entry, "name", name);
@@ -264,6 +265,7 @@ fn pe_import_thunk64_null() {
 fn pe_import_hint_name(hint: u64, name: string) {
     assert(hint <= 0xffff, "PE import hint is out of range");
     assert(len(name) > 0, "PE import hint-name text is empty");
+    assert(!contains(name, "\0"), "PE import name contains an embedded NUL");
     emit.u16(hint);
     db(name, 0);
     align(2, 0);
@@ -282,6 +284,7 @@ fn pe_import_emit(imports: map, idata_rva: u64, idata_start: u64, thunk_size: u6
 
     const dlls: list = map.keys(imports);
     for dll in dlls {
+        assert(len(dll) > 0 && !contains(dll, "\0"), "PE import DLL name contains an embedded NUL or is empty");
         const entries: list = map.get(imports, dll);
         pe_import_emit_hint_names(dll, entries);
         pe_import_emit_dll_name(dll);

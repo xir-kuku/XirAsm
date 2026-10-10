@@ -368,10 +368,14 @@ The two machines differ in three places:
 | Difference | x86-64 | AArch64 |
 | --- | --- | --- |
 | LOAD segment page alignment | 4 KiB, the Linux default | **16 KiB**, required by Android 15 and later |
-| Import mechanism | PLT entries | GLOB_DAT slots, declared with `format_elfso_import_slots_mut` |
+| Import mechanism | PLT entries and GLOB_DAT slots, including mixed imports | GLOB_DAT slots, declared with `format_elfso_import_slots_mut` |
 | Executable imports | supported | unsupported, import through a shared object instead |
 
 A larger page alignment costs file bytes only when a segment has to move to the next page boundary: virtual addresses advance by whole pages while the file layout stays compact. To choose another page size, set `"load_align"` on the configuration before `format_begin`.
+
+`"load_align"` must be a nonzero power of two. It controls page alignment for user LOAD segments, the PLT, and dynamic metadata. Set it to `elf_android_page_align` when packaging an x86-64 shared object for Android, so both its LOAD segments and its APK entry data align to 16 KiB.
+
+x86-64 shared objects accept GOT slots declared with `format_elfso_import_slots_mut` together with PLT imports. Dynamic symbol records default to `elf_stt_func`; set `"type"` to `elf_stt_object` on an import or export record for a data symbol. Data imports require GOT slots. Export addresses and sizes must fit within their declared segment. Library and dynamic symbol names cannot contain NUL. Generated table names such as `.dynsym` and `.dynamic` are reserved by the format layer.
 
 Each load segment also honours the alignment its sections declare: 16 bytes for a segment marked `format_executable`, 8 bytes otherwise. That alignment applies to the **file offset** as well, because the loader requires `p_vaddr == p_offset (mod p_align)` — the low bits of the address follow from the file offset, so moving only the address would break the relation. The result is that every section satisfies `sh_addr % sh_addralign == 0`, which is the guarantee code doing aligned accesses depends on; the cost is a few padding bytes when a segment would otherwise land on a carry inside the page.
 
@@ -398,5 +402,5 @@ Each load segment also honours the alignment its sections declare: 16 bytes for 
 | `format_elfso_import_new()` | create a shared-object import list |
 | `format_elfso_import_many_mut(imports, library, names)` | add a batch of shared-object imports from one library |
 | `format_elfso_import_pairs_mut(imports, library, pairs)` | add "local prefix, real symbol name" pairs |
-| `format_elfso_import_slots_mut(imports, library, names)` | AArch64 shared-object GLOB_DAT import slots |
+| `format_elfso_import_slots_mut(imports, library, names)` | x86-64/AArch64 shared-object GLOB_DAT import slots |
 | `format_elfso_tables_mut(plan, exports, imports)` | attach shared-object dynamic metadata to the configuration |
