@@ -282,6 +282,8 @@ format_finish(object)
 
 `elf_const.inc` 里常用的 AArch64 类型还有：`elf_r_aarch64_abs64`、`elf_r_aarch64_abs32`、`elf_r_aarch64_adr_prel_lo21`、`elf_r_aarch64_ldst{8,16,32,64}_abs_lo12_nc` 系列、`elf_r_aarch64_condbr19`、`elf_r_aarch64_jump26`，以及 GOT 形式的 `elf_r_aarch64_adr_got_page` 和 `elf_r_aarch64_ld64_got_lo12_nc`。
 
+AArch64 目标文件接口拒绝未知重定位类型、不是四字节倍数的指令重定位偏移，以及超出目标节的字段。数据重定位按实际的二、四或八字节宽度检查。RELA 加数使用 64 位位模式，例如 `0xfffffffffffffffc` 表示 `-4`。
+
 ELF32 用 `format_elfobj32`，常用的 32 位相对调用重定位是 `elf_r_386_pc32`。
 
 ## Mach-O 目标文件

@@ -182,7 +182,7 @@ apk_emit(app)
 
 这段代码演示调用形状；它引用的 `icons/`、`docs/` 和 `build/` 下的文件要由项目自己准备，缺了会报 `apk entry input file does not exist`。其中 `build/` 下的两个 `.so` 就是上一步编出来的库。
 
-同样的应用，让资源目录自己声明资源，打包脚本只剩三行：
+同样的应用，让资源目录自己声明资源，再把主库加入归档：
 
 ```asm id=apk-facade-res-dir
 // 需要输入文件：本块不单独汇编，配套文件见正文说明（needs input files）。
@@ -193,6 +193,7 @@ origin(0)
 let app: map = apk_new("com.example.tool", 1, "1.0", "demo")
 app = apk_set_sdk(app, 26, 34)
 app = apk_res_dir(app, "res")
+app = apk_native_lib(app, "arm64-v8a", "libdemo.so", "build/arm64-v8a/libdemo.so")
 apk_emit(app)
 ```
 
@@ -220,6 +221,8 @@ apk_emit(app)
   资源池按平台的方式存储文本：补充平面字符（例如 emoji）写成代理对，两半各自编码，读回来与系统其它应用一致。
 - 默认写出 112 字节的启动 DEX，应用声明 `hasCode=false`、不执行任何 Java 代码；用 `apk_skip_dex(app)` 可以不写。
 - `.so` 条目自动按 16 KiB 对齐，满足 Android 15 及以后对未压缩共享库的页对齐要求。
+- 清单设置 `extractNativeLibs=false`，让 Android 直接映射 APK 中对齐的未压缩库。
+- `apk_emit` 至少需要一个 native 库；每个声明的 ABI 都必须包含 `lib<lib_name>.so` 主库。包名、版本、SDK 范围和重复归档条目会在输出前检查。
 - 条目默认按 STORED（不压缩）写入；需要压缩的条目逐条选择，见下文。
 
 ## 应用配置 API
@@ -343,7 +346,9 @@ apk_res_file_entry("res/mipmap-hdpi/ic_launcher.png", "icons/hdpi.png")
 - **资源 ID 由名字决定，与声明顺序无关**：类型 ID 从 1 开始按类型名字典序分配，类型内的条目 ID 按条目名字典序分配。同一组资源无论按什么顺序写，产物字节相同。
 - 密度用名字写：`ldpi`、`mdpi`、`tvdpi`、`hdpi`、`xhdpi`、`xxhdpi`、`xxxhdpi`、`nodpi`。
 - 资源条目里记录的路径就是 APK 内的条目名。用低层入口时要自己保证 `arsc_file` 的路径与 `apk_res_file_entry` 的路径一致；走 facade 的 `apk_icon` 时这条自动成立。
-- 字符串值可以是任何文字，补充平面字符按平台的代理对方式编码，读回来与系统其它应用一致。资源名必须保持 ASCII 标识符。
+- 字符串值支持中文、补充平面字符和空字符串；补充平面字符按平台的代理对方式编码。资源名必须保持 ASCII 标识符。
+
+`format/axml.inc` 的独立清单构造器也支持这些文本。开始和结束节点必须同名配对，命名空间必须配对关闭；使用未声明的 URI、重复活跃前缀或同一节点的重复属性会被拒绝。
 
 ## 压缩条目
 
@@ -362,6 +367,7 @@ app = apk_label(app, "Example Tool")
 app = apk_asset_bytes_compressed(app, "assets/notes.txt", notes)
 app = apk_asset_compressed(app, "assets/readme.txt", "docs/readme.txt")
 app = apk_resource_file_compressed(app, "raw", "notice", "", "res/raw/notice.txt", "docs/readme.txt")
+app = apk_native_lib(app, "arm64-v8a", "libdemo.so", "build/arm64-v8a/libdemo.so")
 apk_emit(app)
 ```
 
@@ -387,6 +393,7 @@ let app: map = apk_new("com.example.tool", 1, "1.0", "demo")
 app = apk_set_sdk(app, 26, 34)
 // 读入源文件旁边的 res/ 树。
 app = apk_res_dir(app, "res")
+app = apk_native_lib(app, "arm64-v8a", "libdemo.so", "build/arm64-v8a/libdemo.so")
 apk_emit(app)
 ```
 
@@ -412,13 +419,14 @@ apk_emit(app)
 - 约定名只在应用**完全没有设置**应用名或图标时自动绑定，显式设置过的不会被覆盖。换别的资源用 `apk_use_label(app, "name")` 与 `apk_use_icon(app, "mipmap", "ic_launcher_round")`；这两个调用只登记引用，资源是否存在在写清单时校验，且应用一个资源都没有时它们会报错（固定模板清单没有资源可引用）。
 - 归档路径默认镜像被扫描的目录，所以 `apk_res_dir(app, "res")` 产出的正是 `res/...` 条目；目录不叫 `res` 时用 `apk_res_dir_at(app, "app_res", "res")` 显式给出归档前缀。
 
-`tests/format/apk_res_scan_user_facade.asm` 是一份完整例子：`check_apk.py` 会用 `aapt2` 把扫出来的资源名、密度、语言配置和归档路径逐条读回来复核。它编出来是 4889 字节的 APK，含 `AndroidManifest.xml`、`resources.arsc`、四个 `res/` 条目与一个 112 字节的启动 DEX；`aapt2 dump badging` 读出包名 `com.example.xirasm.resdir`、版本号 3、默认应用名 `XIRASM Res Scan`、中文配置下的应用名 `资源目录扫描`，以及 `mdpi` 与 `hdpi` 两档图标各自的归档路径。
+`tests/format/apk_res_scan_user_facade.asm` 是一份完整例子：`check_apk.py` 会用 `aapt2` 把扫出来的资源名、密度、语言配置和归档路径逐条读回来复核。APK 包含清单、资源表、资源文件、启动 DEX 和主库；`aapt2 dump badging` 读出包名 `com.example.xirasm.resdir`、版本号 3、默认应用名 `XIRASM Res Scan`、中文配置下的应用名 `资源目录扫描`，以及 `mdpi` 与 `hdpi` 两档图标各自的归档路径。
 
 ## 框架资源与主题
 
 清单或资源值里引用 `@android:...` 时，要带上平台给这个资源的 ID，形式是 `0x01 <类型> <条目>`。仓库里带一份从平台 jar 生成的目录：
 
 ```asm id=apk-framework-theme
+// 需要输入文件：先汇编 build/arm64-v8a/libdemo.so。
 import("format/apk.inc")
 import("format/android/generated/framework_ids.inc")
 
@@ -429,6 +437,7 @@ const ids: map = android_framework_ids()
 let app: map = apk_new("com.example.tool", 1, "1.0", "demo")
 app = apk_label_string(app, "app_name", "Example Tool")
 app = apk_use_theme_id(app, android_style_id(ids, "Theme.DeviceDefault"))
+app = apk_native_lib(app, "arm64-v8a", "libdemo.so", "build/arm64-v8a/libdemo.so")
 apk_emit(app)
 ```
 

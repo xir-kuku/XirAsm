@@ -106,6 +106,38 @@ fn elfobj_r_info32(symbol_index: u64, reloc_type: u64) -> u64 {
     return symbol_index * 0x100 + reloc_type;
 }
 
+fn elfobj_aarch64_reloc_instruction(kind: u64) -> bool {
+    return (kind == elf_r_aarch64_adr_prel_lo21 ||
+        kind == elf_r_aarch64_adr_prel_pg_hi21 ||
+        kind == elf_r_aarch64_add_abs_lo12_nc ||
+        kind == elf_r_aarch64_ldst8_abs_lo12_nc ||
+        kind == elf_r_aarch64_ldst16_abs_lo12_nc ||
+        kind == elf_r_aarch64_ldst32_abs_lo12_nc ||
+        kind == elf_r_aarch64_ldst64_abs_lo12_nc ||
+        kind == elf_r_aarch64_condbr19 ||
+        kind == elf_r_aarch64_jump26 ||
+        kind == elf_r_aarch64_call26 ||
+        kind == elf_r_aarch64_adr_got_page ||
+        kind == elf_r_aarch64_ld64_got_lo12_nc);
+}
+
+fn elfobj_aarch64_reloc_width(kind: u64) -> u64 {
+    if kind == 0 {
+        return 0;
+    }
+    if kind == elf_r_aarch64_abs64 || kind == elf_r_aarch64_prel64 {
+        return 8;
+    }
+    if kind == elf_r_aarch64_abs32 || kind == elf_r_aarch64_prel32 || elfobj_aarch64_reloc_instruction(kind) {
+        return 4;
+    }
+    if kind == elf_r_aarch64_abs16 || kind == elf_r_aarch64_prel16 {
+        return 2;
+    }
+    assert(false, "unsupported AArch64 ELF object relocation type");
+    return 0;
+}
+
 packed struct ElfObjIdent {
     magic: u32 = elf_magic,
     class: u8,

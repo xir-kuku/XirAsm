@@ -946,6 +946,10 @@ fn format_elf_plan(kind: u64, options: u64, segments: list) -> map {
     map.set_mut(plan, "load_align", elf_default_page_align);
     map.set_mut(plan, "entry", 0);
     map.set_mut(plan, "imports", list.new());
+    map.set_mut(plan, "exports", list.new());
+    map.set_mut(plan, "relptrs", list.new());
+    map.set_mut(plan, "dynamic", false);
+    map.set_mut(plan, "started", false);
     return plan;
 }
 
@@ -953,11 +957,8 @@ fn format_elf32(options: u64, segments: list) -> map {
     return format_elf_plan(format_kind_elf32, options, segments);
 }
 
-// ELF64 executable or PIE for a chosen machine. Imports stay x86-64 only,
-// because the executable import path is built on PLT entries; AArch64 imports
-// use the shared-object GLOB_DAT path instead. AArch64 defaults to the 16 KiB
-// page alignment that Android devices require; set "load_align" on the plan
-// before format_begin to choose another page size.
+// AArch64 uses GLOB_DAT slots; x86-64 accepts both slots and PLT imports.
+// Set "load_align" before format_begin to choose another page size.
 fn format_elf64_machine(options: u64, segments: list, machine: u16) -> map {
     assert(machine == elf_machine_x86_64 || machine == elf_machine_aarch64, "unsupported ELF64 machine");
     let plan: map = format_elf_plan(format_kind_elf64, options, segments)
@@ -990,10 +991,31 @@ fn format_elfexe_import_pairs_mut(let imports: list, library: string, pairs: lis
     imports = elfexe_import_use64_plt_pairs(imports, library, pairs);
 }
 
+fn format_elfexe_import_slots_mut(let imports: list, library: string, names: list) {
+    imports = elfexe_import_use64_many(imports, library, names);
+}
+
+fn format_elfexe_import_slots_pairs_mut(let imports: list, library: string, pairs: list) {
+    imports = elfexe_import_use64_pairs(imports, library, pairs);
+}
+
+fn format_elf_dynamic_mut(let plan: map, interpreter: string) {
+    assert(map.get(plan, "kind") == format_kind_elf64, "ELF dynamic executable requires ELF64");
+    assert(!map.get(plan, "started"), "ELF dynamic metadata must be configured before format_begin");
+    assert(len(interpreter) > 0 && elf_validate_c_name(interpreter), "invalid ELF interpreter path");
+    map.set_mut(plan, "dynamic", true);
+    map.set_mut(plan, "interpreter", interpreter);
+}
+
+fn format_elfexe_exports_mut(let plan: map, exports: list) {
+    assert(map.get(plan, "kind") == format_kind_elf64, "ELF executable exports require ELF64");
+    assert(!map.get(plan, "started"), "ELF dynamic metadata must be configured before format_begin");
+    map.set_mut(plan, "exports", exports);
+    map.set_mut(plan, "dynamic", true);
+}
+
 fn format_validate_elfexe_tables(plan: map, imports: list) -> bool {
     assert(map.get(plan, "kind") == format_kind_elf64, "ELF executable imports require ELF64");
-    assert(map.get(plan, "options") == format_elf_exec, "ELF executable imports require fixed-address EXEC mode");
-    assert(map.get(plan, "machine") == elf_machine_x86_64, "ELF executable imports are x86-64 only; use an AArch64 shared object for GLOB_DAT imports");
     assert(len(imports) > 0, "ELF executable import table is empty");
 
     const segments: list = map.get(plan, "segments")
@@ -1005,19 +1027,26 @@ fn format_validate_elfexe_tables(plan: map, imports: list) -> bool {
     for i in range(0, len(imports)) {
         const current: map = list.get(imports, i)
         const current_slot: string = map.get(current, "slot")
-        const current_plt: string = map.get(current, "plt")
+        const current_plt: string = map.get_or(current, "plt", "")
+        if map.get(plan, "machine") == elf_machine_aarch64 {
+            assert(current_plt == "", "AArch64 ELF executable imports require GOT slots");
+        }
         for j in range(i + 1, len(imports)) {
             const other: map = list.get(imports, j)
             assert(map.get(other, "slot") != current_slot, "ELF executable import slot is duplicated");
-            assert(map.get(other, "plt") != current_plt, "ELF executable import PLT label is duplicated");
+            if current_plt != "" && map.get_or(other, "plt", "") != "" {
+                assert(map.get(other, "plt") != current_plt, "ELF executable import PLT label is duplicated");
+            }
         }
     }
     return true;
 }
 
 fn format_elfexe_tables_mut(let plan: map, imports: list) {
+    assert(!map.get(plan, "started"), "ELF dynamic metadata must be configured before format_begin");
     assert(format_validate_elfexe_tables(plan, imports), "invalid ELF executable import table");
     map.set_mut(plan, "imports", imports);
+    map.set_mut(plan, "dynamic", true);
 }
 
 // ELF64 shared object for a chosen machine. x86-64 accepts PLT and GOT
@@ -1111,12 +1140,11 @@ fn format_elfso_import_slots_mut(let imports: list, library: string, names: list
 }
 
 fn format_validate_elfso_tables(plan: map, exports: list, imports: list) -> bool {
-    assert(map.get(plan, "kind") == format_kind_elfso64, "format plan is not an ELF64 shared object");
-    assert(len(exports) > 0, "ELF shared-object format API requires at least one export");
+    assert(map.get(plan, "kind") == format_kind_elfso64 || map.get(plan, "kind") == format_kind_elf64, "format plan is not a dynamic ELF64 image");
 
     for segment in map.get(plan, "segments") {
         const name: string = map.get(segment, "name")
-        for reserved in list.of(".elfso.plt", ".elfso.metadata", ".plt", ".got", ".got.plt", ".rela.dyn", ".rela.plt", ".dynsym", ".dynstr", ".hash", ".dynamic", ".shstrtab") {
+        for reserved in list.of(".elfso.plt", ".elfso.metadata", ".plt", ".got", ".got.plt", ".rela.dyn", ".rela.plt", ".dynsym", ".dynstr", ".hash", ".dynamic", ".interp", ".shstrtab") {
             assert(name != reserved, "ELF shared-object segment uses a reserved internal name");
         }
     }
@@ -1141,9 +1169,6 @@ fn format_validate_elfso_tables(plan: map, exports: list, imports: list) -> bool
         if map.get(plan, "machine") == elf_machine_aarch64 {
             assert(plt_name == "", "AArch64 shared-object imports require GOT slots");
         }
-        for export0 in exports {
-            assert(map.get(export0, "name") != import_name, "ELF shared-object symbol cannot be both imported and exported");
-        }
         for j in range(i + 1, len(imports)) {
             const other: map = list.get(imports, j)
             assert(map.get(other, "slot") != slot_name, "ELF shared-object import slot is duplicated");
@@ -1159,9 +1184,32 @@ fn format_validate_elfso_tables(plan: map, exports: list, imports: list) -> bool
 }
 
 fn format_elfso_tables_mut(let plan: map, exports: list, imports: list) {
+    assert(map.get(plan, "kind") == format_kind_elfso64, "format plan is not an ELF64 shared object");
+    assert(!map.get_or(plan, "started", false), "ELF dynamic metadata must be configured before format_begin");
     assert(format_validate_elfso_tables(plan, exports, imports), "invalid ELF shared-object format API tables");
     map.set_mut(plan, "exports", exports);
     map.set_mut(plan, "imports", imports);
+}
+
+// Emit a pointer slot and keep its explicit target until the image is complete.
+fn format_elf_relptr_mut(let plan: map, segment_name: string, target_label: string) {
+    const kind: u64 = map.get(plan, "kind")
+    assert(kind == format_kind_elfso64 || kind == format_kind_elf64, "ELF relative pointer requires ELF64");
+    assert(map.get_or(plan, "started", false), "ELF relative pointer requires format_begin");
+    assert(kind == format_kind_elfso64 || map.get(plan, "dynamic"), "ELF relative pointer requires a dynamic executable plan");
+    assert(len(target_label) > 0, "ELF relative pointer target is empty");
+    const row: u64 = format_segment_row(plan, segment_name)
+    assert(row < len(map.get(plan, "segments")), "ELF relative pointer segment is invalid");
+    const segment: map = list.get(map.get(plan, "segments"), row)
+    assert((map.get(segment, "attributes") & format_writeable) != 0, "ELF relative pointer slot requires a writable LOAD");
+    let entry: map = map.new()
+    map.set_mut(entry, "segment", segment_name);
+    map.set_mut(entry, "slot", here());
+    map.set_mut(entry, "target", target_label);
+    let pointers: list = map.get_or(plan, "relptrs", list.new())
+    list.push_mut(pointers, entry);
+    map.set_mut(plan, "relptrs", pointers);
+    dq(0);
 }
 
 fn format_entry_mut(let plan: map, address: u64) {
@@ -1685,6 +1733,7 @@ fn format_coff_finalize_section_row(row: u64, start: u64, chars: u64, purpose: u
 fn format_elfso_finalize_first_load_region(start: u64, flags: u64, load_align: u64) {
     defer {
         const start_offset: u64 = region_file_offset(start)
+        assert(start == start_offset, "ELF shared-object first LOAD must map its header and code contiguously");
         const file_size: u64 = start_offset + region_file_size(start)
         let memory_size = start_offset + region_logical_size(start)
         if memory_size < file_size {
@@ -1752,9 +1801,12 @@ fn format_elf_begin64(plan: map) {
     const machine: u64 = map.get(plan, "machine")
     assert(machine == elf_machine_x86_64 || machine == elf_machine_aarch64, "unsupported ELF64 machine");
     let segment_count = len(segments)
-    if len(imports) > 0 {
-        assert(machine == elf_machine_x86_64, "ELF executable imports are x86-64 only; use an AArch64 shared object for GLOB_DAT imports");
+    if map.get(plan, "dynamic") {
+        // PHDR and INTERP precede every LOAD in a dynamic main executable.
         segment_count = segment_count + 4
+        if format_elfso_uses_plt(plan) {
+            segment_count = segment_count + 1
+        }
     }
     if machine == elf_machine_x86_64 {
         x86.use64();
@@ -1954,6 +2006,10 @@ fn format_macho64_begin(let plan: map) {
 
 fn format_begin(let plan: map) {
     const kind: u64 = map.get(plan, "kind")
+    if kind == format_kind_elf64 || kind == format_kind_elfso64 {
+        assert(!map.get_or(plan, "started", false), "ELF format_begin was already called");
+        map.set_mut(plan, "started", true);
+    }
 
     if kind == format_kind_pe32 {
         const options: u64 = map.get(plan, "options")
@@ -2319,6 +2375,9 @@ fn format_segment_begin(plan: map, name: string) {
     const attributes: u64 = map.get(segment, "attributes")
     const purpose: u64 = attributes & format_segment_purpose_mask
     const flags: u64 = format_elf_segment_flags(attributes)
+    if row == 0 && kind == format_kind_elf64 && map.get(plan, "dynamic") {
+        assert((flags & elf_pf_r) != 0, "ELF dynamic executable first LOAD must be readable");
+    }
     // A LOAD segment address is derived from the file offset by keeping the two
     // congruent modulo the page, which is the relation the ELF layer promises;
     // the low bits of that address are therefore fixed by the file offset, so the
@@ -2336,7 +2395,7 @@ fn format_segment_begin(plan: map, name: string) {
     // shared object whose first segment ended with a page carry put the next one
     // at, say, 0x219D while declaring an alignment of 8.
     let file_offset: u64 = file_cursor_real()
-    if kind == format_kind_elfso64 {
+    if kind == format_kind_elfso64 || (kind == format_kind_elf64 && map.get(plan, "dynamic")) {
         const section_align: u64 = format_elfso_section_alignment(attributes)
         if section_align > 1 {
             file_offset = elfso_align_up(file_offset, section_align);
@@ -2365,21 +2424,21 @@ fn format_segment_begin(plan: map, name: string) {
         format_elf_finalize_load32(row, here(), flags);
     }
     if kind == format_kind_elf64 {
-        const imports: list = map.get(plan, "imports")
         if options == format_elf_exec {
             region.begin(name, elf_default_base64 + logical_offset, file_offset);
         }
         if options == format_elf_pie {
             region.begin(name, logical_offset, file_offset);
         }
-        if len(imports) > 0 && row == 0 {
-            format_elfexe_finalize_first_load64(here(), flags);
-            defer {
-                store.u64(region_base() + elf64_phdr_foa(0) + elf64_phdr_align_foa, load_page);
+        label.define(format_elfso_segment_start_label(name));
+        if map.get(plan, "dynamic") && row == 0 {
+            format_elf_dynamic_first_load64(2, here(), flags, load_page, image_base);
+        } else {
+            let header_row: u64 = row
+            if map.get(plan, "dynamic") {
+                header_row = header_row + 2
             }
-        }
-        if len(imports) == 0 || row > 0 {
-            format_elf_finalize_load64_page(row, here(), flags, load_page);
+            format_elf_finalize_load64_page(header_row, here(), flags, load_page);
         }
     }
     if kind == format_kind_elfso64 {
@@ -2414,13 +2473,11 @@ fn format_segment_end(plan: map, name: string) {
     if kind == format_kind_elf32 {
         region.file_align(1);
     }
-    if kind == format_kind_elf64 && options == format_elf_exec {
+    if kind == format_kind_elf64 && !map.get(plan, "dynamic") {
+        label.define(format_elfso_segment_end_label(name));
         region.file_align(1);
     }
-    if kind == format_kind_elf64 && options == format_elf_pie {
-        region.file_align(1);
-    }
-    if kind == format_kind_elfso64 {
+    if kind == format_kind_elfso64 || (kind == format_kind_elf64 && map.get(plan, "dynamic")) {
         label.define(format_elfso_segment_end_label(name));
         const tail: u64 = file_cursor_potential() - file_cursor_real()
         const size: u64 = label_addr(format_elfso_segment_end_label(name)) - label_addr(format_elfso_segment_start_label(name))
@@ -2617,6 +2674,23 @@ fn format_elfexe_finalize_first_load64(start: u64, flags: u64) {
     }
 }
 
+fn format_elf_dynamic_first_load64(row: u64, start: u64, flags: u64, page: u64, image_base: u64) {
+    defer {
+        const offset: u64 = region_file_offset(start)
+        assert(start == image_base + offset, "ELF dynamic executable first LOAD must map its header and code contiguously");
+        const file_size: u64 = offset + region_file_size(start)
+        const memory_size: u64 = offset + region_logical_size(start)
+        store.u32(region_base() + elf64_phdr_foa(row) + elf64_phdr_type_foa, elf_pt_load);
+        store.u32(region_base() + elf64_phdr_foa(row) + elf64_phdr_flags_foa, flags);
+        store.u64(region_base() + elf64_phdr_foa(row) + elf64_phdr_offset_foa, 0);
+        store.u64(region_base() + elf64_phdr_foa(row) + elf64_phdr_vaddr_foa, image_base);
+        store.u64(region_base() + elf64_phdr_foa(row) + elf64_phdr_paddr_foa, image_base);
+        store.u64(region_base() + elf64_phdr_foa(row) + elf64_phdr_filesz_foa, file_size);
+        store.u64(region_base() + elf64_phdr_foa(row) + elf64_phdr_memsz_foa, memory_size);
+        store.u64(region_base() + elf64_phdr_foa(row) + elf64_phdr_align_foa, page);
+    }
+}
+
 fn format_elf_finalize_entry32(entry_address: u64) {
     defer {
         store.u32(region_base() + elf32_entry_foa, entry_address);
@@ -2794,15 +2868,7 @@ fn format_elfobj_reloc_width(machine: u64, kind: u64) -> u64 {
         }
     }
     if machine == elf_machine_aarch64 {
-        if kind == elf_r_aarch64_abs64 || kind == elf_r_aarch64_prel64 {
-            return 8;
-        }
-        if kind == elf_r_aarch64_abs16 || kind == elf_r_aarch64_prel16 {
-            return 2;
-        }
-        if kind >= elf_r_aarch64_abs32 && kind <= elf_r_aarch64_ld64_got_lo12_nc {
-            return 4;
-        }
+        return elfobj_aarch64_reloc_width(kind);
     }
     return 1;
 }
@@ -2899,6 +2965,9 @@ fn format_elfobj_finish_tables(plan: map) {
                     const end: u64 = label_addr(format_elfobj_section_end_label(section_name))
                     const offset: u64 = map.get(reloc, "offset")
                     const width: u64 = format_elfobj_reloc_width(map.get(plan, "machine"), map.get(reloc, "type"))
+                    if map.get(plan, "machine") == elf_machine_aarch64 && elfobj_aarch64_reloc_instruction(map.get(reloc, "type")) {
+                        assert(offset % 4 == 0, "AArch64 ELF instruction relocation offset must be four-byte aligned");
+                    }
                     assert(offset <= end - start && width <= end - start - offset, "ELF object relocation offset is outside its section");
                     const symbol_index: u64 = format_elfobj_symbol_index(plan, symbols, map.get(reloc, "symbol"))
                     if kind == format_kind_elfobj32 {
@@ -3201,6 +3270,132 @@ fn format_elfso_import_group(plan: map, plt: bool) -> list {
     return entries;
 }
 
+fn format_elf_dynamic_base(plan: map) -> u64 {
+    if map.get(plan, "kind") == format_kind_elf64 && map.get(plan, "options") == format_elf_exec {
+        return elf_default_base64;
+    }
+    return 0;
+}
+
+fn format_elf_dynamic_symbol_index(symbols: list, name: string) -> u64 {
+    for i in range(0, len(symbols)) {
+        if map.get(list.get(symbols, i), "name") == name {
+            return i + 1;
+        }
+    }
+    assert(false, "ELF dynamic relocation symbol is missing");
+    return 0;
+}
+
+fn format_elf_dynamic_symbols(imports: list, exports: list) -> list {
+    let symbols = list.new()
+    for entry in imports {
+        const name: string = map.get(entry, "name")
+        const symbol_type: u64 = map.get_or(entry, "type", elf_stt_func)
+        assert(symbol_type == elf_stt_func || symbol_type == elf_stt_object, "ELF dynamic import type must be function or object");
+        assert(map.get_or(entry, "plt", "") == "" || symbol_type == elf_stt_func, "ELF object import requires a GOT slot");
+        let found: bool = false
+        for old in symbols {
+            if map.get(old, "name") == name {
+                assert(map.get(old, "type") == symbol_type, "ELF dynamic symbol has conflicting types");
+                found = true
+            }
+        }
+        if !found {
+            let value = map.new()
+            map.set_mut(value, "name", name);
+            map.set_mut(value, "target", "");
+            map.set_mut(value, "section", elf_shn_undef);
+            map.set_mut(value, "size", 0);
+            map.set_mut(value, "type", symbol_type);
+            list.push_mut(symbols, value);
+        }
+    }
+    for entry in exports {
+        let found: bool = false
+        for i in range(0, len(symbols)) {
+            const old: map = list.get(symbols, i)
+            if map.get(old, "name") == map.get(entry, "name") {
+                assert(map.get(old, "type") == map.get(entry, "type"), "ELF dynamic symbol has conflicting types");
+                list.set_mut(symbols, i, entry);
+                found = true
+            }
+        }
+        if !found {
+            list.push_mut(symbols, entry);
+        }
+    }
+    return symbols;
+}
+
+fn format_elf_dynamic_symbol_names(symbols: list) -> list {
+    let names = list.new()
+    for entry in symbols {
+        list.push_mut(names, map.get(entry, "name"));
+    }
+    return names;
+}
+
+fn format_elf_dynamic_emit_dynsym64(symbols: list) {
+    elfso_sym64(0, 0, elf_shn_undef, 0, 0);
+    const names: list = format_elf_dynamic_symbol_names(symbols)
+    for i in range(0, len(symbols)) {
+        const entry: map = list.get(symbols, i)
+        let address: u64 = 0
+        if map.get(entry, "section") != elf_shn_undef {
+            address = label_addr(map.get(entry, "target"));
+        }
+        elfso_sym64(format_string_table_offset(names, i), elfso_st_info(elf_stb_global, map.get(entry, "type")), map.get(entry, "section"), address, map.get(entry, "size"));
+    }
+}
+
+fn format_elf_dynamic_relptrs(plan: map) -> list {
+    let values = list.new()
+    for pointer in map.get_or(plan, "relptrs", list.new()) {
+        const segment: string = map.get(pointer, "segment")
+        const start: u64 = label_addr(format_elfso_segment_start_label(segment))
+        const end: u64 = label_addr(format_elfso_segment_end_label(segment))
+        const slot: u64 = map.get(pointer, "slot")
+        assert(slot >= start && slot <= end && end - slot >= 8, "ELF relative pointer slot is outside its segment");
+        const target: string = map.get(pointer, "target")
+        for export0 in map.get_or(plan, "exports", list.new()) {
+            assert(map.get(export0, "target") != target, "ELF relative pointer cannot target a preemptible export; use a GOT slot");
+        }
+        const address: u64 = label_addr(target)
+        let internal: bool = false
+        for user_segment in map.get(plan, "segments") {
+            const name: string = map.get(user_segment, "name")
+            const first: u64 = label_addr(format_elfso_segment_start_label(name))
+            const last: u64 = label_addr(format_elfso_segment_end_label(name))
+            if address >= first && address < last {
+                internal = true
+            }
+        }
+        assert(internal, "ELF relative pointer target must be internal to the image");
+        if map.get(plan, "kind") != format_kind_elf64 || map.get(plan, "options") != format_elf_exec {
+            let value = pointer
+            map.set_mut(value, "addend", address);
+            list.push_mut(values, value);
+        }
+    }
+    return values;
+}
+
+fn format_elf_dynamic_finalize_relptrs(plan: map) {
+    const fixed: bool = map.get(plan, "kind") == format_kind_elf64 && map.get(plan, "options") == format_elf_exec
+    for pointer in map.get_or(plan, "relptrs", list.new()) {
+        const start: u64 = label_addr(format_elfso_segment_start_label(map.get(pointer, "segment")))
+        const slot: u64 = map.get(pointer, "slot")
+        const address: u64 = label_addr(map.get(pointer, "target"))
+        defer {
+            assert(region_file_size(start) >= slot - start + 8, "ELF relative pointer slot must be file-backed");
+            if fixed {
+                store.u64(slot, address);
+            }
+        }
+    }
+}
+
 fn format_elfso_section_names(plan: map, has_imports: bool) -> list {
     const uses_plt: bool = format_elfso_uses_plt(plan)
     const uses_slots: bool = len(format_elfso_import_group(plan, false)) > 0
@@ -3215,7 +3410,12 @@ fn format_elfso_section_names(plan: map, has_imports: bool) -> list {
     // Match the section-header emission order to keep symbol links valid.
     if uses_slots {
         list.push_mut(names, ".got");
+    }
+    if uses_slots || len(map.get_or(plan, "relptrs", list.new())) > 0 {
         list.push_mut(names, ".rela.dyn");
+    }
+    if map.get(plan, "kind") == format_kind_elf64 {
+        list.push_mut(names, ".interp");
     }
     list.push_mut(names, ".dynsym");
     list.push_mut(names, ".dynstr");
@@ -3377,18 +3577,30 @@ fn format_elfso_emit_user_section_headers(plan: map, section_names: list) {
 
 fn format_elfso_finish_tables(plan: map) {
     const segments: list = map.get(plan, "segments")
+    const executable: bool = map.get(plan, "kind") == format_kind_elf64
+    const image_base: u64 = format_elf_dynamic_base(plan)
+    let header_bias: u64 = 0
+    if executable {
+        header_bias = 2
+    }
+    assert(format_validate_elfso_tables(plan, map.get(plan, "exports"), map.get(plan, "imports")), "invalid dynamic ELF tables");
     const exports: list = format_elfso_exports64(plan, map.get(plan, "exports"))
     const plts: list = format_elfso_import_group(plan, true)
     const slots: list = format_elfso_import_group(plan, false)
     // Preserve declaration order in dynsym and DT_NEEDED when grouping slots.
     const imports: list = map.get(plan, "imports")
-    const soname: string = map.get(plan, "soname")
+    const soname: string = map.get_or(plan, "soname", "")
+    const pointers: list = format_elf_dynamic_relptrs(plan)
+    format_elf_dynamic_finalize_relptrs(plan);
+    const symbols: list = format_elf_dynamic_symbols(imports, exports)
+    const symbol_names: list = format_elf_dynamic_symbol_names(symbols)
     const has_imports: bool = len(imports) > 0
     const machine: u64 = map.get(plan, "machine")
     const load_align: u64 = map.get(plan, "load_align")
     assert(machine == elf_machine_x86_64 || machine == elf_machine_aarch64, "unsupported ELF shared-object machine");
     const plt_imports: bool = has_imports && format_elfso_uses_plt(plan)
     const slots_imports: bool = len(slots) > 0
+    const has_rela: bool = slots_imports || len(map.get_or(plan, "relptrs", list.new())) > 0
     const section_names: list = format_elfso_section_names(plan, has_imports)
     const section_count: u64 = len(section_names) + 1
     const shstrndx: u64 = format_elfso_section_index(section_names, ".shstrtab")
@@ -3397,23 +3609,21 @@ fn format_elfso_finish_tables(plan: map) {
 
     const import_count: u64 = len(imports)
     const export_count: u64 = len(exports)
-    const symbol_count: u64 = 1 + import_count + export_count
-    const first_import_symbol: u64 = 1
-    const export_name_start: u64 = 1 + elfso_import_names_size(imports)
-    const soname_offset: u64 = export_name_start + elf_export_names_size(exports)
+    const symbol_count: u64 = 1 + len(symbols)
+    const soname_offset: u64 = format_string_table_size(symbol_names)
     const first_needed_offset: u64 = soname_offset + len(soname) + 1
 
     let plt_foa = 0
     let plt_size = 0
     let plt_vaddr = 0
     let metadata_foa = elfso_align_up(file_cursor_real(), 16)
-    let metadata_vaddr = format_elf_next_load_logical_offset_page(0, metadata_foa, 1, load_align)
+    let metadata_vaddr = image_base + format_elf_next_load_logical_offset_page(image_base, metadata_foa, 1, load_align)
     if plt_imports {
         plt_foa = elfso_align_up(file_cursor_real(), 16)
         plt_size = elfso_import_plt_size(plts)
         metadata_foa = elfso_align_up(plt_foa + plt_size, 8)
-        plt_vaddr = format_elf_next_load_logical_offset_page(0, plt_foa, 1, load_align)
-        metadata_vaddr = format_elf_logical_offset_page(metadata_foa, plt_vaddr + plt_size, load_align)
+        plt_vaddr = image_base + format_elf_next_load_logical_offset_page(image_base, plt_foa, 1, load_align)
+        metadata_vaddr = image_base + format_elf_logical_offset_page(metadata_foa, plt_vaddr - image_base + plt_size, load_align)
         const plt_last_page: u64 = (plt_vaddr + plt_size - 1) / load_align
         if metadata_vaddr / load_align <= plt_last_page {
             metadata_vaddr = metadata_vaddr + load_align
@@ -3421,7 +3631,7 @@ fn format_elfso_finish_tables(plan: map) {
     }
     if slots_imports && !plt_imports {
         metadata_foa = elfso_align_up(file_cursor_real(), 16)
-        metadata_vaddr = format_elf_next_load_logical_offset_page(0, metadata_foa, 1, load_align)
+        metadata_vaddr = image_base + format_elf_next_load_logical_offset_page(image_base, metadata_foa, 1, load_align)
     }
 
     let gotplt_foa = 0
@@ -3435,16 +3645,27 @@ fn format_elfso_finish_tables(plan: map) {
     const got_foa: u64 = dynsym_foa
     const got_size: u64 = len(slots) * elfso_import_gotplt_entry_size
     dynsym_foa = dynsym_foa + got_size
+    let interpreter: string = elfexe_import_default_interp64
+    if machine == elf_machine_aarch64 {
+        interpreter = "/lib/ld-linux-aarch64.so.1"
+    }
+    interpreter = map.get_or(plan, "interpreter", interpreter)
+    const interp_foa: u64 = dynsym_foa
+    let interp_size: u64 = 0
+    if executable {
+        interp_size = len(interpreter) + 1
+        dynsym_foa = elfso_align_up(interp_foa + interp_size, 8)
+    }
     const dynsym_size: u64 = symbol_count * elfso_sym64_size
     const dynstr_foa: u64 = dynsym_foa + dynsym_size
-    const dynstr_size: u64 = format_elfso_dynstr_size(imports, exports, soname)
+    const dynstr_size: u64 = first_needed_offset + elfso_import_libraries_size(elfso_import_libraries(imports))
     const hash_foa: u64 = elfso_align_up(dynstr_foa + dynstr_size, 4)
     const hash_size: u64 = format_elfso_hash_size(symbol_count)
     let rela_plt_foa = 0
     let rela_plt_size = 0
     let dynamic_foa = elfso_align_up(hash_foa + hash_size, 8)
     const rela_dyn_foa: u64 = dynamic_foa
-    const rela_dyn_size: u64 = len(slots) * elfso_import_rela64_size
+    const rela_dyn_size: u64 = (len(slots) + len(pointers)) * elfso_import_rela64_size
     dynamic_foa = dynamic_foa + rela_dyn_size
     if plt_imports {
         rela_plt_foa = dynamic_foa
@@ -3452,10 +3673,16 @@ fn format_elfso_finish_tables(plan: map) {
         dynamic_foa = elfso_align_up(rela_plt_foa + rela_plt_size, 8)
     }
     let dynamic_rows: u64 = 7 + len(elfso_import_libraries(imports))
+    if executable {
+        dynamic_rows = dynamic_rows - 1
+        if map.get(plan, "options") == format_elf_pie {
+            dynamic_rows = dynamic_rows + 1
+        }
+    }
     if plt_imports {
         dynamic_rows = dynamic_rows + 4
     }
-    if slots_imports {
+    if has_rela {
         dynamic_rows = dynamic_rows + 3
     }
     const dynamic_size: u64 = dynamic_rows * elfso_dyn64_size
@@ -3474,6 +3701,7 @@ fn format_elfso_finish_tables(plan: map) {
     const dynamic_vaddr: u64 = metadata_vaddr + (dynamic_foa - metadata_foa)
     const got_vaddr: u64 = metadata_vaddr + (got_foa - metadata_foa)
     const rela_dyn_vaddr: u64 = metadata_vaddr + (rela_dyn_foa - metadata_foa)
+    const interp_vaddr: u64 = metadata_vaddr + (interp_foa - metadata_foa)
 
     let plt_start = 0
     if plt_imports {
@@ -3496,19 +3724,27 @@ fn format_elfso_finish_tables(plan: map) {
         assert(file_cursor_real() == got_foa, "ELF shared-object GOT layout mismatch");
         elfso_import_emit_slots64(slots);
     }
+    if executable {
+        assert(file_cursor_real() == interp_foa, "ELF executable INTERP layout mismatch");
+        db(interpreter, 0);
+    }
 
     align(8);
     assert(file_cursor_real() == dynsym_foa, "ELF shared-object DYNSYM layout mismatch");
-    format_elfso_emit_dynsym64(imports, exports, export_name_start);
+    format_elf_dynamic_emit_dynsym64(symbols);
 
     assert(file_cursor_real() == dynstr_foa, "ELF shared-object DYNSTR layout mismatch");
-    format_elfso_emit_dynstr64(imports, exports, soname);
+    format_emit_string_table(symbol_names);
+    db(soname, 0);
+    for library in elfso_import_libraries(imports) {
+        db(library, 0);
+    }
 
     align(4);
     assert(file_cursor_real() == hash_foa, "ELF shared-object HASH layout mismatch");
     format_elfso_emit_hash(symbol_count);
 
-    if slots_imports {
+    if has_rela {
         align(8);
         assert(file_cursor_real() == rela_dyn_foa, "ELF shared-object RELA.DYN layout mismatch");
         let relocation: u64 = elf_r_x86_64_glob_dat
@@ -3518,8 +3754,15 @@ fn format_elfso_finish_tables(plan: map) {
         for i in range(0, len(imports)) {
             const entry: map = list.get(imports, i)
             if map.get_or(entry, "plt", "") == "" {
-                elfso_import_rela64(label_addr(map.get(entry, "slot")), first_import_symbol + i, relocation, 0);
+                elfso_import_rela64(label_addr(map.get(entry, "slot")), format_elf_dynamic_symbol_index(symbols, map.get(entry, "name")), relocation, 0);
             }
+        }
+        let relative_type: u64 = elf_r_x86_64_relative
+        if machine == elf_machine_aarch64 {
+            relative_type = elf_r_aarch64_relative
+        }
+        for pointer in pointers {
+            elfso_import_rela64(map.get(pointer, "slot"), 0, relative_type, map.get(pointer, "addend"));
         }
     }
     if plt_imports {
@@ -3528,7 +3771,7 @@ fn format_elfso_finish_tables(plan: map) {
         for i in range(0, len(imports)) {
             const entry: map = list.get(imports, i)
             if map.get_or(entry, "plt", "") != "" {
-                elfso_import_rela64(label_addr(map.get(entry, "slot")), first_import_symbol + i, elf_r_x86_64_jump_slot, 0);
+                elfso_import_rela64(label_addr(map.get(entry, "slot")), format_elf_dynamic_symbol_index(symbols, map.get(entry, "name")), elf_r_x86_64_jump_slot, 0);
             }
         }
     }
@@ -3540,7 +3783,7 @@ fn format_elfso_finish_tables(plan: map) {
     elfso_dyn64(elf_dt_strsz, dynstr_size);
     elfso_dyn64(elf_dt_symtab, dynsym_vaddr);
     elfso_dyn64(elf_dt_syment, elfso_sym64_size);
-    if slots_imports {
+    if has_rela {
         elfso_dyn64(elf_dt_rela, rela_dyn_vaddr);
         elfso_dyn64(elf_dt_relasz, rela_dyn_size);
         elfso_dyn64(elf_dt_relaent, elfso_import_rela64_size);
@@ -3551,7 +3794,12 @@ fn format_elfso_finish_tables(plan: map) {
         elfso_dyn64(elf_dt_pltrel, elf_dt_rela);
         elfso_dyn64(elf_dt_jmprel, rela_plt_vaddr);
     }
-    elfso_dyn64(elf_dt_soname, soname_offset);
+    if !executable {
+        elfso_dyn64(elf_dt_soname, soname_offset);
+    }
+    if executable && map.get(plan, "options") == format_elf_pie {
+        elfso_dyn64(0x6ffffffb, 0x08000000); // DT_FLAGS_1: DF_1_PIE.
+    }
     const libraries: list = elfso_import_libraries(imports)
     const needed_offsets: list = elfso_import_library_offsets(libraries)
     for i in range(0, len(libraries)) {
@@ -3597,7 +3845,6 @@ fn format_elfso_finish_tables(plan: map) {
     }
     if slots_imports {
         const got_index: u64 = format_elfso_section_index(section_names, ".got")
-        const rela_dyn_index: u64 = format_elfso_section_index(section_names, ".rela.dyn")
         elfso_shdr64(
             format_string_table_offset(section_names, got_index - 1),
             elf_sht_progbits,
@@ -3610,6 +3857,9 @@ fn format_elfso_finish_tables(plan: map) {
             8,
             elfso_import_gotplt_entry_size
         );
+    }
+    if has_rela {
+        const rela_dyn_index: u64 = format_elfso_section_index(section_names, ".rela.dyn")
         elfso_shdr64(
             format_string_table_offset(section_names, rela_dyn_index - 1),
             elf_sht_rela,
@@ -3622,6 +3872,11 @@ fn format_elfso_finish_tables(plan: map) {
             8,
             elfso_import_rela64_size
         );
+    }
+
+    if executable {
+        const interp_index: u64 = format_elfso_section_index(section_names, ".interp")
+        elfso_shdr64(format_string_table_offset(section_names, interp_index - 1), elf_sht_progbits, elf_shf_alloc, interp_vaddr, interp_foa, interp_size, 0, 0, 1, 0);
     }
 
     elfso_shdr64(
@@ -3702,9 +3957,9 @@ fn format_elfso_finish_tables(plan: map) {
         0
     );
 
-    let metadata_row = len(segments)
+    let metadata_row = len(segments) + header_bias
     if plt_imports {
-        const plt_row: u64 = len(segments)
+        const plt_row: u64 = len(segments) + header_bias
         metadata_row = plt_row + 1
         format_elfso_finalize_load_region(plt_row, plt_start, elf_pf_r | elf_pf_x, load_align);
     }
@@ -3719,94 +3974,19 @@ fn format_elfso_finish_tables(plan: map) {
         dynamic_size,
         8
     );
+    if executable {
+        const phdr_size: u64 = (metadata_row + 2) * elf_phdr64_size
+        elfexe_finalize_phdr64(0, elf_pt_phdr, elf_pf_r, elf_header64_size, image_base + elf_header64_size, phdr_size, phdr_size, 8);
+        elfexe_finalize_phdr64(1, elf_pt_interp, elf_pf_r, interp_foa, interp_vaddr, interp_size, interp_size, 1);
+        defer {
+            store.u16(region_base() + 58, elfso_shdr64_size);
+        }
+    }
     format_elfso_finalize_header64(section_table_foa, section_count, shstrndx);
 }
 
 fn format_elfexe_finish_tables(plan: map) {
-    const segments: list = map.get(plan, "segments")
-    const imports: list = map.get(plan, "imports")
-    const load_align: u64 = map.get(plan, "load_align")
-    assert(len(imports) > 0, "ELF executable import table is empty");
-
-    const first_import_symbol: u64 = 1
-    const dynstr_name_start: u64 = 1
-    const dynstr_needed_start: u64 = dynstr_name_start + elfexe_import_names_size(imports)
-
-    const plt_foa: u64 = elfexe_align_up(file_cursor_real(), 16)
-    const plt_size: u64 = elfexe_import_plt_size(imports)
-    const metadata_foa: u64 = elfexe_align_up(plt_foa + plt_size, 8)
-
-    const plt_logical_offset: u64 = format_elf_next_load_logical_offset_page(elf_default_base64, plt_foa, 1, load_align)
-    const plt_vaddr: u64 = elf_default_base64 + plt_logical_offset
-    let metadata_logical_offset = format_elf_logical_offset_page(metadata_foa, plt_logical_offset + plt_size, load_align)
-    const plt_last_page: u64 = (plt_logical_offset + plt_size - 1) / load_align
-    if metadata_logical_offset / load_align <= plt_last_page {
-        metadata_logical_offset = metadata_logical_offset + load_align
-    }
-    const metadata_vaddr: u64 = elf_default_base64 + metadata_logical_offset
-
-    const gotplt_foa: u64 = metadata_foa
-    const gotplt_size: u64 = elfexe_import_gotplt_size(imports)
-    const interp_foa: u64 = gotplt_foa + gotplt_size
-    const interp_size: u64 = len(elfexe_import_default_interp64) + 1
-    const dynsym_foa: u64 = elfexe_align_up(interp_foa + interp_size, 8)
-    const dynsym_size: u64 = (1 + len(imports)) * elfexe_import_sym64_size
-    const dynstr_foa: u64 = dynsym_foa + dynsym_size
-    const dynstr_size: u64 = elfexe_import_dynstr_size(imports)
-    const hash_foa: u64 = elfexe_align_up(dynstr_foa + dynstr_size, 4)
-    const hash_size: u64 = elfexe_import_hash_size(imports)
-    const rela_plt_foa: u64 = elfexe_align_up(hash_foa + hash_size, 8)
-    const rela_plt_size: u64 = elfexe_import_rela_plt_size(imports)
-    const dynamic_foa: u64 = elfexe_align_up(rela_plt_foa + rela_plt_size, 8)
-    const dynamic_size: u64 = elfexe_import_dynamic_plt_size(imports)
-
-    const gotplt_vaddr: u64 = metadata_vaddr + (gotplt_foa - metadata_foa)
-    const interp_vaddr: u64 = metadata_vaddr + (interp_foa - metadata_foa)
-    const dynsym_vaddr: u64 = metadata_vaddr + (dynsym_foa - metadata_foa)
-    const dynstr_vaddr: u64 = metadata_vaddr + (dynstr_foa - metadata_foa)
-    const hash_vaddr: u64 = metadata_vaddr + (hash_foa - metadata_foa)
-    const rela_plt_vaddr: u64 = metadata_vaddr + (rela_plt_foa - metadata_foa)
-    const dynamic_vaddr: u64 = metadata_vaddr + (dynamic_foa - metadata_foa)
-
-    region.begin(".elfexe.plt", plt_vaddr, plt_foa);
-    const plt_start: u64 = here()
-    assert(file_cursor_real() == plt_foa, "ELF executable PLT layout mismatch");
-    elfexe_import_emit_plt64(imports, plt_vaddr, gotplt_vaddr);
-    region.file_align(1);
-
-    region.begin(".elfexe.imports", metadata_vaddr, metadata_foa);
-    const metadata_start: u64 = here()
-    assert(file_cursor_real() == gotplt_foa, "ELF executable GOTPLT layout mismatch");
-    elfexe_import_emit_gotplt64(imports, dynamic_vaddr, plt_vaddr);
-
-    assert(file_cursor_real() == interp_foa, "ELF executable INTERP layout mismatch");
-    db(elfexe_import_default_interp64, 0);
-
-    align(8);
-    assert(file_cursor_real() == dynsym_foa, "ELF executable DYNSYM layout mismatch");
-    elfexe_import_emit_dynsym64(imports, dynstr_name_start);
-
-    assert(file_cursor_real() == dynstr_foa, "ELF executable DYNSTR layout mismatch");
-    elfexe_import_emit_dynstr64(imports);
-
-    align(4);
-    assert(file_cursor_real() == hash_foa, "ELF executable HASH layout mismatch");
-    elfexe_import_hash(imports);
-
-    align(8);
-    assert(file_cursor_real() == rela_plt_foa, "ELF executable RELA.PLT layout mismatch");
-    elfexe_import_emit_rela_plt64(imports, first_import_symbol);
-
-    align(8);
-    assert(file_cursor_real() == dynamic_foa, "ELF executable DYNAMIC layout mismatch");
-    elfexe_import_emit_dynamic64_plt(imports, dynstr_vaddr, dynstr_size, dynsym_vaddr, hash_vaddr, gotplt_vaddr, rela_plt_vaddr, rela_plt_size, dynstr_needed_start);
-
-    const plt_row: u64 = len(segments)
-    const metadata_row: u64 = plt_row + 1
-    format_elf_finalize_load64_page(plt_row, plt_start, elf_pf_r | elf_pf_x, load_align);
-    format_elf_finalize_load64_page(metadata_row, metadata_start, elf_pf_r | elf_pf_w, load_align);
-    elfexe_finalize_phdr64(metadata_row + 1, elf_pt_interp, elf_pf_r, interp_foa, interp_vaddr, interp_size, interp_size, 1);
-    elfexe_finalize_phdr64(metadata_row + 2, elf_pt_dynamic, elf_pf_r | elf_pf_w, dynamic_foa, dynamic_vaddr, dynamic_size, dynamic_size, 8);
+    format_elfso_finish_tables(plan);
 }
 
 fn format_macho64_finalize_section(section: map) {
@@ -4072,8 +4252,7 @@ fn format_finish(let plan: map) {
     }
     if kind == format_kind_elf64 {
         assert(entry_address != 0, "ELF executable requires an entry address");
-        const imports: list = map.get(plan, "imports")
-        if len(imports) > 0 {
+        if map.get(plan, "dynamic") {
             format_elfexe_finish_tables(plan);
         }
         format_elf_finalize_entry64(entry_address);

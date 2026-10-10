@@ -170,13 +170,13 @@ format_entry_mut(image, start)
 format_finish(image)
 ```
 
-PIE 与固定地址可执行文件只有一个实质区别：基址由加载器决定。因此**所有指向映像内部的引用都必须写成 RIP 相对形式**（`[rel label]`），这种引用编码的是位移，不管映像被搬到哪里都成立，也不需要动态重定位。反过来，把绝对指针存进 `.data` 就需要一条动态重定位记录，而任意用户指针的动态重定位目前要通过 ELF 直接构造来完成，`format.inc` 这一层不提供。
+PIE 的基址由加载器决定。RIP 相对引用（`[rel label]`）在映像移动后仍然有效。可写数据中的绝对指针需要动态重定位：`format_elf_relptr_mut(image, segment_name, target_label)` 输出八字节槽，并为内部目标登记 `RELATIVE`；固定地址的动态 EXEC 则直接写目标地址。此接口要求动态配置；没有导入或导出表时，先在 `format_begin` 前调用 `format_elf_dynamic_mut` 开启。默认可见的导出目标应通过符号导入槽访问，让加载器仍能执行符号抢占。
 
-PIE 不支持可执行文件导入。把导入表挂到 PIE 配置上会报 `ELF executable imports require fixed-address EXEC mode`。
+PIE 支持可执行文件导入表。x86-64 支持 PLT 调用和提前解析的 GOT 槽，AArch64 使用提前解析的 GOT 槽。表必须在 `format_begin` 之前声明。需要指定解释器，或者启用没有导入的动态可执行文件时，在 `format_begin` 之前调用 `format_elf_dynamic_mut(image, interpreter)`。
 
 ## ELF64 可执行文件导入
 
-固定地址可执行文件可以通过 PLT 条目调用外部函数。声明导入之后，`format.inc` 会生成动态段、PLT、GOT 以及配套的重定位：
+x86-64 的固定地址可执行文件和 PIE 都可以通过 PLT 条目调用外部函数。声明导入之后，`format.inc` 会生成动态段、PLT、GOT 以及配套的重定位：
 
 ```asm id=elf64-exe-imports target=x86-64
 import("format/format.inc")
@@ -211,21 +211,11 @@ format_entry_mut(image, start)
 format_finish(image)
 ```
 
-生成的映像为 960 字节，动态段里有两条 `NEEDED`（`libc.so.6` 和 `libm.so.6`），动态符号表里有三个未定义函数 `getpid`、`getppid`、`cos`。
+动态段里有两条 `NEEDED`（`libc.so.6` 和 `libm.so.6`），以及三个导入函数 `getpid`、`getppid`、`cos`。
 
-声明导入会让文件多出装载段。上例只声明了 `.text` 一个装载段，最终的程序头有五个：
+动态可执行文件除了装载段，还带有 `PT_PHDR`、`PT_INTERP` 和 `PT_DYNAMIC`。`PT_PHDR` 排在第一项，第一个 `PT_LOAD` 覆盖 ELF 头和程序头表。自动生成的 PLT 可执行；GOT 槽和动态元数据位于有文件内容的可写区域。用 `readelf -lW` 和 `readelf -dW -rW` 检查实际地址和重定位表。
 
-| 程序头 | 文件偏移 | 虚拟地址 | 文件大小 | 权限 | 来源 |
-| --- | --- | --- | --- | --- | --- |
-| `PT_LOAD` | `0x0` | `0x400000` | 371 | `R\|X` | 声明的 `.text` |
-| `PT_LOAD` | `0x180` | `0x401180` | 64 | `R\|X` | 自动生成，放 PLT |
-| `PT_LOAD` | `0x1C0` | `0x4021C0` | 512 | `R\|W` | 自动生成，放 GOT、动态符号表、字符串表、hash、RELA 和动态段 |
-| `PT_INTERP` | `0x1F0` | `0x4021F0` | 28 | `R` | 动态链接器路径 |
-| `PT_DYNAMIC` | `0x300` | `0x402300` | 192 | `R\|W` | 动态段本身 |
-
-后两个装载段排在所有声明段之后，各自页对齐。因此文件大小和地址布局不能只按声明的段来算——导入表本身要占一个可写段。动态链接器的路径固定为 `/lib64/ld-linux-x86-64.so.2`，写在 `PT_INTERP` 指向的位置。
-
-可写装载段里的内容按固定顺序排布：GOTPLT、解释器路径、动态符号表、动态字符串表、hash、`RELA.PLT`、动态段。这个顺序不是可以调整的选项，`format.inc` 逐个对齐着写，因此段内偏移是可预测的。
+x86-64 默认解释器为 `/lib64/ld-linux-x86-64.so.2`，AArch64 为 `/lib/ld-linux-aarch64.so.1`。目标系统使用其他路径时，通过 `format_elf_dynamic_mut` 覆盖。
 
 标签的生成规则：`many` 用导入名本身，`getpid` 生成 `getpid_plt` 和 `getpid_gotplt`；`pairs` 的列表按「本地前缀, 真实符号名」成对给出，上例的 `cos_fn` 生成 `cos_fn_plt` 和 `cos_fn_gotplt`。`pairs` 的项数必须是偶数，上限 128。
 
@@ -279,7 +269,7 @@ format_entry_mut(image, start)
 format_finish(image)
 ```
 
-生成的映像为 960 字节。程序在 x86-64 Linux 上打印 `xirasm: write() came from libc through the PLT`，退出码是当前进程号（每次运行不同，属于正常现象）。
+程序在 x86-64 Linux 上打印 `xirasm: write() came from libc through the PLT`，退出码是当前进程号的低八位。
 
 `readelf -d` 显示动态段里的 `NEEDED` 一条指向 `libc.so.6`，`PLTRELSZ` 为 48 字节——两个导入函数各占一条 24 字节的 RELA 记录，`PLTREL` 为 `RELA`。`ldd` 列出三个依赖：`linux-vdso.so.1`、`libc.so.6`、`/lib64/ld-linux-x86-64.so.2`，最后一项来自程序头中 `PT_INTERP` 指定的解释器，由 `format.inc` 填为 `/lib64/ld-linux-x86-64.so.2`。
 
@@ -325,16 +315,16 @@ format_finish(image)
 
 导出声明要给出所在装载段名和符号大小。`.dynsym`、`.dynstr`、hash、`.dynamic`、GOT/PLT 这些载荷由 `format.inc` 生成。共享库同样不调用 `format_entry_mut`。
 
-共享库带节头表，可执行文件不带。同样是 x86-64 下由 `format.inc` 生成的文件，两者在头部和布局上的差别如下：
+共享库和动态可执行文件带有描述符号和重定位表的节头；静态可执行文件不带节头表：
 
 | 项目 | ELF 可执行文件 | ELF 共享库 |
 | --- | --- | --- |
 | 文件类型 | `ET_EXEC` 或 PIE 的 `ET_DYN` | `ET_DYN` |
-| 节头表 | **没有**（`e_shnum = 0`） | 有，共 7 项：空节、`.text`、`.dynsym`、`.dynstr`、`.hash`、`.dynamic`、`.shstrtab` |
+| 节头表 | 静态 EXEC 没有，动态 EXEC/PIE 有 | 有，包括动态符号表和字符串表 |
 | 段基址 | `0x400000` 起 | `0` 起 |
 | 段对应关系 | 每个声明的装载段一个 `PT_LOAD` | 声明的段合进 `PT_LOAD`，另有 `PT_DYNAMIC` |
 
-共享库的地址从 0 起算，是因为它被加载到哪个地址由加载器决定，节头里的地址都按基址 0 记录。可执行文件没有节头表，`readelf -S` 不会有输出；要用 `readelf -l` 看程序头，或者用 `llvm-readobj --program-headers`。
+共享库的地址从 0 起算，是因为它被加载到哪个地址由加载器决定，节头里的地址都按基址 0 记录。用 `readelf -l` 或 `llvm-readobj --program-headers` 查看加载器实际映射的段。
 
 ## ELF64 共享库导入
 
@@ -347,7 +337,7 @@ format_elfso_import_pairs_mut(imports, "libm.so.6", list.of("cos_fn", "cos"))
 format_elfso_tables_mut(image, exports, imports)
 ```
 
-导入名和导出名不能冲突，生成出来的 `*_plt` 和 `*_gotplt` 标签也必须唯一。映像内部的引用写 `rel`，调用导入函数用生成出来的 PLT 标签。
+导入可以与导出使用同一个公开名称：它们共用一个已定义的动态符号，加载器可以对它执行符号抢占。多个不同的本地槽也可以引用同一个公开符号。重复导出声明和自动生成的本地标签冲突会被拒绝。映像内部的引用写 `rel`，调用 PLT 导入函数用自动生成的 PLT 标签。
 
 ## 选择目标机器
 
@@ -369,7 +359,7 @@ format_elfso_tables_mut(image, exports, imports)
 | --- | --- | --- |
 | LOAD 段页对齐 | 4 KiB，Linux 默认值 | **16 KiB**，Android 15 及以后设备的要求 |
 | 导入方式 | PLT 条目和 GLOB_DAT 槽位，可以混用 | GLOB_DAT 槽位，用 `format_elfso_import_slots_mut` 声明 |
-| 可执行文件导入 | 支持 | 不支持，改由共享库导入 |
+| 可执行文件导入 | EXEC/PIE，PLT 和 GOT 槽 | EXEC/PIE，GOT 槽 |
 
 页对齐调大只在装载段必须挪到下一个页边界时才多占文件字节：虚拟地址按整页前进，文件布局仍然紧凑。要换别的页大小，在 `format_begin` 之前给配置设置 `"load_align"`。
 
@@ -395,7 +385,12 @@ x86-64 共享库通过 `format_elfso_import_slots_mut` 声明 GOT 槽位，可�
 | `format_elfexe_import_new()` | 创建 ELF64 可执行文件导入列表 |
 | `format_elfexe_import_many_mut(imports, library, names)` | 从同一个库批量加入同名导入 |
 | `format_elfexe_import_pairs_mut(imports, library, pairs)` | 加入「本地前缀, 真实符号名」成对导入 |
+| `format_elfexe_import_slots_mut(imports, library, names)` | x86-64/AArch64 可执行文件 GLOB_DAT 导入槽 |
+| `format_elfexe_import_slots_pairs_mut(imports, library, pairs)` | 加入「本地槽, 公开符号」成对 GOT 导入 |
 | `format_elfexe_tables_mut(plan, imports)` | 把可执行文件导入元数据挂到配置上 |
+| `format_elfexe_exports_mut(plan, exports)` | 用共享库导出列表配置动态可执行文件的导出 |
+| `format_elf_dynamic_mut(plan, interpreter)` | 启用动态可执行文件并选择解释器 |
+| `format_elf_relptr_mut(plan, segment, target_label)` | 在可写段中输出指向内部目标的绝对指针 |
 | `format_elfso_export_new()` | 创建共享库导出列表 |
 | `format_elfso_export_many_mut(exports, names, segment, size)` | 批量导出同名符号 |
 | `format_elfso_export_pairs_mut(exports, pairs, segment, size)` | 批量导出「内部标签, 公开名称」成对符号 |

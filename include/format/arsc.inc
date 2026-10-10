@@ -21,6 +21,8 @@
 //   entry too (see apk.inc) so the table and the archive agree.
 // - Signing stays external (apksigner).
 
+import("axml.inc");
+
 const arsc_chunk_string_pool: u64 = 0x0001
 const arsc_chunk_table: u64 = 0x0002
 const arsc_chunk_package: u64 = 0x0200
@@ -112,9 +114,23 @@ fn arsc_item(type_name: string, name: string, kind: u64, text: string, value: u6
 fn arsc_add(doc: map, type_name: string, name: string, kind: u64, text: string, value: u64, density: u64, locale: string) -> map {
     assert(len(type_name) > 0, "arsc resource type must not be empty");
     assert(len(name) > 0, "arsc resource name must not be empty");
+    assert(android_ascii_identifier(type_name, false, true) && android_ascii_identifier(name, false, true), "arsc resource type and name must be Android identifiers");
     assert(len(locale) == 0 || len(locale) == 2, "arsc locale must be a two letter code");
-    const item: map = arsc_item(type_name, name, kind, text, value, density, locale)
+    if locale != "" {
+        let remaining: string = locale
+        for letter in android_lowercase_letters {
+            remaining = replace(remaining, letter, "")
+        }
+        assert(remaining == "", "arsc locale must contain lowercase letters");
+    }
+    assert(density <= 0xffff, "arsc density exceeds u16");
+    assert(kind == arsc_kind_string || kind == arsc_kind_file || kind == arsc_kind_int || kind == arsc_kind_hex || kind == arsc_kind_bool || kind == arsc_kind_reference, "arsc value kind is not supported");
+    assert(value <= 0xffffffff || value >= 0xffffffff80000000, "arsc value exceeds u32");
+    const item: map = arsc_item(type_name, name, kind, text, value & 0xffffffff, density, locale)
     let items: list = map.get(doc, "res")
+    for existing in items {
+        assert(map.get(existing, "type") != type_name || map.get(existing, "name") != name || map.get(existing, "density") != density || map.get(existing, "locale") != locale, "arsc resource configuration is duplicated");
+    }
     list.push_mut(items, item);
     return map.set(doc, "res", items)
 }
@@ -375,7 +391,6 @@ fn arsc_sort_strings(let out, items: list) {
         let lengths: list = list.new()
         let cursor: u64 = 0
         for text in items {
-            assert(len(text) > 0, "arsc pool strings must not be empty");
             list.push_mut(offsets, band + cursor);
             list.push_mut(lengths, len(text));
             emit.bytes(text);
@@ -561,18 +576,15 @@ fn arsc_pool_band(let offsets, let units, let lengths, let cursor, items: list, 
         let encoded: u64 = 0
         let i: u64 = 0
         while i < n {
-            const byte: u64 = load.u8(band + cursor + i)
-            if byte >= 0xf0 && i + 4 <= n {
+            const decoded: map = android_utf8_decode(band + cursor + i, band + cursor + n)
+            if map.get(decoded, "value") >= 0x10000 {
                 code_units = code_units + 2;
                 encoded = encoded + 6;
-                i = i + 4
             } else {
-                if (byte & 0xc0) != 0x80 {
-                    code_units = code_units + 1
-                }
-                encoded = encoded + 1;
-                i = i + 1
+                code_units = code_units + 1
+                encoded = encoded + map.get(decoded, "size");
             }
+            i = i + map.get(decoded, "size")
         }
         list.push_mut(units, code_units);
         list.push_mut(lengths, encoded);

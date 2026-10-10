@@ -70,7 +70,11 @@ let zip_dos_date: u64 = 0x5c21
 // alignment.
 let zip_entries: list = list.new()
 let zip_finished: bool = false
-let zip_expected: u64 = 0
+let zip_expected: u64 = file_offset()
+
+defer {
+    assert(zip_finished, "zip archive is missing zip_finish");
+}
 
 // CRC-32 (IEEE 802.3, reflected, polynomial 0xedb88320) via the engine
 // crypto builtin, which is native-speed: any payload size hashes in
@@ -112,9 +116,7 @@ fn zip_align_extra_len(foa: u64, alignment: u64) -> u64 {
 fn zip_entry_method(name: bytes, data: bytes, flags: u64, data_alignment: u64, method: u64, level: u64) {
     assert(!zip_finished, "zip archive is already finished");
     assert(here() == file_offset(), "zip output address must equal its file offset");
-    if len(zip_entries) > 0 {
-        assert(file_offset() == zip_expected, "zip output changed between entries");
-    }
+    assert(file_offset() == zip_expected, "zip output changed between entries");
     assert(len(name) > 0, "zip entry name must not be empty");
     assert(len(name) <= 0xffff, "zip entry name is too long");
     assert(len(zip_entries) < 0xfffe, "zip entry count requires ZIP64");
@@ -268,9 +270,7 @@ fn zip_finish() {
     assert(here() == file_offset(), "zip output address must equal its file offset");
     const entry_count: u64 = len(zip_entries)
     assert(entry_count < 0xffff, "zip entry count requires ZIP64");
-    if entry_count > 0 {
-        assert(file_offset() == zip_expected, "zip output changed between entries");
-    }
+    assert(file_offset() == zip_expected, "zip output changed between entries");
 
     let cd_size = 0
     for entry in zip_entries {

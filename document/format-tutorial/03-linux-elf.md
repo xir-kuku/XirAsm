@@ -170,13 +170,13 @@ format_entry_mut(image, start)
 format_finish(image)
 ```
 
-PIE differs from a fixed-address executable in one substantial way: the loader decides the base address. **Every reference into the image must therefore be RIP-relative** (`[rel label]`), which encodes a displacement that holds wherever the image moves and needs no dynamic relocation. Storing an absolute pointer in `.data` instead does require a dynamic relocation, and arbitrary user pointer relocations are not available through `format.inc`; they belong to direct ELF construction.
+For PIE, the loader decides the base address. RIP-relative references (`[rel label]`) remain valid when the image moves. An absolute pointer stored in writable data needs a dynamic relocation: `format_elf_relptr_mut(image, segment_name, target_label)` emits an eight-byte slot and registers `RELATIVE` for an internal target. For a fixed-address dynamic EXEC, it writes the target address directly. This helper requires a dynamic plan; enable it with `format_elf_dynamic_mut` before `format_begin` when the executable has no import or export tables. A default-visible exported target must be reached through a symbol import slot so that loader interposition remains possible.
 
-PIE does not support executable imports. Attaching an import table to a PIE configuration reports `ELF executable imports require fixed-address EXEC mode`.
+PIE accepts executable import tables. x86-64 supports both PLT calls and eager GOT slots; AArch64 uses eager GOT slots. Declare the tables before `format_begin`. Use `format_elf_dynamic_mut(image, interpreter)` before `format_begin` to select an interpreter explicitly or to enable a dynamic executable that has no imports.
 
 ## ELF64 Executable Imports
 
-A fixed-address executable can call external functions through PLT entries. Once imports are declared, `format.inc` generates the dynamic segment, the PLT, the GOT, and the matching relocations:
+A fixed-address executable or PIE can call external functions through PLT entries on x86-64. Once imports are declared, `format.inc` generates the dynamic segment, the PLT, the GOT, and the matching relocations:
 
 ```asm id=elf64-exe-imports target=x86-64
 import("format/format.inc")
@@ -211,21 +211,11 @@ format_entry_mut(image, start)
 format_finish(image)
 ```
 
-This example is 960 bytes, and its dynamic segment carries two `NEEDED` entries (`libc.so.6` and `libm.so.6`) with three undefined functions in the dynamic symbol table: `getpid`, `getppid`, and `cos`.
+The dynamic segment carries two `NEEDED` entries (`libc.so.6` and `libm.so.6`) and three imported functions: `getpid`, `getppid`, and `cos`.
 
-Declaring imports adds load segments to the file. The example above declares one load segment, `.text`, and ends up with five program headers:
+Dynamic executables carry `PT_PHDR`, `PT_INTERP`, and `PT_DYNAMIC` in addition to the load segments. `PT_PHDR` comes first, and the first `PT_LOAD` covers the ELF header and program headers. The generated PLT is executable; GOT slots and dynamic metadata occupy writable, file-backed storage. Use `readelf -lW` and `readelf -dW -rW` to inspect the actual addresses and relocation tables.
 
-| Program header | File offset | Virtual address | File size | Permissions | Source |
-| --- | --- | --- | --- | --- | --- |
-| `PT_LOAD` | `0x0` | `0x400000` | 371 | `R\|X` | the declared `.text` |
-| `PT_LOAD` | `0x180` | `0x401180` | 64 | `R\|X` | generated, holding the PLT |
-| `PT_LOAD` | `0x1C0` | `0x4021C0` | 512 | `R\|W` | generated, holding the GOT, dynamic symbols, strings, hash, RELA, and the dynamic segment |
-| `PT_INTERP` | `0x1F0` | `0x4021F0` | 28 | `R` | the dynamic linker path |
-| `PT_DYNAMIC` | `0x300` | `0x402300` | 192 | `R\|W` | the dynamic segment itself |
-
-The two generated load segments follow every declared segment, each page-aligned. File size and address layout therefore cannot be computed from the declared segments alone — the import tables take a writable segment of their own. The linker path is fixed at `/lib64/ld-linux-x86-64.so.2`, written where `PT_INTERP` points.
-
-The writable segment lays its content out in a fixed order: GOTPLT, the interpreter path, the dynamic symbol table, the dynamic string table, the hash, `RELA.PLT`, and the dynamic segment. That order is not an option to adjust; `format.inc` writes each part aligned to the next, so the offsets inside the segment are predictable.
+The default interpreter is `/lib64/ld-linux-x86-64.so.2` on x86-64 and `/lib/ld-linux-aarch64.so.1` on AArch64. Override it with `format_elf_dynamic_mut` when the target system uses another path.
 
 Label names follow a rule: `many` uses the imported name, so `getpid` becomes `getpid_plt` and `getpid_gotplt`; a `pairs` list gives "local prefix, real symbol name", so `cos_fn` becomes `cos_fn_plt` and `cos_fn_gotplt`. A `pairs` list needs an even number of entries, at most 128.
 
@@ -279,7 +269,7 @@ format_entry_mut(image, start)
 format_finish(image)
 ```
 
-This example is 960 bytes. The program prints `xirasm: write() came from libc through the PLT` on x86-64 Linux, and its exit status is the current process id, which differs on every run.
+The program prints `xirasm: write() came from libc through the PLT` on x86-64 Linux, and its exit status is the low eight bits of the current process id.
 
 `readelf -d` shows the parts `format.inc` generated: one `NEEDED` naming `libc.so.6`, `PLTRELSZ` of 48 bytes — two imported functions, each a 24-byte RELA record — and `PLTREL` set to `RELA`. `ldd` lists three dependencies: `linux-vdso.so.1`, `libc.so.6`, and `/lib64/ld-linux-x86-64.so.2`, the last being the interpreter named by `PT_INTERP` and filled in by `format.inc`.
 
@@ -325,16 +315,16 @@ format_finish(image)
 
 An export declaration names the segment it lives in and the symbol size. `.dynsym`, `.dynstr`, the hash, `.dynamic`, and the GOT/PLT come from `format.inc`. A shared object does not call `format_entry_mut` either.
 
-A shared object carries a section header table; an executable does not. Both files below were generated for x86-64 by `format.inc`, and they differ in header and layout like this:
+A shared object and a dynamic executable carry section headers for their symbols and relocation tables. A static executable has no section header table:
 
 | Item | ELF executable | ELF shared object |
 | --- | --- | --- |
 | File type | `ET_EXEC`, or `ET_DYN` for PIE | `ET_DYN` |
-| Section header table | **absent** (`e_shnum = 0`) | present, seven entries: the null section, `.text`, `.dynsym`, `.dynstr`, `.hash`, `.dynamic`, `.shstrtab` |
+| Section header table | absent for static EXEC; present for dynamic EXEC/PIE | present, including dynamic symbols and strings |
 | Segment base | from `0x400000` | from `0` |
 | Segment mapping | one `PT_LOAD` per declared segment | declared segments inside `PT_LOAD`, plus `PT_DYNAMIC` |
 
-A shared object starts at address 0 because the loader decides where it goes; the addresses in its section headers are recorded against a base of 0. Because an executable has no section header table, `readelf -S` prints nothing for it; use `readelf -l` for the program headers, or `llvm-readobj --program-headers`.
+A shared object starts at address 0 because the loader decides where it goes; the addresses in its section headers are recorded against a base of 0. Use `readelf -l` or `llvm-readobj --program-headers` to inspect the segments that the loader maps.
 
 ## ELF64 Shared Object Imports
 
@@ -347,7 +337,7 @@ format_elfso_import_pairs_mut(imports, "libm.so.6", list.of("cos_fn", "cos"))
 format_elfso_tables_mut(image, exports, imports)
 ```
 
-Import names and export names must not collide, and the generated `*_plt` and `*_gotplt` labels must be unique. References inside the image are written `rel`; calls into an import use a generated PLT label.
+An import may share its public name with an export: both use one defined dynamic symbol, which the loader can interpose. Several distinct local slots may also refer to one public symbol. Duplicate export declarations and generated local label collisions are rejected. References inside the image are written `rel`; calls into a PLT import use a generated PLT label.
 
 ## Choosing the Machine
 
@@ -369,7 +359,7 @@ The two machines differ in three places:
 | --- | --- | --- |
 | LOAD segment page alignment | 4 KiB, the Linux default | **16 KiB**, required by Android 15 and later |
 | Import mechanism | PLT entries and GLOB_DAT slots, including mixed imports | GLOB_DAT slots, declared with `format_elfso_import_slots_mut` |
-| Executable imports | supported | unsupported, import through a shared object instead |
+| Executable imports | EXEC/PIE, PLT and GOT slots | EXEC/PIE, GOT slots |
 
 A larger page alignment costs file bytes only when a segment has to move to the next page boundary: virtual addresses advance by whole pages while the file layout stays compact. To choose another page size, set `"load_align"` on the configuration before `format_begin`.
 
@@ -395,7 +385,12 @@ Each load segment also honours the alignment its sections declare: 16 bytes for 
 | `format_elfexe_import_new()` | create an ELF64 executable import list |
 | `format_elfexe_import_many_mut(imports, library, names)` | add a batch of same-named imports from one library |
 | `format_elfexe_import_pairs_mut(imports, library, pairs)` | add "local prefix, real symbol name" pairs |
+| `format_elfexe_import_slots_mut(imports, library, names)` | x86-64/AArch64 executable GLOB_DAT import slots |
+| `format_elfexe_import_slots_pairs_mut(imports, library, pairs)` | add "local slot, public symbol" GOT imports |
 | `format_elfexe_tables_mut(plan, imports)` | attach executable import metadata to the configuration |
+| `format_elfexe_exports_mut(plan, exports)` | attach dynamic executable exports using an SO export list |
+| `format_elf_dynamic_mut(plan, interpreter)` | enable a dynamic executable and select its interpreter |
+| `format_elf_relptr_mut(plan, segment, target_label)` | emit an internal absolute pointer in a writable segment |
 | `format_elfso_export_new()` | create a shared-object export list |
 | `format_elfso_export_many_mut(exports, names, segment, size)` | export a batch of same-named symbols |
 | `format_elfso_export_pairs_mut(exports, pairs, segment, size)` | export "internal label, public name" pairs |

@@ -283,6 +283,8 @@ When an `adrp` and an `add` together produce a symbol's address, each instructio
 
 `elf_const.inc` also provides `elf_r_aarch64_abs64`, `elf_r_aarch64_abs32`, `elf_r_aarch64_adr_prel_lo21`, the `elf_r_aarch64_ldst{8,16,32,64}_abs_lo12_nc` family, `elf_r_aarch64_condbr19`, `elf_r_aarch64_jump26`, and the GOT forms `elf_r_aarch64_adr_got_page` and `elf_r_aarch64_ld64_got_lo12_nc`.
 
+The AArch64 object facade rejects unknown relocation types, instruction relocation offsets that are not multiples of four, and fields that extend beyond the target section. Data relocations use their actual two-, four-, or eight-byte width. RELA addends are passed as 64-bit bit patterns; for example, `0xfffffffffffffffc` represents `-4`.
+
 ELF32 uses `format_elfobj32`, and its common 32-bit relative call relocation is `elf_r_386_pc32`.
 
 ## Mach-O Objects

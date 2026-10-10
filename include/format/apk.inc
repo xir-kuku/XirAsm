@@ -9,10 +9,9 @@
 //   manifest byte for byte: UTF-16LE string pool (attr names first, mirrored
 //   by a resource-map chunk), u32 pool indices, 20-byte attributes with a
 //   4-byte alignment gap after the element header fields.
-// - Manifest strings are ASCII in stage 2 (asserted while transcoding);
-//   full UTF-8/UTF-16 support belongs to the stage-4 axml/arsc work.
+// - Manifest strings accept strict UTF-8 and use the AXML UTF-16 pool.
 // - Assembly trick: the AXML body is emitted first with a zeroed string
-//   pool data area; the raw ASCII strings are appended behind it as a
+//   pool data area; the raw UTF-8 strings are appended behind it as a
 //   scratch band and transcoded in place via load/store. Only the AXML body
 //   is copied out of the virtual area.
 // - Attribute resource IDs are well-known framework constants verified
@@ -44,6 +43,7 @@ const apk_attr_screen_orientation: u64 = 0x0101001e
 const apk_attr_config_changes: u64 = 0x0101001f
 const apk_attr_gl_es_version: u64 = 0x01010281
 const apk_attr_required: u64 = 0x0101028e
+const apk_attr_extract_native_libs: u64 = 0x010104ea
 
 let apk_min_sdk: u64 = 24
 let apk_target_sdk: u64 = 35
@@ -206,7 +206,9 @@ fn apk_manifest_body(doc_in: map, app_attrs: list, package_name: string, version
     ));
     doc = axml_end(doc, "uses-feature");
 
-    doc = axml_start(doc, "application", app_attrs);
+    let application_attrs: list = app_attrs
+    list.push_mut(application_attrs, axml_attr_bool("extractNativeLibs", apk_android_ns, 0));
+    doc = axml_start(doc, "application", application_attrs);
 
     doc = axml_start(doc, "activity", list.of(
         axml_attr_string("name", apk_android_ns, "android.app.NativeActivity"),
@@ -261,6 +263,7 @@ fn apk_manifest_resmap(doc_in: map) -> map {
     doc = axml_attr_resource_id(doc, "configChanges", apk_attr_config_changes);
     doc = axml_attr_resource_id(doc, "glEsVersion", apk_attr_gl_es_version);
     doc = axml_attr_resource_id(doc, "required", apk_attr_required);
+    doc = axml_attr_resource_id(doc, "extractNativeLibs", apk_attr_extract_native_libs);
     return doc
 }
 
@@ -359,11 +362,14 @@ fn apk_manifest_res_entry(tbl: map, package_name: string, version_code: u64, ver
 // entry together, so the two can never disagree.
 //
 // The fixed-template manifest path stays in use while an application declares
-// no resources, which keeps its output byte-identical to earlier releases.
+// no resources.
 
 fn apk_new(package_name: string, version_code: u64, version_name: string, lib_name: string) -> map {
-    assert(len(package_name) > 0, "apk package name must not be empty");
+    assert(apk_validate_package(package_name), "apk package name is invalid");
+    assert(version_code >= 1 && version_code <= 0x7fffffff, "apk version code must be a positive signed u32");
+    assert(len(version_name) > 0, "apk version name must not be empty");
     assert(len(lib_name) > 0, "apk native library name must not be empty");
+    assert(apk_validate_library_name(sym.join("lib", lib_name, ".so")), "apk main native library name is invalid");
     let app: map = map.new()
     map.set_mut(app, "package", package_name);
     map.set_mut(app, "version_code", version_code);
@@ -371,7 +377,8 @@ fn apk_new(package_name: string, version_code: u64, version_name: string, lib_na
     map.set_mut(app, "lib_name", lib_name);
     map.set_mut(app, "min_sdk", apk_min_sdk);
     map.set_mut(app, "target_sdk", apk_target_sdk);
-    map.set_mut(app, "label_text", "");
+    map.set_mut(app, "label_text", "Native application");
+    map.set_mut(app, "label_explicit", false);
     map.set_mut(app, "label_name", "");
     map.set_mut(app, "icon_resource", "");
     map.set_mut(app, "theme_id", 0);
@@ -381,6 +388,26 @@ fn apk_new(package_name: string, version_code: u64, version_name: string, lib_na
     map.set_mut(app, "libs", list.new());
     map.set_mut(app, "dex", true);
     return app
+}
+
+fn apk_validate_package(package_name: string) -> bool {
+    if len(package_name) == 0 || len(package_name) >= 128 {
+        return false;
+    }
+    const parts: list = split(package_name, ".")
+    if len(parts) < 2 {
+        return false;
+    }
+    for part in parts {
+        if !android_ascii_identifier(part, true, false) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn apk_validate_library_name(name: string) -> bool {
+    return len(name) > 6 && starts_with(name, "lib") && ends_with(name, ".so") && !contains(name, "/") && !contains(name, "\\") && !contains(name, ":") && !contains(name, "\0");
 }
 
 fn apk_set_sdk(app: map, min_sdk: u64, target_sdk: u64) -> map {
@@ -393,14 +420,15 @@ fn apk_set_sdk(app: map, min_sdk: u64, target_sdk: u64) -> map {
 // resources; a declared string resource takes precedence.
 fn apk_label(app: map, text: string) -> map {
     assert(len(text) > 0, "apk label must not be empty");
-    return map.set(app, "label_text", text)
+    return map.set(map.set(app, "label_text", text), "label_explicit", true)
 }
 
-// Add an ASCII string resource and use it as the application label.
+// Add a string resource and use it as the application label.
 fn apk_label_string(app: map, name: string, text: string) -> map {
     const res: map = map.get(app, "res")
     let linked: map = map.set(app, "res", arsc_string(res, name, text))
     linked = map.set(linked, "label_name", name);
+    linked = map.set(linked, "label_explicit", true);
     return map.set(linked, "label_text", "")
 }
 
@@ -468,7 +496,6 @@ fn apk_payload_file(apk_path: string, local_path: string) -> map {
 
 fn apk_payload_bytes(apk_path: string, data: bytes) -> map {
     assert(len(apk_path) > 0, "apk entry path must not be empty");
-    assert(len(data) > 0, "apk entry payload must not be empty");
     let item: map = map.new()
     map.set_mut(item, "apk_path", apk_path);
     map.set_mut(item, "local_path", "");
@@ -542,7 +569,8 @@ fn apk_resource_file_compressed(app: map, type_name: string, res_name: string, d
 }
 
 fn apk_native_lib(app: map, abi_dir: string, so_name: string, local_path: string) -> map {
-    assert(len(abi_dir) > 0 && len(so_name) > 0, "apk native library needs an ABI directory and a name");
+    assert(abi_dir == "arm64-v8a" || abi_dir == "x86_64", "apk native ELF requires arm64-v8a or x86_64");
+    assert(apk_validate_library_name(so_name), "apk native library filename is invalid");
     assert(len(local_path) > 0, "apk native library needs a source file");
     let item: map = map.new()
     map.set_mut(item, "abi", abi_dir);
@@ -730,7 +758,7 @@ fn apk_res_add_values(app: map, local_dir: string, locale: string) -> map {
             out = apk_res_add_string(out, key, text, locale);
             // Bind the conventional name only while the application sets no
             // label at all: an explicit apk_label is a decision, not a default.
-            if key == "app_name" && map.get(out, "label_name") == "" && map.get(out, "label_text") == "" {
+            if key == "app_name" && map.get(out, "label_name") == "" && !map.get(out, "label_explicit") {
                 out = apk_use_label(out, key);
             }
         }
@@ -894,7 +922,54 @@ fn apk_payload_emit(item: map) {
 
 // Emit the complete APK described by `app`.
 fn apk_emit(app: map) {
+    assert(apk_validate_package(map.get(app, "package")), "apk package name is invalid");
+    const version_code: u64 = map.get(app, "version_code")
+    assert(version_code >= 1 && version_code <= 0x7fffffff, "apk version code must be a positive signed u32");
+    assert(len(map.get(app, "version_name")) > 0, "apk version name must not be empty");
+    const main_name: string = sym.join("lib", map.get(app, "lib_name"), ".so")
+    assert(apk_validate_library_name(main_name), "apk main native library name is invalid");
+    const libs: list = map.get(app, "libs")
+    assert(len(libs) > 0, "apk NativeActivity requires at least one native library");
+    let paths: list = list.of("AndroidManifest.xml", "resources.arsc", "classes.dex")
+    let declared_paths: list = list.new()
+    for key in list.of("icons", "assets") {
+        for item in map.get(app, key) {
+            const path: string = map.get(item, "apk_path")
+            for existing in paths {
+                assert(path != existing, "apk archive entry is duplicated");
+            }
+            list.push_mut(paths, path);
+            list.push_mut(declared_paths, path);
+        }
+    }
+    for lib in libs {
+        const abi: string = map.get(lib, "abi")
+        let found: bool = false
+        for candidate in libs {
+            if map.get(candidate, "abi") == abi && map.get(candidate, "so") == main_name {
+                found = true
+            }
+        }
+        assert(found, "apk native ABI is missing its main library");
+        const path: string = sym.join("lib/", abi, "/", map.get(lib, "so"))
+        for existing in paths {
+            assert(path != existing, "apk archive entry is duplicated");
+        }
+        list.push_mut(paths, path);
+        list.push_mut(declared_paths, path);
+    }
     const res: map = map.get(app, "res")
+    for item in map.get(res, "res") {
+        if map.get(item, "kind") == arsc_kind_file {
+            let found: bool = false
+            for path in declared_paths {
+                if path == map.get(item, "text") {
+                    found = true
+                }
+            }
+            assert(found, "apk file resource is missing its archive entry");
+        }
+    }
     const has_table: bool = len(map.get(res, "res")) > 0
 
     apk_set_min_sdk(map.get(app, "min_sdk"));

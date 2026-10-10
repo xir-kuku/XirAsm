@@ -35,6 +35,8 @@ For hand-written PE/ELF headers, directories, section tables, program headers, o
 5. [Common Rules and Mistakes](format-tutorial/05-common-rules.md)
 6. [macOS Mach-O](format-tutorial/06-macos-macho.md)
 
+See [Format validation](format-validation.md) for dynamic pointers and container input checks.
+
 ## Quick Choice Table
 
 | Goal | Start with | Main calls |

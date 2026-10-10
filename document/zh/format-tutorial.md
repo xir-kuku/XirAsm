@@ -35,6 +35,8 @@ import("format/format.inc")
 5. [通用规则和常见错误](format-tutorial/05-common-rules.md)
 6. [macOS Mach-O](format-tutorial/06-macos-macho.md)
 
+动态指针和容器输入检查见[格式校验](format-validation.md)。
+
 ## 快速选择
 
 | 目标 | 起始函数 | 主要操作 |
