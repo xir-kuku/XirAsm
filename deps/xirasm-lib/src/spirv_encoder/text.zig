@@ -17,6 +17,7 @@ pub const ParseError = Allocator.Error || error{
     ExpectedOperand,
     TooManyOperands,
     InvalidInteger,
+    UnsupportedFloatEncoding,
     InvalidString,
     InstructionTooLong,
     InvalidHeaderBound,
@@ -56,12 +57,15 @@ pub const ScalarType = union(enum) {
     },
     float: struct {
         width: u32,
+        encoding: ?Word = null,
     },
 };
 
 pub const ParseContext = struct {
     scalar_types: std.AutoHashMapUnmanaged(Word, ScalarType) = .empty,
-    ext_inst_sets: std.AutoHashMapUnmanaged(Word, tables.ExtInstSet) = .empty,
+    /// Result ID to its declared type, needed for OpSwitch literal widths.
+    result_types: std.AutoHashMapUnmanaged(Word, Word) = .empty,
+    ext_inst_sets: std.AutoHashMapUnmanaged(Word, ?tables.ExtInstSet) = .empty,
     /// Symbolic ID name to the number the pre-scan assigned it.
     ///
     /// The keys borrow the bytes of the source text that was pre-scanned, so that
@@ -80,6 +84,7 @@ pub const ParseContext = struct {
 
     pub fn deinit(self: *ParseContext, allocator: Allocator) void {
         self.scalar_types.deinit(allocator);
+        self.result_types.deinit(allocator);
         self.ext_inst_sets.deinit(allocator);
         self.symbols.deinit(allocator);
         self.* = undefined;
@@ -87,6 +92,7 @@ pub const ParseContext = struct {
 
     pub fn reset(self: *ParseContext) void {
         self.scalar_types.clearRetainingCapacity();
+        self.result_types.clearRetainingCapacity();
         self.ext_inst_sets.clearRetainingCapacity();
         self.symbols.clearRetainingCapacity();
         self.diagnostic = null;
@@ -343,6 +349,7 @@ pub fn parseLineWithContext(
 
     var max_id = result_id orelse 0;
     var result_type_id: ?Word = null;
+    var switch_type_id: ?Word = null;
     var operand_index: usize = 0;
     while (operand_index < opcode.operands.len) : (operand_index += 1) {
         const operand = opcode.operands[operand_index];
@@ -367,16 +374,19 @@ pub fn parseLineWithContext(
             },
             .variable => {
                 while (tokenizer.peek() != null) {
-                    try appendOperand(allocator, context, &operands, &tokenizer, operand.kind, result_type_id, &max_id);
+                    try appendOperand(allocator, context, &operands, &tokenizer, operand.kind, switch_type_id orelse result_type_id, &max_id);
                 }
             },
+        }
+        if (opcode.opcode == 251 and operand_index == 0 and operands.items.len != 0) {
+            if (context) |ctx| switch_type_id = ctx.result_types.get(operands.items[0]);
         }
     }
 
     if (result_id != null) return error.ExpectedOperand;
     if (tokenizer.next() != null) return error.TooManyOperands;
 
-    const word_count = operands.items.len + 1;
+    const word_count = std.math.add(usize, operands.items.len, 1) catch return error.InstructionTooLong;
     if (word_count > std.math.maxInt(u16)) return error.InstructionTooLong;
 
     var words: std.ArrayListUnmanaged(Word) = .empty;
@@ -391,6 +401,11 @@ pub fn parseLineWithContext(
 
     if (context) |ctx| {
         try recordParsedFacts(allocator, ctx, opcode.opcode, owned_words);
+        if (opcode.operands.len >= 2 and opcode.operands[0].kind == .id_result_type and
+            opcode.operands[1].kind == .id_result)
+        {
+            try ctx.result_types.put(allocator, owned_words[2], owned_words[1]);
+        }
     }
 
     return .{
@@ -446,7 +461,7 @@ fn appendOperand(
             try appendSpecConstantOp(allocator, context, out, tokenizer, result_type_id, max_id);
         },
         .pair_literal_integer_id_ref => {
-            try appendWord(allocator, out, try parseWord(tokenizer.next() orelse return error.ExpectedOperand));
+            try appendContextDependentNumber(allocator, context, out, tokenizer.next() orelse return error.ExpectedOperand, result_type_id);
             const id = try parseId(context, tokenizer.next() orelse return error.ExpectedOperand);
             if (id > max_id.*) max_id.* = id;
             try appendWord(allocator, out, id);
@@ -482,12 +497,14 @@ fn appendExtInst(
     max_id: *Word,
 ) ParseError!void {
     const token = tokenizer.next() orelse return error.ExpectedOperand;
-    const set = if (context) |ctx|
+    const imported_set = if (context) |ctx|
         if (set_id) |id| ctx.ext_inst_sets.get(id) else null
     else
         null;
-    const instruction = if (set) |known_set|
-        tables.lookupExtInst(known_set, token)
+    // Null inside a present map entry means an imported, unknown set. Only a
+    // line without an import context uses the legacy GLSL name convenience.
+    const instruction = if (imported_set) |set|
+        if (set) |known_set| tables.lookupExtInst(known_set, token) else null
     else
         tables.lookupGlslStd450ExtInst(token);
     if (instruction) |inst| {
@@ -507,12 +524,11 @@ fn appendSpecConstantOp(
     max_id: *Word,
 ) ParseError!void {
     const token = tokenizer.next() orelse return error.ExpectedOperand;
-    if (tables.lookupSpecConstantOpcode(token)) |opcode| {
-        try appendWord(allocator, out, opcode.opcode);
-        try appendDynamicOperands(allocator, context, out, tokenizer, opcode.operands, result_type_id, max_id);
-        return;
-    }
-    try appendWord(allocator, out, try parseWord(token));
+    const opcode = tables.lookupSpecConstantOpcode(token) orelse
+        tables.lookupSpecConstantOpcodeValue(parseWord(token) catch return error.UnknownOperand) orelse
+        return error.UnknownOperand;
+    try appendWord(allocator, out, opcode.opcode);
+    try appendDynamicOperands(allocator, context, out, tokenizer, opcode.operands, result_type_id, max_id);
 }
 
 fn appendDynamicOperands(
@@ -556,8 +572,7 @@ fn appendContextDependentNumber(
         }
     }
     if (isFloatToken(token)) {
-        const value = std.fmt.parseFloat(f32, token) catch return error.InvalidInteger;
-        try appendWord(allocator, out, @bitCast(value));
+        try appendFloating(allocator, out, token, 32, null);
         return;
     }
 
@@ -571,23 +586,7 @@ fn appendTypedContextDependentNumber(
     scalar: ScalarType,
 ) ParseError!void {
     switch (scalar) {
-        .float => |info| switch (info.width) {
-            16 => {
-                const value = std.fmt.parseFloat(f16, token) catch return error.InvalidInteger;
-                try appendWord(allocator, out, @as(u16, @bitCast(value)));
-            },
-            32 => {
-                const value = std.fmt.parseFloat(f32, token) catch return error.InvalidInteger;
-                try appendWord(allocator, out, @bitCast(value));
-            },
-            64 => {
-                const value = std.fmt.parseFloat(f64, token) catch return error.InvalidInteger;
-                const raw: u64 = @bitCast(value);
-                try appendWord(allocator, out, @truncate(raw));
-                try appendWord(allocator, out, @truncate(raw >> 32));
-            },
-            else => return error.InvalidInteger,
-        },
+        .float => |info| try appendFloating(allocator, out, token, info.width, info.encoding),
         .int => |info| try appendTypedInteger(allocator, out, token, info.width, info.signed),
     }
 }
@@ -600,7 +599,14 @@ fn appendTypedInteger(
     signed: bool,
 ) ParseError!void {
     if (width == 0 or width > 64) return error.InvalidInteger;
-    const raw: u64 = if (signed) signed_value: {
+    const raw: u64 = if (signed and (std.mem.startsWith(u8, token, "0x") or std.mem.startsWith(u8, token, "0X"))) hex_value: {
+        const value = try parseUnsigned64(token);
+        if (width == 64) break :hex_value value;
+        const shift: u6 = @intCast(width);
+        if (value >= @as(u64, 1) << shift) return error.InvalidInteger;
+        const sign_bit = @as(u64, 1) << @as(u6, @intCast(width - 1));
+        break :hex_value if (value & sign_bit != 0) value | (@as(u64, std.math.maxInt(u64)) << shift) else value;
+    } else if (signed) signed_value: {
         const value = std.fmt.parseInt(i64, token, 0) catch return error.InvalidInteger;
         if (width < 64) {
             const shift: u6 = @intCast(width - 1);
@@ -633,9 +639,7 @@ fn appendValueEnum(
     const token = tokenizer.next() orelse return error.ExpectedOperand;
     const enumerant = tables.lookupEnumerant(kind, token) orelse return error.UnknownOperand;
     try appendWord(allocator, out, enumerant.value);
-    for (enumerant.parameters) |parameter_kind| {
-        try appendOperand(allocator, context, out, tokenizer, parameter_kind, result_type_id, max_id);
-    }
+    try appendDynamicOperands(allocator, context, out, tokenizer, enumerant.parameters, result_type_id, max_id);
 }
 
 fn appendBitEnum(
@@ -648,35 +652,23 @@ fn appendBitEnum(
     max_id: *Word,
 ) ParseError!void {
     const token = tokenizer.next() orelse return error.ExpectedOperand;
-    if (std.mem.indexOfScalar(u8, token, '|') == null) {
-        if (tables.lookupEnumerant(kind, token)) |enumerant| {
-            try appendWord(allocator, out, enumerant.value);
-            for (enumerant.parameters) |parameter_kind| {
-                try appendOperand(allocator, context, out, tokenizer, parameter_kind, result_type_id, max_id);
-            }
-            return;
-        }
-        try appendWord(allocator, out, try parseWord(token));
-        return;
-    }
-
     var mask: Word = 0;
-    var parameter_kinds: std.ArrayListUnmanaged([]const tables.OperandKind) = .empty;
-    defer parameter_kinds.deinit(allocator);
-
     var terms = std.mem.splitScalar(u8, token, '|');
     while (terms.next()) |term| {
         if (term.len == 0) return error.UnknownOperand;
-        const enumerant = tables.lookupEnumerant(kind, term) orelse return error.UnknownOperand;
-        mask |= enumerant.value;
-        try parameter_kinds.append(allocator, enumerant.parameters);
+        mask |= if (tables.lookupEnumerant(kind, term)) |enumerant| enumerant.value else try parseWord(term);
     }
 
     try appendWord(allocator, out, mask);
-    for (parameter_kinds.items) |parameters| {
-        for (parameters) |parameter_kind| {
-            try appendOperand(allocator, context, out, tokenizer, parameter_kind, result_type_id, max_id);
-        }
+    // Tables are sorted by value within a kind. Aliases share one parameter
+    // sequence, and parameter order depends on the mask bits, not text order.
+    var previous: ?Word = null;
+    for (tables.enumerants) |enumerant| {
+        if (enumerant.kind != kind or enumerant.value == 0) continue;
+        if (previous == enumerant.value) continue;
+        previous = enumerant.value;
+        if (mask & enumerant.value != enumerant.value) continue;
+        try appendDynamicOperands(allocator, context, out, tokenizer, enumerant.parameters, result_type_id, max_id);
     }
 }
 
@@ -694,6 +686,7 @@ fn appendString(allocator: Allocator, out: *std.ArrayListUnmanaged(Word), raw: [
     var escaping = false;
     while (index < raw.len - 1) : (index += 1) {
         const ch = raw[index];
+        if (ch == 0) return error.InvalidString;
         if (ch == '\\' and !escaping) {
             escaping = true;
             continue;
@@ -721,8 +714,127 @@ fn appendString(allocator: Allocator, out: *std.ArrayListUnmanaged(Word), raw: [
 }
 
 fn appendFloat32(allocator: Allocator, out: *std.ArrayListUnmanaged(Word), token: []const u8) ParseError!void {
+    try appendFloating(allocator, out, token, 32, null);
+}
+
+const FloatLayout = struct {
+    width: u32,
+    fraction_width: u6,
+    bias: i64,
+
+    fn get(width: u32, encoding: ?Word) ParseError!FloatLayout {
+        if (encoding) |value| {
+            if (value == 0 and width == 16) return .{ .width = 16, .fraction_width = 7, .bias = 127 };
+            return error.UnsupportedFloatEncoding;
+        }
+        return switch (width) {
+            16 => .{ .width = width, .fraction_width = 10, .bias = 15 },
+            32 => .{ .width = width, .fraction_width = 23, .bias = 127 },
+            64 => .{ .width = width, .fraction_width = 52, .bias = 1023 },
+            else => error.UnsupportedFloatEncoding,
+        };
+    }
+};
+
+fn appendFloating(allocator: Allocator, out: *std.ArrayListUnmanaged(Word), token: []const u8, width: u32, encoding: ?Word) ParseError!void {
+    const layout = try FloatLayout.get(width, encoding);
+    const body = if (token.len != 0 and (token[0] == '-' or token[0] == '+')) token[1..] else token;
+    const raw: u64 = if (std.mem.startsWith(u8, body, "0x") or std.mem.startsWith(u8, body, "0X"))
+        try parseHexFloatBits(token, layout)
+    else switch (width) {
+        16 => try parseSmallDecimalFloat(token, layout),
+        32 => finite: {
+            const value = std.fmt.parseFloat(f32, token) catch return error.InvalidInteger;
+            if (!std.math.isFinite(value)) return error.InvalidInteger;
+            break :finite @as(u32, @bitCast(value));
+        },
+        64 => finite: {
+            const value = std.fmt.parseFloat(f64, token) catch return error.InvalidInteger;
+            if (!std.math.isFinite(value)) return error.InvalidInteger;
+            break :finite @as(u64, @bitCast(value));
+        },
+        else => return error.UnsupportedFloatEncoding,
+    };
+    try appendWord(allocator, out, @truncate(raw));
+    if (width == 64) try appendWord(allocator, out, @truncate(raw >> 32));
+}
+
+// SPIRV-Tools parses decimal half/BFloat16 through f32, rounding toward zero.
+fn parseSmallDecimalFloat(token: []const u8, layout: FloatLayout) ParseError!u64 {
     const value = std.fmt.parseFloat(f32, token) catch return error.InvalidInteger;
-    try appendWord(allocator, out, @bitCast(value));
+    if (!std.math.isFinite(value)) return error.InvalidInteger;
+    const raw: u32 = @bitCast(value);
+    const sign: u64 = @as(u64, raw >> 31) << 15;
+    const fraction: u64 = raw & 0x7f_ffff;
+    const exponent32 = (raw >> 23) & 0xff;
+    const discard: u6 = 23 - layout.fraction_width;
+    if (exponent32 == 0) return sign | (if (layout.bias == 127) fraction >> discard else 0);
+    const exponent = @as(i64, exponent32) - 127 + layout.bias;
+    if (exponent >= layout.bias * 2 + 1) return error.InvalidInteger;
+    if (exponent <= 0) {
+        if (exponent <= -@as(i64, layout.fraction_width)) return sign;
+        const shift: u6 = @intCast(@as(i64, discard) + 1 - exponent);
+        return sign | ((fraction | 0x80_0000) >> shift);
+    }
+    return sign | (@as(u64, @intCast(exponent)) << layout.fraction_width) | (fraction >> discard);
+}
+
+/// SPIR-V hex floats encode bits even at the all-ones exponent. Native float
+/// parsing would round those NaN payloads to infinity before we could emit them.
+fn parseHexFloatBits(token: []const u8, layout: FloatLayout) ParseError!u64 {
+    const fraction_width = layout.fraction_width;
+    const bias = layout.bias;
+    const negative = token.len != 0 and token[0] == '-';
+    const body = if (token.len != 0 and (token[0] == '-' or token[0] == '+')) token[1..] else token;
+    if (body.len < 3) return error.InvalidInteger;
+    const digits = body[2..];
+    const p = std.mem.indexOfAny(u8, digits, "pP") orelse return error.InvalidInteger;
+    const mantissa = digits[0..p];
+    const written_exponent = std.fmt.parseInt(i64, digits[p + 1 ..], 10) catch return error.InvalidInteger;
+    const point = std.mem.indexOfScalar(u8, mantissa, '.') orelse mantissa.len;
+    if (point < mantissa.len and std.mem.indexOfScalar(u8, mantissa[point + 1 ..], '.') != null) return error.InvalidInteger;
+    var fraction: u64 = 0;
+    var fraction_bits: u6 = 0;
+    var leading_exponent: ?i64 = null;
+    var digit_index: usize = 0;
+    for (mantissa) |ch| {
+        if (ch == '.') continue;
+        const nibble = std.fmt.charToDigit(ch, 16) catch return error.InvalidInteger;
+        var bit_index: u3 = 4;
+        while (bit_index > 0) {
+            bit_index -= 1;
+            const bit = (nibble >> @as(u3, bit_index)) & 1;
+            if (leading_exponent == null) {
+                if (bit == 0) continue;
+                const left = std.math.cast(i64, point) orelse return error.InvalidInteger;
+                const right = std.math.cast(i64, digit_index) orelse return error.InvalidInteger;
+                const nibble_exponent = std.math.sub(i64, try checkedFloatSub(left, right), 1) catch return error.InvalidInteger;
+                const exponent_bits = std.math.mul(i64, nibble_exponent, 4) catch return error.InvalidInteger;
+                leading_exponent = std.math.add(i64, exponent_bits, bit_index) catch return error.InvalidInteger;
+            } else if (fraction_bits < fraction_width) {
+                fraction |= @as(u64, bit) << (fraction_width - 1 - fraction_bits);
+                fraction_bits += 1;
+            }
+        }
+        digit_index += 1;
+    }
+    if (digit_index == 0) return error.InvalidInteger;
+    const sign = if (negative) @as(u64, 1) << @as(u6, @intCast(layout.width - 1)) else 0;
+    const leading = leading_exponent orelse return sign;
+    const unbiased = std.math.add(i64, written_exponent, leading) catch return error.InvalidInteger;
+    const exponent = std.math.add(i64, unbiased, bias) catch return error.InvalidInteger;
+    const maximum = bias * 2 + 1;
+    if (exponent > maximum) return sign | (@as(u64, @intCast(maximum)) << fraction_width);
+    if (exponent <= 0) {
+        if (exponent <= -@as(i64, fraction_width)) return sign;
+        const shift: u6 = @intCast(1 - exponent);
+        return sign | (((@as(u64, 1) << fraction_width) | fraction) >> shift);
+    }
+    return sign | (@as(u64, @intCast(exponent)) << fraction_width) | fraction;
+}
+
+fn checkedFloatSub(left: i64, right: i64) ParseError!i64 {
+    return std.math.sub(i64, left, right) catch error.InvalidInteger;
 }
 
 fn parseId(context: ?*ParseContext, token: []const u8) ParseError!Word {
@@ -732,7 +844,7 @@ fn parseId(context: ?*ParseContext, token: []const u8) ParseError!Word {
     // A literal keeps the number it was written with. Symbolic IDs are numbered
     // by the pre-scan, so a name that reaches here without an entry was never
     // defined anywhere in the module.
-    if (literalIdValue(body)) |id| return id;
+    if (literalIdValue(body)) |id| return if (id == 0) error.ExpectedId else id;
     if (!isSymbolicIdBody(body)) return error.ExpectedId;
     if (context) |ctx| {
         if (ctx.symbols.get(body)) |id| return id;
@@ -824,6 +936,7 @@ const Tokenizer = struct {
     fn nextRaw(self: *Tokenizer) ?[]const u8 {
         self.skipSpace();
         if (self.index >= self.text.len) return null;
+        if (self.text[self.index] == ';') return null;
 
         const start = self.index;
         if (self.text[self.index] == '"') {
@@ -845,7 +958,7 @@ const Tokenizer = struct {
             return self.text[start..self.index];
         }
 
-        while (self.index < self.text.len and !isSpace(self.text[self.index])) : (self.index += 1) {}
+        while (self.index < self.text.len and !isSpace(self.text[self.index]) and self.text[self.index] != ';') : (self.index += 1) {}
         return self.text[start..self.index];
     }
 
@@ -867,9 +980,7 @@ fn recordParsedFacts(
     switch (opcode) {
         11 => {
             if (words.len < 3) return;
-            if (extInstSetFromWords(words[2..])) |set| {
-                try context.ext_inst_sets.put(allocator, words[1], set);
-            }
+            try context.ext_inst_sets.put(allocator, words[1], extInstSetFromWords(words[2..]));
         },
         21 => {
             if (words.len < 4) return;
@@ -882,6 +993,7 @@ fn recordParsedFacts(
             if (words.len < 3) return;
             try context.scalar_types.put(allocator, words[1], .{ .float = .{
                 .width = words[2],
+                .encoding = if (words.len > 3) words[3] else null,
             } });
         },
         else => {},

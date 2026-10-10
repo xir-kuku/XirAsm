@@ -1,5 +1,25 @@
 // Generated file. Do not edit.
-// Do not edit by hand.
+// SPIR-V 1.6 revision 7.
+// spirv.core.grammar.json: sha256 b3a3be9ce86e016bb0c0328ec4f2d5876bd7af5f0386adfaa544eec1c89fe080
+// extinst.glsl.std.450.grammar.json: sha256 cac419d11e1e8997d91d7a2e746ebac4c48ccdc88f173c97c9c759a1134d8aec
+// extinst.opencl.std.100.grammar.json: sha256 8557e9a50f055a84f7988d1dd8646134528fcc9d109def195888803bc9cb51ac
+// extinst.opencl.debuginfo.100.grammar.json: sha256 71acb00d98fb68b06dc033ea1c98f66b8d4b35ead0d5c34396ac590c87fdeb90
+// extinst.nonsemantic.shader.debuginfo.100.grammar.json: sha256 552ac3ed2d7cbd5b2d54667fa378b96967ec368118732a03f6e8d6862499a48d
+// extinst.nonsemantic.shader.debuginfo.grammar.json: sha256 9b05ba7f749b9360af00a995d431b43b04f42857e9517db478f291bf51215974
+// extinst.debuginfo.grammar.json: sha256 927ee250d6c2c7a2e6f8b6c89583cf2e72002e5e2d64ee811476747b0936469c
+// extinst.nonsemantic.debugprintf.grammar.json: sha256 c101f9b54a3f2e513aaeaee251a5ca7d542269cf40a2ab2296ff14b6cc332c36
+// extinst.spv-amd-shader-trinary-minmax.grammar.json: sha256 6ef34572b108e457b25f86f74b3b718230026ab2ed88f3be895201af32027172
+// extinst.spv-amd-shader-explicit-vertex-parameter.grammar.json: sha256 9343c4acfc86d39f47ad8f3dac61b8b6248d8583fc05c6f19b541b335171b512
+// extinst.spv-amd-gcn-shader.grammar.json: sha256 65c2b4e0c81b164d11d9edf1b00fe2fdb5fd7761d3f94e607f796913ae66d4f5
+// extinst.spv-amd-shader-ballot.grammar.json: sha256 279715d5778fb3750bf4a9332b086808773bf433851875a125ae13c4276fb7bf
+// extinst.nonsemantic.clspvreflection.grammar.json: sha256 b981812fb2ca1f369d7a0bbe940f524f3e32b1c118aca208690e39d77065633a
+// extinst.nonsemantic.graph.debuginfo.grammar.json: sha256 1be2ad9cb96b529fe9b91158fde58ddb8c8ae2f56155318f1b926fa477edeb89
+// extinst.nonsemantic.vkspreflection.grammar.json: sha256 0800008054befa10fa60937ad2b0a5f185e4b7c804825de585f82f681e0c1359
+// extinst.nonsemantic.debugbreak.grammar.json: sha256 486129d2a02666332009319ded75c557392e0cc068f29e7a8ab29c4196ecbad0
+// extinst.arm.motion-engine.100.grammar.json: sha256 4f16a0967fd8d143eba7687fc89604611f4baa4939a4ce5a8140c27702a8257f
+// extinst.arm.experimental-ml-operations.grammar.json: sha256 aebbd76d14825d6fd1286e798b722318d29e2fc7b28e2dbd0e07c18d758836f4
+// extinst.tosa.001000.1.grammar.json: sha256 b82c5b382f49db2c6a2a14f898ffff9ee5c137313528b7235ef41900de3c7ef2
+// OpSpecConstantOp list from binary.adoc: sha256 334f76a9d67f68bfb64db7b0b6b5a4767de73f8f148aef1e92358a56e170ff61
 
 const types = @import("types.zig");
 
@@ -8,7 +28,6 @@ pub const Word = types.Word;
 pub const OperandKind = enum(u16) {
     access_qualifier,
     addressing_model,
-    build_identifier_flags,
     built_in,
     capability,
     component_type,
@@ -17,12 +36,6 @@ pub const OperandKind = enum(u16) {
     cooperative_matrix_reduce,
     cooperative_matrix_use,
     cooperative_vector_matrix_layout,
-    debug_base_type_attribute_encoding,
-    debug_composite_type,
-    debug_imported_entity,
-    debug_info_flags,
-    debug_operation,
-    debug_type_qualifier,
     decoration,
     dim,
     execution_mode,
@@ -35,6 +48,7 @@ pub const OperandKind = enum(u16) {
     fragment_shading_rate,
     function_control,
     function_parameter_attribute,
+    gather_modes,
     group_operation,
     host_access_qualifier,
     id_memory_semantics,
@@ -84,6 +98,32 @@ pub const OperandKind = enum(u16) {
     tensor_addressing_operands,
     tensor_clamp_mode,
     tensor_operands,
+    debug_info_debug_base_type_attribute_encoding,
+    debug_info_debug_composite_type,
+    debug_info_debug_info_flags,
+    debug_info_debug_operation,
+    debug_info_debug_type_qualifier,
+    nonsemantic_clspv_reflection_kernel_property_flags,
+    nonsemantic_shader_debug_info_100_build_identifier_flags,
+    nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding,
+    nonsemantic_shader_debug_info_100_debug_composite_type,
+    nonsemantic_shader_debug_info_100_debug_imported_entity,
+    nonsemantic_shader_debug_info_100_debug_info_flags,
+    nonsemantic_shader_debug_info_100_debug_operation,
+    nonsemantic_shader_debug_info_100_debug_type_qualifier,
+    nonsemantic_shader_debug_info_build_identifier_flags,
+    nonsemantic_shader_debug_info_debug_base_type_attribute_encoding,
+    nonsemantic_shader_debug_info_debug_composite_type,
+    nonsemantic_shader_debug_info_debug_imported_entity,
+    nonsemantic_shader_debug_info_debug_info_flags,
+    nonsemantic_shader_debug_info_debug_operation,
+    nonsemantic_shader_debug_info_debug_type_qualifier,
+    opencl_debug_info_100_debug_base_type_attribute_encoding,
+    opencl_debug_info_100_debug_composite_type,
+    opencl_debug_info_100_debug_imported_entity,
+    opencl_debug_info_100_debug_info_flags,
+    opencl_debug_info_100_debug_operation,
+    opencl_debug_info_100_debug_type_qualifier,
 };
 
 pub const OperandCategory = enum {
@@ -116,7 +156,7 @@ pub const EnumerantInfo = struct {
     kind: OperandKind,
     name: []const u8,
     value: Word,
-    parameters: []const OperandKind = &.{},
+    parameters: []const OperandInfo = &.{},
 };
 
 pub const ExtInstInfo = struct {
@@ -130,18 +170,47 @@ pub const ExtInstSet = enum {
     opencl_std,
     opencl_debug_info_100,
     nonsemantic_shader_debug_info_100,
+    nonsemantic_shader_debug_info,
+    debug_info,
+    nonsemantic_debug_printf,
+    amd_trinary_minmax,
+    amd_explicit_vertex_parameter,
+    amd_gcn_shader,
+    amd_shader_ballot,
+    nonsemantic_clspv_reflection,
+    nonsemantic_graph_debug_info,
+    nonsemantic_vksp_reflection,
+    nonsemantic_debug_break,
+    arm_motion_engine_100,
+    arm_experimental_ml_operations,
+    tosa_001000_1,
 };
 
 pub const ExtInstSetInfo = struct {
     name: []const u8,
     set: ExtInstSet,
+    prefix: bool = false,
 };
 
 pub const ext_inst_sets = [_]ExtInstSetInfo{
-    .{ .name = "GLSL.std.450", .set = .glsl_std_450 },
-    .{ .name = "OpenCL.std", .set = .opencl_std },
-    .{ .name = "OpenCL.DebugInfo.100", .set = .opencl_debug_info_100 },
-    .{ .name = "NonSemantic.Shader.DebugInfo.100", .set = .nonsemantic_shader_debug_info_100 },
+    .{ .name = "GLSL.std.450", .set = .glsl_std_450, .prefix = false },
+    .{ .name = "OpenCL.std", .set = .opencl_std, .prefix = false },
+    .{ .name = "OpenCL.DebugInfo.100", .set = .opencl_debug_info_100, .prefix = false },
+    .{ .name = "NonSemantic.Shader.DebugInfo.100", .set = .nonsemantic_shader_debug_info_100, .prefix = false },
+    .{ .name = "NonSemantic.Shader.DebugInfo.", .set = .nonsemantic_shader_debug_info, .prefix = true },
+    .{ .name = "DebugInfo", .set = .debug_info, .prefix = false },
+    .{ .name = "NonSemantic.DebugPrintf", .set = .nonsemantic_debug_printf, .prefix = false },
+    .{ .name = "SPV_AMD_shader_trinary_minmax", .set = .amd_trinary_minmax, .prefix = false },
+    .{ .name = "SPV_AMD_shader_explicit_vertex_parameter", .set = .amd_explicit_vertex_parameter, .prefix = false },
+    .{ .name = "SPV_AMD_gcn_shader", .set = .amd_gcn_shader, .prefix = false },
+    .{ .name = "SPV_AMD_shader_ballot", .set = .amd_shader_ballot, .prefix = false },
+    .{ .name = "NonSemantic.ClspvReflection.", .set = .nonsemantic_clspv_reflection, .prefix = true },
+    .{ .name = "NonSemantic.Graph.DebugInfo.", .set = .nonsemantic_graph_debug_info, .prefix = true },
+    .{ .name = "NonSemantic.VkspReflection.", .set = .nonsemantic_vksp_reflection, .prefix = true },
+    .{ .name = "NonSemantic.DebugBreak", .set = .nonsemantic_debug_break, .prefix = false },
+    .{ .name = "Arm.MotionEngine.100", .set = .arm_motion_engine_100, .prefix = false },
+    .{ .name = "Arm.ExperimentalMLOperations.", .set = .arm_experimental_ml_operations, .prefix = true },
+    .{ .name = "TOSA.001000.1", .set = .tosa_001000_1, .prefix = false },
 };
 
 const operands_op_nop = [_]OperandInfo{};
@@ -2230,6 +2299,12 @@ const operands_op_type_graph_arm = [_]OperandInfo{
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .variable },
 };
+const operands_op_bitcast_extract_ext = [_]OperandInfo{
+    .{ .kind = .id_result_type, .quantifier = .one },
+    .{ .kind = .id_result, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
 const operands_op_terminate_invocation = [_]OperandInfo{};
 const operands_op_type_untyped_pointer_khr = [_]OperandInfo{
     .{ .kind = .id_result, .quantifier = .one },
@@ -2579,6 +2654,13 @@ const operands_op_image_block_match_gather_sadqcom = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
 };
+const operands_op_b_float16_mul_add_qcom = [_]OperandInfo{
+    .{ .kind = .id_result_type, .quantifier = .one },
+    .{ .kind = .id_result, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
 const operands_op_composite_construct_coop_mat_qcom = [_]OperandInfo{
     .{ .kind = .id_result_type, .quantifier = .one },
     .{ .kind = .id_result, .quantifier = .one },
@@ -2594,6 +2676,15 @@ const operands_op_extract_sub_array_qcom = [_]OperandInfo{
     .{ .kind = .id_result, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
+};
+const operands_op_image_gather_qcom = [_]OperandInfo{
+    .{ .kind = .id_result_type, .quantifier = .one },
+    .{ .kind = .id_result, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .image_operands, .quantifier = .optional },
 };
 const operands_op_group_i_add_non_uniform_amd = [_]OperandInfo{
     .{ .kind = .id_result_type, .quantifier = .one },
@@ -3052,7 +3143,7 @@ const operands_op_cooperative_vector_matrix_mul_add_nv = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .optional },
     .{ .kind = .cooperative_matrix_operands, .quantifier = .optional },
 };
-const operands_op_cooperative_matrix_convert_nv = [_]OperandInfo{
+const operands_op_cooperative_matrix_convert_use_ext = [_]OperandInfo{
     .{ .kind = .id_result_type, .quantifier = .one },
     .{ .kind = .id_result, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
@@ -3440,9 +3531,15 @@ const operands_op_cooperative_matrix_length_nv = [_]OperandInfo{
     .{ .kind = .id_result, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
 };
+const operands_op_cooperative_matrix_get_coordinate_ext = [_]OperandInfo{
+    .{ .kind = .id_result_type, .quantifier = .one },
+    .{ .kind = .id_result, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
 const operands_op_begin_invocation_interlock_ext = [_]OperandInfo{};
 const operands_op_end_invocation_interlock_ext = [_]OperandInfo{};
-const operands_op_cooperative_matrix_reduce_nv = [_]OperandInfo{
+const operands_op_cooperative_matrix_reduce_ext = [_]OperandInfo{
     .{ .kind = .id_result_type, .quantifier = .one },
     .{ .kind = .id_result, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
@@ -3465,7 +3562,7 @@ const operands_op_cooperative_matrix_store_tensor_nv = [_]OperandInfo{
     .{ .kind = .memory_access, .quantifier = .one },
     .{ .kind = .tensor_addressing_operands, .quantifier = .one },
 };
-const operands_op_cooperative_matrix_per_element_op_nv = [_]OperandInfo{
+const operands_op_cooperative_matrix_per_element_op_ext = [_]OperandInfo{
     .{ .kind = .id_result_type, .quantifier = .one },
     .{ .kind = .id_result, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
@@ -5926,6 +6023,7 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpGraphSetOutputARM", .opcode = 4185, .operands = &operands_op_graph_set_output_arm },
     .{ .name = "OpGraphEndARM", .opcode = 4186, .operands = &operands_op_graph_end_arm },
     .{ .name = "OpTypeGraphARM", .opcode = 4190, .operands = &operands_op_type_graph_arm },
+    .{ .name = "OpBitcastExtractEXT", .opcode = 4195, .operands = &operands_op_bitcast_extract_ext },
     .{ .name = "OpTerminateInvocation", .opcode = 4416, .operands = &operands_op_terminate_invocation },
     .{ .name = "OpTypeUntypedPointerKHR", .opcode = 4417, .operands = &operands_op_type_untyped_pointer_khr },
     .{ .name = "OpUntypedVariableKHR", .opcode = 4418, .operands = &operands_op_untyped_variable_khr },
@@ -5951,11 +6049,17 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpIgnoreIntersectionKHR", .opcode = 4448, .operands = &operands_op_ignore_intersection_khr },
     .{ .name = "OpTerminateRayKHR", .opcode = 4449, .operands = &operands_op_terminate_ray_khr },
     .{ .name = "OpSDot", .opcode = 4450, .operands = &operands_op_s_dot },
+    .{ .name = "OpSDotKHR", .opcode = 4450, .operands = &operands_op_s_dot },
     .{ .name = "OpUDot", .opcode = 4451, .operands = &operands_op_u_dot },
+    .{ .name = "OpUDotKHR", .opcode = 4451, .operands = &operands_op_u_dot },
     .{ .name = "OpSUDot", .opcode = 4452, .operands = &operands_op_su_dot },
+    .{ .name = "OpSUDotKHR", .opcode = 4452, .operands = &operands_op_su_dot },
     .{ .name = "OpSDotAccSat", .opcode = 4453, .operands = &operands_op_s_dot_acc_sat },
+    .{ .name = "OpSDotAccSatKHR", .opcode = 4453, .operands = &operands_op_s_dot_acc_sat },
     .{ .name = "OpUDotAccSat", .opcode = 4454, .operands = &operands_op_u_dot_acc_sat },
+    .{ .name = "OpUDotAccSatKHR", .opcode = 4454, .operands = &operands_op_u_dot_acc_sat },
     .{ .name = "OpSUDotAccSat", .opcode = 4455, .operands = &operands_op_su_dot_acc_sat },
+    .{ .name = "OpSUDotAccSatKHR", .opcode = 4455, .operands = &operands_op_su_dot_acc_sat },
     .{ .name = "OpTypeCooperativeMatrixKHR", .opcode = 4456, .operands = &operands_op_type_cooperative_matrix_khr },
     .{ .name = "OpCooperativeMatrixLoadKHR", .opcode = 4457, .operands = &operands_op_cooperative_matrix_load_khr },
     .{ .name = "OpCooperativeMatrixStoreKHR", .opcode = 4458, .operands = &operands_op_cooperative_matrix_store_khr },
@@ -5980,9 +6084,11 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpImageBlockMatchWindowSADQCOM", .opcode = 4501, .operands = &operands_op_image_block_match_window_sadqcom },
     .{ .name = "OpImageBlockMatchGatherSSDQCOM", .opcode = 4502, .operands = &operands_op_image_block_match_gather_ssdqcom },
     .{ .name = "OpImageBlockMatchGatherSADQCOM", .opcode = 4503, .operands = &operands_op_image_block_match_gather_sadqcom },
+    .{ .name = "OpBFloat16MulAddQCOM", .opcode = 4505, .operands = &operands_op_b_float16_mul_add_qcom },
     .{ .name = "OpCompositeConstructCoopMatQCOM", .opcode = 4540, .operands = &operands_op_composite_construct_coop_mat_qcom },
     .{ .name = "OpCompositeExtractCoopMatQCOM", .opcode = 4541, .operands = &operands_op_composite_extract_coop_mat_qcom },
     .{ .name = "OpExtractSubArrayQCOM", .opcode = 4542, .operands = &operands_op_extract_sub_array_qcom },
+    .{ .name = "OpImageGatherQCOM", .opcode = 4545, .operands = &operands_op_image_gather_qcom },
     .{ .name = "OpGroupIAddNonUniformAMD", .opcode = 5000, .operands = &operands_op_group_i_add_non_uniform_amd },
     .{ .name = "OpGroupFAddNonUniformAMD", .opcode = 5001, .operands = &operands_op_group_f_add_non_uniform_amd },
     .{ .name = "OpGroupFMinNonUniformAMD", .opcode = 5002, .operands = &operands_op_group_f_min_non_uniform_amd },
@@ -6049,14 +6155,17 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpTypeHitObjectNV", .opcode = 5281, .operands = &operands_op_type_hit_object_nv },
     .{ .name = "OpImageSampleFootprintNV", .opcode = 5283, .operands = &operands_op_image_sample_footprint_nv },
     .{ .name = "OpTypeVectorIdEXT", .opcode = 5288, .operands = &operands_op_type_vector_id_ext },
+    .{ .name = "OpTypeCooperativeVectorNV", .opcode = 5288, .operands = &operands_op_type_vector_id_ext },
     .{ .name = "OpCooperativeVectorMatrixMulNV", .opcode = 5289, .operands = &operands_op_cooperative_vector_matrix_mul_nv },
     .{ .name = "OpCooperativeVectorOuterProductAccumulateNV", .opcode = 5290, .operands = &operands_op_cooperative_vector_outer_product_accumulate_nv },
     .{ .name = "OpCooperativeVectorReduceSumAccumulateNV", .opcode = 5291, .operands = &operands_op_cooperative_vector_reduce_sum_accumulate_nv },
     .{ .name = "OpCooperativeVectorMatrixMulAddNV", .opcode = 5292, .operands = &operands_op_cooperative_vector_matrix_mul_add_nv },
-    .{ .name = "OpCooperativeMatrixConvertNV", .opcode = 5293, .operands = &operands_op_cooperative_matrix_convert_nv },
+    .{ .name = "OpCooperativeMatrixConvertUseEXT", .opcode = 5293, .operands = &operands_op_cooperative_matrix_convert_use_ext },
+    .{ .name = "OpCooperativeMatrixConvertNV", .opcode = 5293, .operands = &operands_op_cooperative_matrix_convert_use_ext },
     .{ .name = "OpEmitMeshTasksEXT", .opcode = 5294, .operands = &operands_op_emit_mesh_tasks_ext },
     .{ .name = "OpSetMeshOutputsEXT", .opcode = 5295, .operands = &operands_op_set_mesh_outputs_ext },
     .{ .name = "OpGroupNonUniformPartitionEXT", .opcode = 5296, .operands = &operands_op_group_non_uniform_partition_ext },
+    .{ .name = "OpGroupNonUniformPartitionNV", .opcode = 5296, .operands = &operands_op_group_non_uniform_partition_ext },
     .{ .name = "OpWritePackedPrimitiveIndices4x8NV", .opcode = 5299, .operands = &operands_op_write_packed_primitive_indices4x8_nv },
     .{ .name = "OpFetchMicroTriangleVertexPositionNV", .opcode = 5300, .operands = &operands_op_fetch_micro_triangle_vertex_position_nv },
     .{ .name = "OpFetchMicroTriangleVertexBarycentricNV", .opcode = 5301, .operands = &operands_op_fetch_micro_triangle_vertex_barycentric_nv },
@@ -6093,6 +6202,7 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpHitObjectGetWorldToObjectEXT", .opcode = 5332, .operands = &operands_op_hit_object_get_world_to_object_ext },
     .{ .name = "OpHitObjectGetRayTMaxEXT", .opcode = 5333, .operands = &operands_op_hit_object_get_ray_t_max_ext },
     .{ .name = "OpReportIntersectionKHR", .opcode = 5334, .operands = &operands_op_report_intersection_khr },
+    .{ .name = "OpReportIntersectionNV", .opcode = 5334, .operands = &operands_op_report_intersection_khr },
     .{ .name = "OpIgnoreIntersectionNV", .opcode = 5335, .operands = &operands_op_ignore_intersection_nv },
     .{ .name = "OpTerminateRayNV", .opcode = 5336, .operands = &operands_op_terminate_ray_nv },
     .{ .name = "OpTraceNV", .opcode = 5337, .operands = &operands_op_trace_nv },
@@ -6100,8 +6210,10 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpTraceRayMotionNV", .opcode = 5339, .operands = &operands_op_trace_ray_motion_nv },
     .{ .name = "OpRayQueryGetIntersectionTriangleVertexPositionsKHR", .opcode = 5340, .operands = &operands_op_ray_query_get_intersection_triangle_vertex_positions_khr },
     .{ .name = "OpTypeAccelerationStructureKHR", .opcode = 5341, .operands = &operands_op_type_acceleration_structure_khr },
+    .{ .name = "OpTypeAccelerationStructureNV", .opcode = 5341, .operands = &operands_op_type_acceleration_structure_khr },
     .{ .name = "OpExecuteCallableNV", .opcode = 5344, .operands = &operands_op_execute_callable_nv },
     .{ .name = "OpRayQueryGetIntersectionClusterIdNV", .opcode = 5345, .operands = &operands_op_ray_query_get_intersection_cluster_id_nv },
+    .{ .name = "OpRayQueryGetClusterIdNV", .opcode = 5345, .operands = &operands_op_ray_query_get_intersection_cluster_id_nv },
     .{ .name = "OpHitObjectGetClusterIdNV", .opcode = 5346, .operands = &operands_op_hit_object_get_cluster_id_nv },
     .{ .name = "OpHitObjectGetRayTMinEXT", .opcode = 5347, .operands = &operands_op_hit_object_get_ray_t_min_ext },
     .{ .name = "OpHitObjectGetShaderBindingTableRecordIndexEXT", .opcode = 5348, .operands = &operands_op_hit_object_get_shader_binding_table_record_index_ext },
@@ -6114,12 +6226,15 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpCooperativeMatrixStoreNV", .opcode = 5360, .operands = &operands_op_cooperative_matrix_store_nv },
     .{ .name = "OpCooperativeMatrixMulAddNV", .opcode = 5361, .operands = &operands_op_cooperative_matrix_mul_add_nv },
     .{ .name = "OpCooperativeMatrixLengthNV", .opcode = 5362, .operands = &operands_op_cooperative_matrix_length_nv },
+    .{ .name = "OpCooperativeMatrixGetCoordinateEXT", .opcode = 5363, .operands = &operands_op_cooperative_matrix_get_coordinate_ext },
     .{ .name = "OpBeginInvocationInterlockEXT", .opcode = 5364, .operands = &operands_op_begin_invocation_interlock_ext },
     .{ .name = "OpEndInvocationInterlockEXT", .opcode = 5365, .operands = &operands_op_end_invocation_interlock_ext },
-    .{ .name = "OpCooperativeMatrixReduceNV", .opcode = 5366, .operands = &operands_op_cooperative_matrix_reduce_nv },
+    .{ .name = "OpCooperativeMatrixReduceEXT", .opcode = 5366, .operands = &operands_op_cooperative_matrix_reduce_ext },
+    .{ .name = "OpCooperativeMatrixReduceNV", .opcode = 5366, .operands = &operands_op_cooperative_matrix_reduce_ext },
     .{ .name = "OpCooperativeMatrixLoadTensorNV", .opcode = 5367, .operands = &operands_op_cooperative_matrix_load_tensor_nv },
     .{ .name = "OpCooperativeMatrixStoreTensorNV", .opcode = 5368, .operands = &operands_op_cooperative_matrix_store_tensor_nv },
-    .{ .name = "OpCooperativeMatrixPerElementOpNV", .opcode = 5369, .operands = &operands_op_cooperative_matrix_per_element_op_nv },
+    .{ .name = "OpCooperativeMatrixPerElementOpEXT", .opcode = 5369, .operands = &operands_op_cooperative_matrix_per_element_op_ext },
+    .{ .name = "OpCooperativeMatrixPerElementOpNV", .opcode = 5369, .operands = &operands_op_cooperative_matrix_per_element_op_ext },
     .{ .name = "OpTypeTensorLayoutNV", .opcode = 5370, .operands = &operands_op_type_tensor_layout_nv },
     .{ .name = "OpTypeTensorViewNV", .opcode = 5371, .operands = &operands_op_type_tensor_view_nv },
     .{ .name = "OpCreateTensorLayoutNV", .opcode = 5372, .operands = &operands_op_create_tensor_layout_nv },
@@ -6131,6 +6246,7 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpTensorViewSetDimensionNV", .opcode = 5378, .operands = &operands_op_tensor_view_set_dimension_nv },
     .{ .name = "OpTensorViewSetStrideNV", .opcode = 5379, .operands = &operands_op_tensor_view_set_stride_nv },
     .{ .name = "OpDemoteToHelperInvocation", .opcode = 5380, .operands = &operands_op_demote_to_helper_invocation },
+    .{ .name = "OpDemoteToHelperInvocationEXT", .opcode = 5380, .operands = &operands_op_demote_to_helper_invocation },
     .{ .name = "OpIsHelperInvocationEXT", .opcode = 5381, .operands = &operands_op_is_helper_invocation_ext },
     .{ .name = "OpTensorViewSetClipNV", .opcode = 5382, .operands = &operands_op_tensor_view_set_clip_nv },
     .{ .name = "OpTensorLayoutSetBlockSizeNV", .opcode = 5384, .operands = &operands_op_tensor_layout_set_block_size_nv },
@@ -6190,7 +6306,9 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpAssumeTrueKHR", .opcode = 5630, .operands = &operands_op_assume_true_khr },
     .{ .name = "OpExpectKHR", .opcode = 5631, .operands = &operands_op_expect_khr },
     .{ .name = "OpDecorateString", .opcode = 5632, .operands = &operands_op_decorate_string },
+    .{ .name = "OpDecorateStringGOOGLE", .opcode = 5632, .operands = &operands_op_decorate_string },
     .{ .name = "OpMemberDecorateString", .opcode = 5633, .operands = &operands_op_member_decorate_string },
+    .{ .name = "OpMemberDecorateStringGOOGLE", .opcode = 5633, .operands = &operands_op_member_decorate_string },
     .{ .name = "OpVmeImageINTEL", .opcode = 5699, .operands = &operands_op_vme_image_intel },
     .{ .name = "OpTypeVmeImageINTEL", .opcode = 5700, .operands = &operands_op_type_vme_image_intel },
     .{ .name = "OpTypeAvcImePayloadINTEL", .opcode = 5701, .operands = &operands_op_type_avc_ime_payload_intel },
@@ -6313,23 +6431,41 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpSaveMemoryINTEL", .opcode = 5819, .operands = &operands_op_save_memory_intel },
     .{ .name = "OpRestoreMemoryINTEL", .opcode = 5820, .operands = &operands_op_restore_memory_intel },
     .{ .name = "OpArbitraryFloatSinCosPiALTERA", .opcode = 5840, .operands = &operands_op_arbitrary_float_sin_cos_pi_altera },
+    .{ .name = "OpArbitraryFloatSinCosPiINTEL", .opcode = 5840, .operands = &operands_op_arbitrary_float_sin_cos_pi_altera },
     .{ .name = "OpArbitraryFloatCastALTERA", .opcode = 5841, .operands = &operands_op_arbitrary_float_cast_altera },
+    .{ .name = "OpArbitraryFloatCastINTEL", .opcode = 5841, .operands = &operands_op_arbitrary_float_cast_altera },
     .{ .name = "OpArbitraryFloatCastFromIntALTERA", .opcode = 5842, .operands = &operands_op_arbitrary_float_cast_from_int_altera },
+    .{ .name = "OpArbitraryFloatCastFromIntINTEL", .opcode = 5842, .operands = &operands_op_arbitrary_float_cast_from_int_altera },
     .{ .name = "OpArbitraryFloatCastToIntALTERA", .opcode = 5843, .operands = &operands_op_arbitrary_float_cast_to_int_altera },
+    .{ .name = "OpArbitraryFloatCastToIntINTEL", .opcode = 5843, .operands = &operands_op_arbitrary_float_cast_to_int_altera },
     .{ .name = "OpArbitraryFloatAddALTERA", .opcode = 5846, .operands = &operands_op_arbitrary_float_add_altera },
+    .{ .name = "OpArbitraryFloatAddINTEL", .opcode = 5846, .operands = &operands_op_arbitrary_float_add_altera },
     .{ .name = "OpArbitraryFloatSubALTERA", .opcode = 5847, .operands = &operands_op_arbitrary_float_sub_altera },
+    .{ .name = "OpArbitraryFloatSubINTEL", .opcode = 5847, .operands = &operands_op_arbitrary_float_sub_altera },
     .{ .name = "OpArbitraryFloatMulALTERA", .opcode = 5848, .operands = &operands_op_arbitrary_float_mul_altera },
+    .{ .name = "OpArbitraryFloatMulINTEL", .opcode = 5848, .operands = &operands_op_arbitrary_float_mul_altera },
     .{ .name = "OpArbitraryFloatDivALTERA", .opcode = 5849, .operands = &operands_op_arbitrary_float_div_altera },
+    .{ .name = "OpArbitraryFloatDivINTEL", .opcode = 5849, .operands = &operands_op_arbitrary_float_div_altera },
     .{ .name = "OpArbitraryFloatGTALTERA", .opcode = 5850, .operands = &operands_op_arbitrary_float_gtaltera },
+    .{ .name = "OpArbitraryFloatGTINTEL", .opcode = 5850, .operands = &operands_op_arbitrary_float_gtaltera },
     .{ .name = "OpArbitraryFloatGEALTERA", .opcode = 5851, .operands = &operands_op_arbitrary_float_gealtera },
+    .{ .name = "OpArbitraryFloatGEINTEL", .opcode = 5851, .operands = &operands_op_arbitrary_float_gealtera },
     .{ .name = "OpArbitraryFloatLTALTERA", .opcode = 5852, .operands = &operands_op_arbitrary_float_ltaltera },
+    .{ .name = "OpArbitraryFloatLTINTEL", .opcode = 5852, .operands = &operands_op_arbitrary_float_ltaltera },
     .{ .name = "OpArbitraryFloatLEALTERA", .opcode = 5853, .operands = &operands_op_arbitrary_float_lealtera },
+    .{ .name = "OpArbitraryFloatLEINTEL", .opcode = 5853, .operands = &operands_op_arbitrary_float_lealtera },
     .{ .name = "OpArbitraryFloatEQALTERA", .opcode = 5854, .operands = &operands_op_arbitrary_float_eqaltera },
+    .{ .name = "OpArbitraryFloatEQINTEL", .opcode = 5854, .operands = &operands_op_arbitrary_float_eqaltera },
     .{ .name = "OpArbitraryFloatRecipALTERA", .opcode = 5855, .operands = &operands_op_arbitrary_float_recip_altera },
+    .{ .name = "OpArbitraryFloatRecipINTEL", .opcode = 5855, .operands = &operands_op_arbitrary_float_recip_altera },
     .{ .name = "OpArbitraryFloatRSqrtALTERA", .opcode = 5856, .operands = &operands_op_arbitrary_float_r_sqrt_altera },
+    .{ .name = "OpArbitraryFloatRSqrtINTEL", .opcode = 5856, .operands = &operands_op_arbitrary_float_r_sqrt_altera },
     .{ .name = "OpArbitraryFloatCbrtALTERA", .opcode = 5857, .operands = &operands_op_arbitrary_float_cbrt_altera },
+    .{ .name = "OpArbitraryFloatCbrtINTEL", .opcode = 5857, .operands = &operands_op_arbitrary_float_cbrt_altera },
     .{ .name = "OpArbitraryFloatHypotALTERA", .opcode = 5858, .operands = &operands_op_arbitrary_float_hypot_altera },
+    .{ .name = "OpArbitraryFloatHypotINTEL", .opcode = 5858, .operands = &operands_op_arbitrary_float_hypot_altera },
     .{ .name = "OpArbitraryFloatSqrtALTERA", .opcode = 5859, .operands = &operands_op_arbitrary_float_sqrt_altera },
+    .{ .name = "OpArbitraryFloatSqrtINTEL", .opcode = 5859, .operands = &operands_op_arbitrary_float_sqrt_altera },
     .{ .name = "OpArbitraryFloatLogINTEL", .opcode = 5860, .operands = &operands_op_arbitrary_float_log_intel },
     .{ .name = "OpArbitraryFloatLog2INTEL", .opcode = 5861, .operands = &operands_op_arbitrary_float_log2_intel },
     .{ .name = "OpArbitraryFloatLog10INTEL", .opcode = 5862, .operands = &operands_op_arbitrary_float_log10_intel },
@@ -6358,21 +6494,37 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpAliasScopeDeclINTEL", .opcode = 5912, .operands = &operands_op_alias_scope_decl_intel },
     .{ .name = "OpAliasScopeListDeclINTEL", .opcode = 5913, .operands = &operands_op_alias_scope_list_decl_intel },
     .{ .name = "OpFixedSqrtALTERA", .opcode = 5923, .operands = &operands_op_fixed_sqrt_altera },
+    .{ .name = "OpFixedSqrtINTEL", .opcode = 5923, .operands = &operands_op_fixed_sqrt_altera },
     .{ .name = "OpFixedRecipALTERA", .opcode = 5924, .operands = &operands_op_fixed_recip_altera },
+    .{ .name = "OpFixedRecipINTEL", .opcode = 5924, .operands = &operands_op_fixed_recip_altera },
     .{ .name = "OpFixedRsqrtALTERA", .opcode = 5925, .operands = &operands_op_fixed_rsqrt_altera },
+    .{ .name = "OpFixedRsqrtINTEL", .opcode = 5925, .operands = &operands_op_fixed_rsqrt_altera },
     .{ .name = "OpFixedSinALTERA", .opcode = 5926, .operands = &operands_op_fixed_sin_altera },
+    .{ .name = "OpFixedSinINTEL", .opcode = 5926, .operands = &operands_op_fixed_sin_altera },
     .{ .name = "OpFixedCosALTERA", .opcode = 5927, .operands = &operands_op_fixed_cos_altera },
+    .{ .name = "OpFixedCosINTEL", .opcode = 5927, .operands = &operands_op_fixed_cos_altera },
     .{ .name = "OpFixedSinCosALTERA", .opcode = 5928, .operands = &operands_op_fixed_sin_cos_altera },
+    .{ .name = "OpFixedSinCosINTEL", .opcode = 5928, .operands = &operands_op_fixed_sin_cos_altera },
     .{ .name = "OpFixedSinPiALTERA", .opcode = 5929, .operands = &operands_op_fixed_sin_pi_altera },
+    .{ .name = "OpFixedSinPiINTEL", .opcode = 5929, .operands = &operands_op_fixed_sin_pi_altera },
     .{ .name = "OpFixedCosPiALTERA", .opcode = 5930, .operands = &operands_op_fixed_cos_pi_altera },
+    .{ .name = "OpFixedCosPiINTEL", .opcode = 5930, .operands = &operands_op_fixed_cos_pi_altera },
     .{ .name = "OpFixedSinCosPiALTERA", .opcode = 5931, .operands = &operands_op_fixed_sin_cos_pi_altera },
+    .{ .name = "OpFixedSinCosPiINTEL", .opcode = 5931, .operands = &operands_op_fixed_sin_cos_pi_altera },
     .{ .name = "OpFixedLogALTERA", .opcode = 5932, .operands = &operands_op_fixed_log_altera },
+    .{ .name = "OpFixedLogINTEL", .opcode = 5932, .operands = &operands_op_fixed_log_altera },
     .{ .name = "OpFixedExpALTERA", .opcode = 5933, .operands = &operands_op_fixed_exp_altera },
+    .{ .name = "OpFixedExpINTEL", .opcode = 5933, .operands = &operands_op_fixed_exp_altera },
     .{ .name = "OpPtrCastToCrossWorkgroupALTERA", .opcode = 5934, .operands = &operands_op_ptr_cast_to_cross_workgroup_altera },
+    .{ .name = "OpPtrCastToCrossWorkgroupINTEL", .opcode = 5934, .operands = &operands_op_ptr_cast_to_cross_workgroup_altera },
     .{ .name = "OpCrossWorkgroupCastToPtrALTERA", .opcode = 5938, .operands = &operands_op_cross_workgroup_cast_to_ptr_altera },
+    .{ .name = "OpCrossWorkgroupCastToPtrINTEL", .opcode = 5938, .operands = &operands_op_cross_workgroup_cast_to_ptr_altera },
     .{ .name = "OpReadPipeBlockingALTERA", .opcode = 5946, .operands = &operands_op_read_pipe_blocking_altera },
+    .{ .name = "OpReadPipeBlockingINTEL", .opcode = 5946, .operands = &operands_op_read_pipe_blocking_altera },
     .{ .name = "OpWritePipeBlockingALTERA", .opcode = 5947, .operands = &operands_op_write_pipe_blocking_altera },
+    .{ .name = "OpWritePipeBlockingINTEL", .opcode = 5947, .operands = &operands_op_write_pipe_blocking_altera },
     .{ .name = "OpFPGARegALTERA", .opcode = 5949, .operands = &operands_op_fpga_reg_altera },
+    .{ .name = "OpFPGARegINTEL", .opcode = 5949, .operands = &operands_op_fpga_reg_altera },
     .{ .name = "OpRayQueryGetRayTMinKHR", .opcode = 6016, .operands = &operands_op_ray_query_get_ray_t_min_khr },
     .{ .name = "OpRayQueryGetRayFlagsKHR", .opcode = 6017, .operands = &operands_op_ray_query_get_ray_flags_khr },
     .{ .name = "OpRayQueryGetIntersectionTKHR", .opcode = 6018, .operands = &operands_op_ray_query_get_intersection_tkhr },
@@ -6399,13 +6551,20 @@ pub const opcodes = [_]OpcodeInfo{
     .{ .name = "OpConvertFToBF16INTEL", .opcode = 6116, .operands = &operands_op_convert_f_to_bf16_intel },
     .{ .name = "OpConvertBF16ToFINTEL", .opcode = 6117, .operands = &operands_op_convert_bf16_to_fintel },
     .{ .name = "OpControlBarrierArriveEXT", .opcode = 6142, .operands = &operands_op_control_barrier_arrive_ext },
+    .{ .name = "OpControlBarrierArriveINTEL", .opcode = 6142, .operands = &operands_op_control_barrier_arrive_ext },
     .{ .name = "OpControlBarrierWaitEXT", .opcode = 6143, .operands = &operands_op_control_barrier_wait_ext },
+    .{ .name = "OpControlBarrierWaitINTEL", .opcode = 6143, .operands = &operands_op_control_barrier_wait_ext },
     .{ .name = "OpArithmeticFenceEXT", .opcode = 6145, .operands = &operands_op_arithmetic_fence_ext },
     .{ .name = "OpTaskSequenceCreateALTERA", .opcode = 6163, .operands = &operands_op_task_sequence_create_altera },
+    .{ .name = "OpTaskSequenceCreateINTEL", .opcode = 6163, .operands = &operands_op_task_sequence_create_altera },
     .{ .name = "OpTaskSequenceAsyncALTERA", .opcode = 6164, .operands = &operands_op_task_sequence_async_altera },
+    .{ .name = "OpTaskSequenceAsyncINTEL", .opcode = 6164, .operands = &operands_op_task_sequence_async_altera },
     .{ .name = "OpTaskSequenceGetALTERA", .opcode = 6165, .operands = &operands_op_task_sequence_get_altera },
+    .{ .name = "OpTaskSequenceGetINTEL", .opcode = 6165, .operands = &operands_op_task_sequence_get_altera },
     .{ .name = "OpTaskSequenceReleaseALTERA", .opcode = 6166, .operands = &operands_op_task_sequence_release_altera },
+    .{ .name = "OpTaskSequenceReleaseINTEL", .opcode = 6166, .operands = &operands_op_task_sequence_release_altera },
     .{ .name = "OpTypeTaskSequenceALTERA", .opcode = 6199, .operands = &operands_op_type_task_sequence_altera },
+    .{ .name = "OpTypeTaskSequenceINTEL", .opcode = 6199, .operands = &operands_op_type_task_sequence_altera },
     .{ .name = "OpSubgroupBlockPrefetchINTEL", .opcode = 6221, .operands = &operands_op_subgroup_block_prefetch_intel },
     .{ .name = "OpSubgroup2DBlockLoadINTEL", .opcode = 6231, .operands = &operands_op_subgroup2_d_block_load_intel },
     .{ .name = "OpSubgroup2DBlockLoadTransformINTEL", .opcode = 6232, .operands = &operands_op_subgroup2_d_block_load_transform_intel },
@@ -6445,18 +6604,18 @@ pub const opcodes = [_]OpcodeInfo{
 
 pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .image_operands, .name = "None", .value = 0, .parameters = &.{} },
-    .{ .kind = .image_operands, .name = "Bias", .value = 1, .parameters = &.{.id_ref} },
-    .{ .kind = .image_operands, .name = "Lod", .value = 2, .parameters = &.{.id_ref} },
-    .{ .kind = .image_operands, .name = "Grad", .value = 4, .parameters = &.{ .id_ref, .id_ref } },
-    .{ .kind = .image_operands, .name = "ConstOffset", .value = 8, .parameters = &.{.id_ref} },
-    .{ .kind = .image_operands, .name = "Offset", .value = 16, .parameters = &.{.id_ref} },
-    .{ .kind = .image_operands, .name = "ConstOffsets", .value = 32, .parameters = &.{.id_ref} },
-    .{ .kind = .image_operands, .name = "Sample", .value = 64, .parameters = &.{.id_ref} },
-    .{ .kind = .image_operands, .name = "MinLod", .value = 128, .parameters = &.{.id_ref} },
-    .{ .kind = .image_operands, .name = "MakeTexelAvailable", .value = 256, .parameters = &.{.id_scope} },
-    .{ .kind = .image_operands, .name = "MakeTexelAvailableKHR", .value = 256, .parameters = &.{.id_scope} },
-    .{ .kind = .image_operands, .name = "MakeTexelVisible", .value = 512, .parameters = &.{.id_scope} },
-    .{ .kind = .image_operands, .name = "MakeTexelVisibleKHR", .value = 512, .parameters = &.{.id_scope} },
+    .{ .kind = .image_operands, .name = "Bias", .value = 1, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "Lod", .value = 2, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "Grad", .value = 4, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .image_operands, .name = "ConstOffset", .value = 8, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "Offset", .value = 16, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "ConstOffsets", .value = 32, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "Sample", .value = 64, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "MinLod", .value = 128, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "MakeTexelAvailable", .value = 256, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "MakeTexelAvailableKHR", .value = 256, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "MakeTexelVisible", .value = 512, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
+    .{ .kind = .image_operands, .name = "MakeTexelVisibleKHR", .value = 512, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
     .{ .kind = .image_operands, .name = "NonPrivateTexel", .value = 1024, .parameters = &.{} },
     .{ .kind = .image_operands, .name = "NonPrivateTexelKHR", .value = 1024, .parameters = &.{} },
     .{ .kind = .image_operands, .name = "VolatileTexel", .value = 2048, .parameters = &.{} },
@@ -6464,7 +6623,7 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .image_operands, .name = "SignExtend", .value = 4096, .parameters = &.{} },
     .{ .kind = .image_operands, .name = "ZeroExtend", .value = 8192, .parameters = &.{} },
     .{ .kind = .image_operands, .name = "Nontemporal", .value = 16384, .parameters = &.{} },
-    .{ .kind = .image_operands, .name = "Offsets", .value = 65536, .parameters = &.{.id_ref} },
+    .{ .kind = .image_operands, .name = "Offsets", .value = 65536, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .fp_fast_math_mode, .name = "None", .value = 0, .parameters = &.{} },
     .{ .kind = .fp_fast_math_mode, .name = "NotNaN", .value = 1, .parameters = &.{} },
     .{ .kind = .fp_fast_math_mode, .name = "NotInf", .value = 2, .parameters = &.{} },
@@ -6483,32 +6642,33 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .loop_control, .name = "Unroll", .value = 1, .parameters = &.{} },
     .{ .kind = .loop_control, .name = "DontUnroll", .value = 2, .parameters = &.{} },
     .{ .kind = .loop_control, .name = "DependencyInfinite", .value = 4, .parameters = &.{} },
-    .{ .kind = .loop_control, .name = "DependencyLength", .value = 8, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MinIterations", .value = 16, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MaxIterations", .value = 32, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "IterationMultiple", .value = 64, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "PeelCount", .value = 128, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "PartialCount", .value = 256, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "InitiationIntervalALTERA", .value = 65536, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "InitiationIntervalINTEL", .value = 65536, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MaxConcurrencyALTERA", .value = 131072, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MaxConcurrencyINTEL", .value = 131072, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "DependencyArrayALTERA", .value = 262144, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "DependencyArrayINTEL", .value = 262144, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "PipelineEnableALTERA", .value = 524288, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "PipelineEnableINTEL", .value = 524288, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "LoopCoalesceALTERA", .value = 1048576, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "LoopCoalesceINTEL", .value = 1048576, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MaxInterleavingALTERA", .value = 2097152, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MaxInterleavingINTEL", .value = 2097152, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "SpeculatedIterationsALTERA", .value = 4194304, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "SpeculatedIterationsINTEL", .value = 4194304, .parameters = &.{.literal_integer} },
+    .{ .kind = .loop_control, .name = "DependencyLength", .value = 8, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MinIterations", .value = 16, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MaxIterations", .value = 32, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "IterationMultiple", .value = 64, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "PeelCount", .value = 128, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "PartialCount", .value = 256, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "InitiationIntervalALTERA", .value = 65536, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "InitiationIntervalINTEL", .value = 65536, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MaxConcurrencyALTERA", .value = 131072, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MaxConcurrencyINTEL", .value = 131072, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "DependencyArrayALTERA", .value = 262144, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "DependencyArrayINTEL", .value = 262144, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "PipelineEnableALTERA", .value = 524288, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "PipelineEnableINTEL", .value = 524288, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "LoopCoalesceALTERA", .value = 1048576, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "LoopCoalesceINTEL", .value = 1048576, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MaxInterleavingALTERA", .value = 2097152, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MaxInterleavingINTEL", .value = 2097152, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "SpeculatedIterationsALTERA", .value = 4194304, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "SpeculatedIterationsINTEL", .value = 4194304, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .loop_control, .name = "NoFusionALTERA", .value = 8388608, .parameters = &.{} },
     .{ .kind = .loop_control, .name = "NoFusionINTEL", .value = 8388608, .parameters = &.{} },
-    .{ .kind = .loop_control, .name = "LoopCountALTERA", .value = 16777216, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "LoopCountINTEL", .value = 16777216, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MaxReinvocationDelayALTERA", .value = 33554432, .parameters = &.{.literal_integer} },
-    .{ .kind = .loop_control, .name = "MaxReinvocationDelayINTEL", .value = 33554432, .parameters = &.{.literal_integer} },
+    .{ .kind = .loop_control, .name = "LoopCountALTERA", .value = 16777216, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "LoopCountINTEL", .value = 16777216, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MaxReinvocationDelayALTERA", .value = 33554432, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MaxReinvocationDelayINTEL", .value = 33554432, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .loop_control, .name = "MultipleWaitQueuesQCOM", .value = 268435456, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .function_control, .name = "None", .value = 0, .parameters = &.{} },
     .{ .kind = .function_control, .name = "Inline", .value = 1, .parameters = &.{} },
     .{ .kind = .function_control, .name = "DontInline", .value = 2, .parameters = &.{} },
@@ -6537,16 +6697,16 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .memory_semantics, .name = "Volatile", .value = 32768, .parameters = &.{} },
     .{ .kind = .memory_access, .name = "None", .value = 0, .parameters = &.{} },
     .{ .kind = .memory_access, .name = "Volatile", .value = 1, .parameters = &.{} },
-    .{ .kind = .memory_access, .name = "Aligned", .value = 2, .parameters = &.{.literal_integer} },
+    .{ .kind = .memory_access, .name = "Aligned", .value = 2, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .memory_access, .name = "Nontemporal", .value = 4, .parameters = &.{} },
-    .{ .kind = .memory_access, .name = "MakePointerAvailable", .value = 8, .parameters = &.{.id_scope} },
-    .{ .kind = .memory_access, .name = "MakePointerAvailableKHR", .value = 8, .parameters = &.{.id_scope} },
-    .{ .kind = .memory_access, .name = "MakePointerVisible", .value = 16, .parameters = &.{.id_scope} },
-    .{ .kind = .memory_access, .name = "MakePointerVisibleKHR", .value = 16, .parameters = &.{.id_scope} },
+    .{ .kind = .memory_access, .name = "MakePointerAvailable", .value = 8, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
+    .{ .kind = .memory_access, .name = "MakePointerAvailableKHR", .value = 8, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
+    .{ .kind = .memory_access, .name = "MakePointerVisible", .value = 16, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
+    .{ .kind = .memory_access, .name = "MakePointerVisibleKHR", .value = 16, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
     .{ .kind = .memory_access, .name = "NonPrivatePointer", .value = 32, .parameters = &.{} },
     .{ .kind = .memory_access, .name = "NonPrivatePointerKHR", .value = 32, .parameters = &.{} },
-    .{ .kind = .memory_access, .name = "AliasScopeINTELMask", .value = 65536, .parameters = &.{.id_ref} },
-    .{ .kind = .memory_access, .name = "NoAliasINTELMask", .value = 131072, .parameters = &.{.id_ref} },
+    .{ .kind = .memory_access, .name = "AliasScopeINTELMask", .value = 65536, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .memory_access, .name = "NoAliasINTELMask", .value = 131072, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .kernel_profiling_info, .name = "None", .value = 0, .parameters = &.{} },
     .{ .kind = .kernel_profiling_info, .name = "CmdExecTime", .value = 1, .parameters = &.{} },
     .{ .kind = .ray_flags, .name = "NoneKHR", .value = 0, .parameters = &.{} },
@@ -6619,7 +6779,7 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .memory_model, .name = "OpenCL", .value = 2, .parameters = &.{} },
     .{ .kind = .memory_model, .name = "Vulkan", .value = 3, .parameters = &.{} },
     .{ .kind = .memory_model, .name = "VulkanKHR", .value = 3, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "Invocations", .value = 0, .parameters = &.{.literal_integer} },
+    .{ .kind = .execution_mode, .name = "Invocations", .value = 0, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .execution_mode, .name = "SpacingEqual", .value = 1, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "SpacingFractionalEven", .value = 2, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "SpacingFractionalOdd", .value = 3, .parameters = &.{} },
@@ -6635,8 +6795,8 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .execution_mode, .name = "DepthGreater", .value = 14, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "DepthLess", .value = 15, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "DepthUnchanged", .value = 16, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "LocalSize", .value = 17, .parameters = &.{ .literal_integer, .literal_integer, .literal_integer } },
-    .{ .kind = .execution_mode, .name = "LocalSizeHint", .value = 18, .parameters = &.{ .literal_integer, .literal_integer, .literal_integer } },
+    .{ .kind = .execution_mode, .name = "LocalSize", .value = 17, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .execution_mode, .name = "LocalSizeHint", .value = 18, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
     .{ .kind = .execution_mode, .name = "InputPoints", .value = 19, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "InputLines", .value = 20, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "InputLinesAdjacency", .value = 21, .parameters = &.{} },
@@ -6644,39 +6804,41 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .execution_mode, .name = "InputTrianglesAdjacency", .value = 23, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "Quads", .value = 24, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "Isolines", .value = 25, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "OutputVertices", .value = 26, .parameters = &.{.literal_integer} },
+    .{ .kind = .execution_mode, .name = "OutputVertices", .value = 26, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .execution_mode, .name = "OutputPoints", .value = 27, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "OutputLineStrip", .value = 28, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "OutputTriangleStrip", .value = 29, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "VecTypeHint", .value = 30, .parameters = &.{.literal_integer} },
+    .{ .kind = .execution_mode, .name = "VecTypeHint", .value = 30, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .execution_mode, .name = "ContractionOff", .value = 31, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "Initializer", .value = 33, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "Finalizer", .value = 34, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "SubgroupSize", .value = 35, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "SubgroupsPerWorkgroup", .value = 36, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "SubgroupsPerWorkgroupId", .value = 37, .parameters = &.{.id_ref} },
-    .{ .kind = .execution_mode, .name = "LocalSizeId", .value = 38, .parameters = &.{ .id_ref, .id_ref, .id_ref } },
-    .{ .kind = .execution_mode, .name = "LocalSizeHintId", .value = 39, .parameters = &.{ .id_ref, .id_ref, .id_ref } },
+    .{ .kind = .execution_mode, .name = "SubgroupSize", .value = 35, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "SubgroupsPerWorkgroup", .value = 36, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "SubgroupsPerWorkgroupId", .value = 37, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "LocalSizeId", .value = 38, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .execution_mode, .name = "LocalSizeHintId", .value = 39, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
     .{ .kind = .execution_mode, .name = "NonCoherentColorAttachmentReadEXT", .value = 4169, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "NonCoherentDepthAttachmentReadEXT", .value = 4170, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "NonCoherentStencilAttachmentReadEXT", .value = 4171, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "SubgroupUniformControlFlowKHR", .value = 4421, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "PostDepthCoverage", .value = 4446, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "DenormPreserve", .value = 4459, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "DenormFlushToZero", .value = 4460, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "SignedZeroInfNanPreserve", .value = 4461, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "RoundingModeRTE", .value = 4462, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "RoundingModeRTZ", .value = 4463, .parameters = &.{.literal_integer} },
+    .{ .kind = .execution_mode, .name = "DenormPreserve", .value = 4459, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "DenormFlushToZero", .value = 4460, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "SignedZeroInfNanPreserve", .value = 4461, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "RoundingModeRTE", .value = 4462, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "RoundingModeRTZ", .value = 4463, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .execution_mode, .name = "NonCoherentTileAttachmentReadQCOM", .value = 4489, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "TileShadingRateQCOM", .value = 4490, .parameters = &.{ .literal_integer, .literal_integer, .literal_integer } },
+    .{ .kind = .execution_mode, .name = "TileShadingRateQCOM", .value = 4490, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .execution_mode, .name = "SubgroupSizeHalfQCOM", .value = 4507, .parameters = &.{} },
+    .{ .kind = .execution_mode, .name = "SubgroupSizeFullQCOM", .value = 4508, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "EarlyAndLateFragmentTestsAMD", .value = 5017, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "StencilRefReplacingEXT", .value = 5027, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "CoalescingAMDX", .value = 5069, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "IsApiEntryAMDX", .value = 5070, .parameters = &.{.id_ref} },
-    .{ .kind = .execution_mode, .name = "MaxNodeRecursionAMDX", .value = 5071, .parameters = &.{.id_ref} },
-    .{ .kind = .execution_mode, .name = "StaticNumWorkgroupsAMDX", .value = 5072, .parameters = &.{ .id_ref, .id_ref, .id_ref } },
-    .{ .kind = .execution_mode, .name = "ShaderIndexAMDX", .value = 5073, .parameters = &.{.id_ref} },
-    .{ .kind = .execution_mode, .name = "MaxNumWorkgroupsAMDX", .value = 5077, .parameters = &.{ .id_ref, .id_ref, .id_ref } },
+    .{ .kind = .execution_mode, .name = "IsApiEntryAMDX", .value = 5070, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "MaxNodeRecursionAMDX", .value = 5071, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "StaticNumWorkgroupsAMDX", .value = 5072, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .execution_mode, .name = "ShaderIndexAMDX", .value = 5073, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "MaxNumWorkgroupsAMDX", .value = 5077, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
     .{ .kind = .execution_mode, .name = "StencilRefUnchangedFrontAMD", .value = 5079, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "StencilRefGreaterFrontAMD", .value = 5080, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "StencilRefLessFrontAMD", .value = 5081, .parameters = &.{} },
@@ -6685,12 +6847,12 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .execution_mode, .name = "StencilRefLessBackAMD", .value = 5084, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "QuadDerivativesKHR", .value = 5088, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "RequireFullQuadsKHR", .value = 5089, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "SharesInputWithAMDX", .value = 5102, .parameters = &.{ .id_ref, .id_ref } },
+    .{ .kind = .execution_mode, .name = "SharesInputWithAMDX", .value = 5102, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
     .{ .kind = .execution_mode, .name = "ArithmeticPoisonKHR", .value = 5157, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "OutputLinesEXT", .value = 5269, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "OutputLinesNV", .value = 5269, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "OutputPrimitivesEXT", .value = 5270, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "OutputPrimitivesNV", .value = 5270, .parameters = &.{.literal_integer} },
+    .{ .kind = .execution_mode, .name = "OutputPrimitivesEXT", .value = 5270, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "OutputPrimitivesNV", .value = 5270, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .execution_mode, .name = "DerivativeGroupQuadsKHR", .value = 5289, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "DerivativeGroupQuadsNV", .value = 5289, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "DerivativeGroupLinearKHR", .value = 5290, .parameters = &.{} },
@@ -6704,25 +6866,25 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .execution_mode, .name = "ShadingRateInterlockOrderedEXT", .value = 5370, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "ShadingRateInterlockUnorderedEXT", .value = 5371, .parameters = &.{} },
     .{ .kind = .execution_mode, .name = "Shader64BitIndexingEXT", .value = 5427, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "SharedLocalMemorySizeINTEL", .value = 5618, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "RoundingModeRTPINTEL", .value = 5620, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "RoundingModeRTNINTEL", .value = 5621, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "FloatingPointModeALTINTEL", .value = 5622, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "FloatingPointModeIEEEINTEL", .value = 5623, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "MaxWorkgroupSizeINTEL", .value = 5893, .parameters = &.{ .literal_integer, .literal_integer, .literal_integer } },
-    .{ .kind = .execution_mode, .name = "MaxWorkDimINTEL", .value = 5894, .parameters = &.{.literal_integer} },
+    .{ .kind = .execution_mode, .name = "SharedLocalMemorySizeINTEL", .value = 5618, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "RoundingModeRTPINTEL", .value = 5620, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "RoundingModeRTNINTEL", .value = 5621, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "FloatingPointModeALTINTEL", .value = 5622, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "FloatingPointModeIEEEINTEL", .value = 5623, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "MaxWorkgroupSizeINTEL", .value = 5893, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .execution_mode, .name = "MaxWorkDimINTEL", .value = 5894, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .execution_mode, .name = "NoGlobalOffsetINTEL", .value = 5895, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "NumSIMDWorkitemsINTEL", .value = 5896, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "SchedulerTargetFmaxMhzINTEL", .value = 5903, .parameters = &.{.literal_integer} },
+    .{ .kind = .execution_mode, .name = "NumSIMDWorkitemsINTEL", .value = 5896, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "SchedulerTargetFmaxMhzINTEL", .value = 5903, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .execution_mode, .name = "MaximallyReconvergesKHR", .value = 6023, .parameters = &.{} },
-    .{ .kind = .execution_mode, .name = "FPFastMathDefault", .value = 6028, .parameters = &.{ .id_ref, .id_ref } },
-    .{ .kind = .execution_mode, .name = "OpacityMicromapIdKHR", .value = 6031, .parameters = &.{.id_ref} },
-    .{ .kind = .execution_mode, .name = "StreamingInterfaceINTEL", .value = 6154, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "RegisterMapInterfaceINTEL", .value = 6160, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "NamedBarrierCountINTEL", .value = 6417, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "MaximumRegistersINTEL", .value = 6461, .parameters = &.{.literal_integer} },
-    .{ .kind = .execution_mode, .name = "MaximumRegistersIdINTEL", .value = 6462, .parameters = &.{.id_ref} },
-    .{ .kind = .execution_mode, .name = "NamedMaximumRegistersINTEL", .value = 6463, .parameters = &.{.named_maximum_number_of_registers} },
+    .{ .kind = .execution_mode, .name = "FPFastMathDefault", .value = 6028, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .execution_mode, .name = "OpacityMicromapIdKHR", .value = 6031, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "StreamingInterfaceINTEL", .value = 6154, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "RegisterMapInterfaceINTEL", .value = 6160, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "NamedBarrierCountINTEL", .value = 6417, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "MaximumRegistersINTEL", .value = 6461, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "MaximumRegistersIdINTEL", .value = 6462, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .execution_mode, .name = "NamedMaximumRegistersINTEL", .value = 6463, .parameters = &.{.{ .kind = .named_maximum_number_of_registers, .quantifier = .one }} },
     .{ .kind = .storage_class, .name = "UniformConstant", .value = 0, .parameters = &.{} },
     .{ .kind = .storage_class, .name = "Input", .value = 1, .parameters = &.{} },
     .{ .kind = .storage_class, .name = "Uniform", .value = 2, .parameters = &.{} },
@@ -6906,17 +7068,17 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .function_parameter_attribute, .name = "RuntimeAlignedALTERA", .value = 5940, .parameters = &.{} },
     .{ .kind = .function_parameter_attribute, .name = "RuntimeAlignedINTEL", .value = 5940, .parameters = &.{} },
     .{ .kind = .decoration, .name = "RelaxedPrecision", .value = 0, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "SpecId", .value = 1, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "SpecId", .value = 1, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "Block", .value = 2, .parameters = &.{} },
     .{ .kind = .decoration, .name = "BufferBlock", .value = 3, .parameters = &.{} },
     .{ .kind = .decoration, .name = "RowMajor", .value = 4, .parameters = &.{} },
     .{ .kind = .decoration, .name = "ColMajor", .value = 5, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "ArrayStride", .value = 6, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MatrixStride", .value = 7, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "ArrayStride", .value = 6, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MatrixStride", .value = 7, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "GLSLShared", .value = 8, .parameters = &.{} },
     .{ .kind = .decoration, .name = "GLSLPacked", .value = 9, .parameters = &.{} },
     .{ .kind = .decoration, .name = "CPacked", .value = 10, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "BuiltIn", .value = 11, .parameters = &.{.built_in} },
+    .{ .kind = .decoration, .name = "BuiltIn", .value = 11, .parameters = &.{.{ .kind = .built_in, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "NoPerspective", .value = 13, .parameters = &.{} },
     .{ .kind = .decoration, .name = "Flat", .value = 14, .parameters = &.{} },
     .{ .kind = .decoration, .name = "Patch", .value = 15, .parameters = &.{} },
@@ -6931,27 +7093,27 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .decoration, .name = "NonWritable", .value = 24, .parameters = &.{} },
     .{ .kind = .decoration, .name = "NonReadable", .value = 25, .parameters = &.{} },
     .{ .kind = .decoration, .name = "Uniform", .value = 26, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "UniformId", .value = 27, .parameters = &.{.id_scope} },
+    .{ .kind = .decoration, .name = "UniformId", .value = 27, .parameters = &.{.{ .kind = .id_scope, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "SaturatedConversion", .value = 28, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "Stream", .value = 29, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "Location", .value = 30, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "Component", .value = 31, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "Index", .value = 32, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "Binding", .value = 33, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "DescriptorSet", .value = 34, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "Offset", .value = 35, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "XfbBuffer", .value = 36, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "XfbStride", .value = 37, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "FuncParamAttr", .value = 38, .parameters = &.{.function_parameter_attribute} },
-    .{ .kind = .decoration, .name = "FPRoundingMode", .value = 39, .parameters = &.{.fp_rounding_mode} },
-    .{ .kind = .decoration, .name = "FPFastMathMode", .value = 40, .parameters = &.{.fp_fast_math_mode} },
-    .{ .kind = .decoration, .name = "LinkageAttributes", .value = 41, .parameters = &.{ .literal_string, .linkage_type } },
+    .{ .kind = .decoration, .name = "Stream", .value = 29, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "Location", .value = 30, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "Component", .value = 31, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "Index", .value = 32, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "Binding", .value = 33, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "DescriptorSet", .value = 34, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "Offset", .value = 35, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "XfbBuffer", .value = 36, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "XfbStride", .value = 37, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "FuncParamAttr", .value = 38, .parameters = &.{.{ .kind = .function_parameter_attribute, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "FPRoundingMode", .value = 39, .parameters = &.{.{ .kind = .fp_rounding_mode, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "FPFastMathMode", .value = 40, .parameters = &.{.{ .kind = .fp_fast_math_mode, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "LinkageAttributes", .value = 41, .parameters = &.{ .{ .kind = .literal_string, .quantifier = .one }, .{ .kind = .linkage_type, .quantifier = .one } } },
     .{ .kind = .decoration, .name = "NoContraction", .value = 42, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "InputAttachmentIndex", .value = 43, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "Alignment", .value = 44, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MaxByteOffset", .value = 45, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "AlignmentId", .value = 46, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "MaxByteOffsetId", .value = 47, .parameters = &.{.id_ref} },
+    .{ .kind = .decoration, .name = "InputAttachmentIndex", .value = 43, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "Alignment", .value = 44, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MaxByteOffset", .value = 45, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "AlignmentId", .value = 46, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MaxByteOffsetId", .value = 47, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "SaturatedToLargestFloat8NormalConversionEXT", .value = 4216, .parameters = &.{} },
     .{ .kind = .decoration, .name = "NoSignedWrap", .value = 4469, .parameters = &.{} },
     .{ .kind = .decoration, .name = "NoUnsignedWrap", .value = 4470, .parameters = &.{} },
@@ -6959,21 +7121,21 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .decoration, .name = "BlockMatchTextureQCOM", .value = 4488, .parameters = &.{} },
     .{ .kind = .decoration, .name = "BlockMatchSamplerQCOM", .value = 4499, .parameters = &.{} },
     .{ .kind = .decoration, .name = "ExplicitInterpAMD", .value = 4999, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "NodeSharesPayloadLimitsWithAMDX", .value = 5019, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "NodeMaxPayloadsAMDX", .value = 5020, .parameters = &.{.id_ref} },
+    .{ .kind = .decoration, .name = "NodeSharesPayloadLimitsWithAMDX", .value = 5019, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "NodeMaxPayloadsAMDX", .value = 5020, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "TrackFinishWritingAMDX", .value = 5078, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "PayloadNodeNameAMDX", .value = 5091, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "PayloadNodeBaseIndexAMDX", .value = 5098, .parameters = &.{.id_ref} },
+    .{ .kind = .decoration, .name = "PayloadNodeNameAMDX", .value = 5091, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "PayloadNodeBaseIndexAMDX", .value = 5098, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "PayloadNodeSparseArrayAMDX", .value = 5099, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "PayloadNodeArraySizeAMDX", .value = 5100, .parameters = &.{.id_ref} },
+    .{ .kind = .decoration, .name = "PayloadNodeArraySizeAMDX", .value = 5100, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "PayloadDispatchIndirectAMDX", .value = 5105, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "ArrayStrideIdEXT", .value = 5124, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "OffsetIdEXT", .value = 5125, .parameters = &.{.id_ref} },
+    .{ .kind = .decoration, .name = "ArrayStrideIdEXT", .value = 5124, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "OffsetIdEXT", .value = 5125, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "UTFEncodedKHR", .value = 5145, .parameters = &.{} },
     .{ .kind = .decoration, .name = "OverrideCoverageNV", .value = 5248, .parameters = &.{} },
     .{ .kind = .decoration, .name = "PassthroughNV", .value = 5250, .parameters = &.{} },
     .{ .kind = .decoration, .name = "ViewportRelativeNV", .value = 5252, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "SecondaryViewportRelativeNV", .value = 5256, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "SecondaryViewportRelativeNV", .value = 5256, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "PerPrimitiveEXT", .value = 5271, .parameters = &.{} },
     .{ .kind = .decoration, .name = "PerPrimitiveNV", .value = 5271, .parameters = &.{} },
     .{ .kind = .decoration, .name = "PerViewNV", .value = 5272, .parameters = &.{} },
@@ -6986,123 +7148,125 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .decoration, .name = "RestrictPointerEXT", .value = 5355, .parameters = &.{} },
     .{ .kind = .decoration, .name = "AliasedPointer", .value = 5356, .parameters = &.{} },
     .{ .kind = .decoration, .name = "AliasedPointerEXT", .value = 5356, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "MemberOffsetNV", .value = 5358, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "MemberOffsetNV", .value = 5358, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "HitObjectShaderRecordBufferNV", .value = 5386, .parameters = &.{} },
     .{ .kind = .decoration, .name = "HitObjectShaderRecordBufferEXT", .value = 5389, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "BankNV", .value = 5397, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "BankNV", .value = 5397, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "BindlessSamplerNV", .value = 5398, .parameters = &.{} },
     .{ .kind = .decoration, .name = "BindlessImageNV", .value = 5399, .parameters = &.{} },
     .{ .kind = .decoration, .name = "BoundSamplerNV", .value = 5400, .parameters = &.{} },
     .{ .kind = .decoration, .name = "BoundImageNV", .value = 5401, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "SIMTCallINTEL", .value = 5599, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "CooperativeMatrixTransposeEXT", .value = 5440, .parameters = &.{} },
+    .{ .kind = .decoration, .name = "SIMTCallINTEL", .value = 5599, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "ReferencedIndirectlyINTEL", .value = 5602, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "ClobberINTEL", .value = 5607, .parameters = &.{.literal_string} },
+    .{ .kind = .decoration, .name = "ClobberINTEL", .value = 5607, .parameters = &.{.{ .kind = .literal_string, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "SideEffectsINTEL", .value = 5608, .parameters = &.{} },
     .{ .kind = .decoration, .name = "VectorComputeVariableINTEL", .value = 5624, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "FuncParamIOKindINTEL", .value = 5625, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "FuncParamIOKindINTEL", .value = 5625, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "VectorComputeFunctionINTEL", .value = 5626, .parameters = &.{} },
     .{ .kind = .decoration, .name = "StackCallINTEL", .value = 5627, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "GlobalVariableOffsetINTEL", .value = 5628, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "CounterBuffer", .value = 5634, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "HlslCounterBufferGOOGLE", .value = 5634, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "UserSemantic", .value = 5635, .parameters = &.{.literal_string} },
-    .{ .kind = .decoration, .name = "HlslSemanticGOOGLE", .value = 5635, .parameters = &.{.literal_string} },
-    .{ .kind = .decoration, .name = "UserTypeGOOGLE", .value = 5636, .parameters = &.{.literal_string} },
-    .{ .kind = .decoration, .name = "FunctionRoundingModeINTEL", .value = 5822, .parameters = &.{ .literal_integer, .fp_rounding_mode } },
-    .{ .kind = .decoration, .name = "FunctionDenormModeINTEL", .value = 5823, .parameters = &.{ .literal_integer, .fp_denorm_mode } },
+    .{ .kind = .decoration, .name = "GlobalVariableOffsetINTEL", .value = 5628, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "CounterBuffer", .value = 5634, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "HlslCounterBufferGOOGLE", .value = 5634, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "UserSemantic", .value = 5635, .parameters = &.{.{ .kind = .literal_string, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "HlslSemanticGOOGLE", .value = 5635, .parameters = &.{.{ .kind = .literal_string, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "UserTypeGOOGLE", .value = 5636, .parameters = &.{.{ .kind = .literal_string, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "FunctionRoundingModeINTEL", .value = 5822, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .fp_rounding_mode, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "FunctionDenormModeINTEL", .value = 5823, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .fp_denorm_mode, .quantifier = .one } } },
     .{ .kind = .decoration, .name = "RegisterALTERA", .value = 5825, .parameters = &.{} },
     .{ .kind = .decoration, .name = "RegisterINTEL", .value = 5825, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "MemoryALTERA", .value = 5826, .parameters = &.{.literal_string} },
-    .{ .kind = .decoration, .name = "MemoryINTEL", .value = 5826, .parameters = &.{.literal_string} },
-    .{ .kind = .decoration, .name = "NumbanksALTERA", .value = 5827, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "NumbanksINTEL", .value = 5827, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "BankwidthALTERA", .value = 5828, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "BankwidthINTEL", .value = 5828, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MaxPrivateCopiesALTERA", .value = 5829, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MaxPrivateCopiesINTEL", .value = 5829, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "MemoryALTERA", .value = 5826, .parameters = &.{.{ .kind = .literal_string, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MemoryINTEL", .value = 5826, .parameters = &.{.{ .kind = .literal_string, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "NumbanksALTERA", .value = 5827, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "NumbanksINTEL", .value = 5827, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "BankwidthALTERA", .value = 5828, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "BankwidthINTEL", .value = 5828, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MaxPrivateCopiesALTERA", .value = 5829, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MaxPrivateCopiesINTEL", .value = 5829, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "SinglepumpALTERA", .value = 5830, .parameters = &.{} },
     .{ .kind = .decoration, .name = "SinglepumpINTEL", .value = 5830, .parameters = &.{} },
     .{ .kind = .decoration, .name = "DoublepumpALTERA", .value = 5831, .parameters = &.{} },
     .{ .kind = .decoration, .name = "DoublepumpINTEL", .value = 5831, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "MaxReplicatesALTERA", .value = 5832, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MaxReplicatesINTEL", .value = 5832, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "MaxReplicatesALTERA", .value = 5832, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MaxReplicatesINTEL", .value = 5832, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "SimpleDualPortALTERA", .value = 5833, .parameters = &.{} },
     .{ .kind = .decoration, .name = "SimpleDualPortINTEL", .value = 5833, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "MergeALTERA", .value = 5834, .parameters = &.{ .literal_string, .literal_string } },
-    .{ .kind = .decoration, .name = "MergeINTEL", .value = 5834, .parameters = &.{ .literal_string, .literal_string } },
-    .{ .kind = .decoration, .name = "BankBitsALTERA", .value = 5835, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "BankBitsINTEL", .value = 5835, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "ForcePow2DepthALTERA", .value = 5836, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "ForcePow2DepthINTEL", .value = 5836, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "StridesizeALTERA", .value = 5883, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "StridesizeINTEL", .value = 5883, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "WordsizeALTERA", .value = 5884, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "WordsizeINTEL", .value = 5884, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "MergeALTERA", .value = 5834, .parameters = &.{ .{ .kind = .literal_string, .quantifier = .one }, .{ .kind = .literal_string, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "MergeINTEL", .value = 5834, .parameters = &.{ .{ .kind = .literal_string, .quantifier = .one }, .{ .kind = .literal_string, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "BankBitsALTERA", .value = 5835, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .variable }} },
+    .{ .kind = .decoration, .name = "BankBitsINTEL", .value = 5835, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .variable }} },
+    .{ .kind = .decoration, .name = "ForcePow2DepthALTERA", .value = 5836, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "ForcePow2DepthINTEL", .value = 5836, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "StridesizeALTERA", .value = 5883, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "StridesizeINTEL", .value = 5883, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "WordsizeALTERA", .value = 5884, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "WordsizeINTEL", .value = 5884, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "TrueDualPortALTERA", .value = 5885, .parameters = &.{} },
     .{ .kind = .decoration, .name = "TrueDualPortINTEL", .value = 5885, .parameters = &.{} },
     .{ .kind = .decoration, .name = "BurstCoalesceALTERA", .value = 5899, .parameters = &.{} },
     .{ .kind = .decoration, .name = "BurstCoalesceINTEL", .value = 5899, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "CacheSizeALTERA", .value = 5900, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "CacheSizeINTEL", .value = 5900, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "CacheSizeALTERA", .value = 5900, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "CacheSizeINTEL", .value = 5900, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "DontStaticallyCoalesceALTERA", .value = 5901, .parameters = &.{} },
     .{ .kind = .decoration, .name = "DontStaticallyCoalesceINTEL", .value = 5901, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "PrefetchALTERA", .value = 5902, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "PrefetchINTEL", .value = 5902, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "PrefetchALTERA", .value = 5902, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "PrefetchINTEL", .value = 5902, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "StallEnableALTERA", .value = 5905, .parameters = &.{} },
     .{ .kind = .decoration, .name = "StallEnableINTEL", .value = 5905, .parameters = &.{} },
     .{ .kind = .decoration, .name = "FuseLoopsInFunctionALTERA", .value = 5907, .parameters = &.{} },
     .{ .kind = .decoration, .name = "FuseLoopsInFunctionINTEL", .value = 5907, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "MathOpDSPModeALTERA", .value = 5909, .parameters = &.{ .literal_integer, .literal_integer } },
-    .{ .kind = .decoration, .name = "MathOpDSPModeINTEL", .value = 5909, .parameters = &.{ .literal_integer, .literal_integer } },
-    .{ .kind = .decoration, .name = "AliasScopeINTEL", .value = 5914, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "NoAliasINTEL", .value = 5915, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "InitiationIntervalALTERA", .value = 5917, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "InitiationIntervalINTEL", .value = 5917, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MaxConcurrencyALTERA", .value = 5918, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MaxConcurrencyINTEL", .value = 5918, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "PipelineEnableALTERA", .value = 5919, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "PipelineEnableINTEL", .value = 5919, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "BufferLocationALTERA", .value = 5921, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "BufferLocationINTEL", .value = 5921, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "IOPipeStorageALTERA", .value = 5944, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "IOPipeStorageINTEL", .value = 5944, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "FunctionFloatingPointModeINTEL", .value = 6080, .parameters = &.{ .literal_integer, .fp_operation_mode } },
+    .{ .kind = .decoration, .name = "MathOpDSPModeALTERA", .value = 5909, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "MathOpDSPModeINTEL", .value = 5909, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "AliasScopeINTEL", .value = 5914, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "NoAliasINTEL", .value = 5915, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "InitiationIntervalALTERA", .value = 5917, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "InitiationIntervalINTEL", .value = 5917, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MaxConcurrencyALTERA", .value = 5918, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MaxConcurrencyINTEL", .value = 5918, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "PipelineEnableALTERA", .value = 5919, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "PipelineEnableINTEL", .value = 5919, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "BufferLocationALTERA", .value = 5921, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "BufferLocationINTEL", .value = 5921, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "IOPipeStorageALTERA", .value = 5944, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "IOPipeStorageINTEL", .value = 5944, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "FunctionFloatingPointModeINTEL", .value = 6080, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .fp_operation_mode, .quantifier = .one } } },
     .{ .kind = .decoration, .name = "SingleElementVectorINTEL", .value = 6085, .parameters = &.{} },
     .{ .kind = .decoration, .name = "VectorComputeCallableFunctionINTEL", .value = 6087, .parameters = &.{} },
     .{ .kind = .decoration, .name = "MediaBlockIOINTEL", .value = 6140, .parameters = &.{} },
     .{ .kind = .decoration, .name = "StallFreeALTERA", .value = 6151, .parameters = &.{} },
     .{ .kind = .decoration, .name = "StallFreeINTEL", .value = 6151, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "FPMaxErrorDecorationINTEL", .value = 6170, .parameters = &.{.literal_float} },
-    .{ .kind = .decoration, .name = "LatencyControlLabelALTERA", .value = 6172, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "LatencyControlLabelINTEL", .value = 6172, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "LatencyControlConstraintALTERA", .value = 6173, .parameters = &.{ .literal_integer, .literal_integer, .literal_integer } },
-    .{ .kind = .decoration, .name = "LatencyControlConstraintINTEL", .value = 6173, .parameters = &.{ .literal_integer, .literal_integer, .literal_integer } },
+    .{ .kind = .decoration, .name = "FPMaxErrorDecorationINTEL", .value = 6170, .parameters = &.{.{ .kind = .literal_float, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "LatencyControlLabelALTERA", .value = 6172, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "LatencyControlLabelINTEL", .value = 6172, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "LatencyControlConstraintALTERA", .value = 6173, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "LatencyControlConstraintINTEL", .value = 6173, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
     .{ .kind = .decoration, .name = "ConduitKernelArgumentALTERA", .value = 6175, .parameters = &.{} },
     .{ .kind = .decoration, .name = "ConduitKernelArgumentINTEL", .value = 6175, .parameters = &.{} },
     .{ .kind = .decoration, .name = "RegisterMapKernelArgumentALTERA", .value = 6176, .parameters = &.{} },
     .{ .kind = .decoration, .name = "RegisterMapKernelArgumentINTEL", .value = 6176, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceAddressWidthALTERA", .value = 6177, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceAddressWidthINTEL", .value = 6177, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceDataWidthALTERA", .value = 6178, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceDataWidthINTEL", .value = 6178, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceLatencyALTERA", .value = 6179, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceLatencyINTEL", .value = 6179, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceReadWriteModeALTERA", .value = 6180, .parameters = &.{.access_qualifier} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceReadWriteModeINTEL", .value = 6180, .parameters = &.{.access_qualifier} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceMaxBurstALTERA", .value = 6181, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceMaxBurstINTEL", .value = 6181, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceWaitRequestALTERA", .value = 6182, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "MMHostInterfaceWaitRequestINTEL", .value = 6182, .parameters = &.{.literal_integer} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceAddressWidthALTERA", .value = 6177, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceAddressWidthINTEL", .value = 6177, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceDataWidthALTERA", .value = 6178, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceDataWidthINTEL", .value = 6178, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceLatencyALTERA", .value = 6179, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceLatencyINTEL", .value = 6179, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceReadWriteModeALTERA", .value = 6180, .parameters = &.{.{ .kind = .access_qualifier, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceReadWriteModeINTEL", .value = 6180, .parameters = &.{.{ .kind = .access_qualifier, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceMaxBurstALTERA", .value = 6181, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceMaxBurstINTEL", .value = 6181, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceWaitRequestALTERA", .value = 6182, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "MMHostInterfaceWaitRequestINTEL", .value = 6182, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .decoration, .name = "StableKernelArgumentALTERA", .value = 6183, .parameters = &.{} },
     .{ .kind = .decoration, .name = "StableKernelArgumentINTEL", .value = 6183, .parameters = &.{} },
-    .{ .kind = .decoration, .name = "HostAccessINTEL", .value = 6188, .parameters = &.{ .host_access_qualifier, .literal_string } },
-    .{ .kind = .decoration, .name = "InitModeALTERA", .value = 6190, .parameters = &.{.initialization_mode_qualifier} },
-    .{ .kind = .decoration, .name = "InitModeINTEL", .value = 6190, .parameters = &.{.initialization_mode_qualifier} },
-    .{ .kind = .decoration, .name = "ImplementInRegisterMapALTERA", .value = 6191, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "ImplementInRegisterMapINTEL", .value = 6191, .parameters = &.{.literal_integer} },
-    .{ .kind = .decoration, .name = "ConditionalINTEL", .value = 6247, .parameters = &.{.id_ref} },
-    .{ .kind = .decoration, .name = "CacheControlLoadINTEL", .value = 6442, .parameters = &.{ .literal_integer, .load_cache_control } },
-    .{ .kind = .decoration, .name = "CacheControlStoreINTEL", .value = 6443, .parameters = &.{ .literal_integer, .store_cache_control } },
+    .{ .kind = .decoration, .name = "HostAccessINTEL", .value = 6188, .parameters = &.{ .{ .kind = .host_access_qualifier, .quantifier = .one }, .{ .kind = .literal_string, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "InitModeALTERA", .value = 6190, .parameters = &.{.{ .kind = .initialization_mode_qualifier, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "InitModeINTEL", .value = 6190, .parameters = &.{.{ .kind = .initialization_mode_qualifier, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "ImplementInRegisterMapALTERA", .value = 6191, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "ImplementInRegisterMapINTEL", .value = 6191, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "ConditionalINTEL", .value = 6247, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .decoration, .name = "CacheControlLoadINTEL", .value = 6442, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .load_cache_control, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "CacheControlStoreINTEL", .value = 6443, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .store_cache_control, .quantifier = .one } } },
+    .{ .kind = .decoration, .name = "IntrinsicSAMSUNG", .value = 7040, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
     .{ .kind = .built_in, .name = "Position", .value = 0, .parameters = &.{} },
     .{ .kind = .built_in, .name = "PointSize", .value = 1, .parameters = &.{} },
     .{ .kind = .built_in, .name = "ClipDistance", .value = 3, .parameters = &.{} },
@@ -7355,6 +7519,11 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .capability, .name = "CooperativeMatrixLayoutsARM", .value = 4201, .parameters = &.{} },
     .{ .kind = .capability, .name = "Float8EXT", .value = 4212, .parameters = &.{} },
     .{ .kind = .capability, .name = "Float8CooperativeMatrixEXT", .value = 4213, .parameters = &.{} },
+    .{ .kind = .capability, .name = "Float6EXT", .value = 4228, .parameters = &.{} },
+    .{ .kind = .capability, .name = "Float4EXT", .value = 4229, .parameters = &.{} },
+    .{ .kind = .capability, .name = "Float8UnsignedE8M0EXT", .value = 4230, .parameters = &.{} },
+    .{ .kind = .capability, .name = "MXInt8EXT", .value = 4231, .parameters = &.{} },
+    .{ .kind = .capability, .name = "BitcastExtractEXT", .value = 4232, .parameters = &.{} },
     .{ .kind = .capability, .name = "FragmentShadingRateKHR", .value = 4422, .parameters = &.{} },
     .{ .kind = .capability, .name = "SubgroupBallotKHR", .value = 4423, .parameters = &.{} },
     .{ .kind = .capability, .name = "DrawParameters", .value = 4427, .parameters = &.{} },
@@ -7393,6 +7562,11 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .capability, .name = "TileShadingQCOM", .value = 4495, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeMatrixConversionQCOM", .value = 4496, .parameters = &.{} },
     .{ .kind = .capability, .name = "TextureBlockMatch2QCOM", .value = 4498, .parameters = &.{} },
+    .{ .kind = .capability, .name = "BFloat16MulAddQCOM", .value = 4504, .parameters = &.{} },
+    .{ .kind = .capability, .name = "SubgroupSizeQCOM", .value = 4506, .parameters = &.{} },
+    .{ .kind = .capability, .name = "MultipleWaitQueuesQCOM", .value = 4539, .parameters = &.{} },
+    .{ .kind = .capability, .name = "ImageGatherLinearQCOM", .value = 4543, .parameters = &.{} },
+    .{ .kind = .capability, .name = "ImageGatherExtendedModesQCOM", .value = 4544, .parameters = &.{} },
     .{ .kind = .capability, .name = "Float16ImageAMD", .value = 5008, .parameters = &.{} },
     .{ .kind = .capability, .name = "ImageGatherBiasLodAMD", .value = 5009, .parameters = &.{} },
     .{ .kind = .capability, .name = "FragmentMaskAMD", .value = 5010, .parameters = &.{} },
@@ -7490,13 +7664,17 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .capability, .name = "PushConstantBanksNV", .value = 5423, .parameters = &.{} },
     .{ .kind = .capability, .name = "LongVectorEXT", .value = 5425, .parameters = &.{} },
     .{ .kind = .capability, .name = "Shader64BitIndexingEXT", .value = 5426, .parameters = &.{} },
+    .{ .kind = .capability, .name = "CooperativeMatrixConversionsEXT", .value = 5429, .parameters = &.{} },
+    .{ .kind = .capability, .name = "CooperativeMatrixReductionsEXT", .value = 5430, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeMatrixReductionsNV", .value = 5430, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeMatrixConversionsNV", .value = 5431, .parameters = &.{} },
+    .{ .kind = .capability, .name = "CooperativeMatrixPerElementOperationsEXT", .value = 5432, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeMatrixPerElementOperationsNV", .value = 5432, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeMatrixTensorAddressingNV", .value = 5433, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeMatrixBlockLoadsNV", .value = 5434, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeVectorTrainingNV", .value = 5435, .parameters = &.{} },
     .{ .kind = .capability, .name = "RayTracingClusterAccelerationStructureNV", .value = 5437, .parameters = &.{} },
+    .{ .kind = .capability, .name = "CooperativeMatrixGetCoordinateEXT", .value = 5438, .parameters = &.{} },
     .{ .kind = .capability, .name = "TensorAddressingNV", .value = 5439, .parameters = &.{} },
     .{ .kind = .capability, .name = "CooperativeMatrixDecodeVectorNV", .value = 5447, .parameters = &.{} },
     .{ .kind = .capability, .name = "SubgroupShuffleINTEL", .value = 5568, .parameters = &.{} },
@@ -7618,6 +7796,7 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .capability, .name = "DotProductFloat16AccFloat16VALVE", .value = 6913, .parameters = &.{} },
     .{ .kind = .capability, .name = "DotProductBFloat16AccVALVE", .value = 6914, .parameters = &.{} },
     .{ .kind = .capability, .name = "DotProductFloat8AccFloat32VALVE", .value = 6915, .parameters = &.{} },
+    .{ .kind = .capability, .name = "IntrinsicSAMSUNG", .value = 7041, .parameters = &.{} },
     .{ .kind = .ray_query_intersection, .name = "RayQueryCandidateIntersectionKHR", .value = 0, .parameters = &.{} },
     .{ .kind = .ray_query_intersection, .name = "RayQueryCommittedIntersectionKHR", .value = 1, .parameters = &.{} },
     .{ .kind = .ray_query_committed_intersection_type, .name = "RayQueryCommittedIntersectionNoneKHR", .value = 0, .parameters = &.{} },
@@ -7649,9 +7828,9 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .tensor_clamp_mode, .name = "Repeat", .value = 3, .parameters = &.{} },
     .{ .kind = .tensor_clamp_mode, .name = "RepeatMirrored", .value = 4, .parameters = &.{} },
     .{ .kind = .tensor_addressing_operands, .name = "None", .value = 0, .parameters = &.{} },
-    .{ .kind = .tensor_addressing_operands, .name = "TensorView", .value = 1, .parameters = &.{.id_ref} },
-    .{ .kind = .tensor_addressing_operands, .name = "DecodeFunc", .value = 2, .parameters = &.{.id_ref} },
-    .{ .kind = .tensor_addressing_operands, .name = "DecodeVectorFunc", .value = 4, .parameters = &.{.id_ref} },
+    .{ .kind = .tensor_addressing_operands, .name = "TensorView", .value = 1, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .tensor_addressing_operands, .name = "DecodeFunc", .value = 2, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .tensor_addressing_operands, .name = "DecodeVectorFunc", .value = 4, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .initialization_mode_qualifier, .name = "InitOnDeviceReprogramALTERA", .value = 0, .parameters = &.{} },
     .{ .kind = .initialization_mode_qualifier, .name = "InitOnDeviceReprogramINTEL", .value = 0, .parameters = &.{} },
     .{ .kind = .initialization_mode_qualifier, .name = "InitOnDeviceResetALTERA", .value = 1, .parameters = &.{} },
@@ -7684,6 +7863,11 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .fp_encoding, .name = "BFloat16KHR", .value = 0, .parameters = &.{} },
     .{ .kind = .fp_encoding, .name = "Float8E4M3EXT", .value = 4214, .parameters = &.{} },
     .{ .kind = .fp_encoding, .name = "Float8E5M2EXT", .value = 4215, .parameters = &.{} },
+    .{ .kind = .fp_encoding, .name = "Float6E2M3EXT", .value = 4223, .parameters = &.{} },
+    .{ .kind = .fp_encoding, .name = "Float6E3M2EXT", .value = 4224, .parameters = &.{} },
+    .{ .kind = .fp_encoding, .name = "Float4E2M1EXT", .value = 4225, .parameters = &.{} },
+    .{ .kind = .fp_encoding, .name = "Float8UnsignedE8M0EXT", .value = 4226, .parameters = &.{} },
+    .{ .kind = .fp_encoding, .name = "MXInt8EXT", .value = 4227, .parameters = &.{} },
     .{ .kind = .cooperative_vector_matrix_layout, .name = "RowMajorNV", .value = 0, .parameters = &.{} },
     .{ .kind = .cooperative_vector_matrix_layout, .name = "ColumnMajorNV", .value = 1, .parameters = &.{} },
     .{ .kind = .cooperative_vector_matrix_layout, .name = "InferencingOptimalNV", .value = 2, .parameters = &.{} },
@@ -7703,111 +7887,201 @@ pub const enumerants = [_]EnumerantInfo{
     .{ .kind = .component_type, .name = "UnsignedInt8PackedNV", .value = 1000491001, .parameters = &.{} },
     .{ .kind = .component_type, .name = "FloatE4M3NV", .value = 1000491002, .parameters = &.{} },
     .{ .kind = .component_type, .name = "FloatE5M2NV", .value = 1000491003, .parameters = &.{} },
+    .{ .kind = .gather_modes, .name = "Gather4x1QCOM", .value = 0, .parameters = &.{} },
+    .{ .kind = .gather_modes, .name = "GatherDQCOM", .value = 1, .parameters = &.{} },
+    .{ .kind = .gather_modes, .name = "GatherH2QCOM", .value = 2, .parameters = &.{} },
+    .{ .kind = .gather_modes, .name = "GatherV2QCOM", .value = 3, .parameters = &.{} },
     .{ .kind = .tensor_operands, .name = "NoneARM", .value = 0, .parameters = &.{} },
     .{ .kind = .tensor_operands, .name = "NontemporalARM", .value = 1, .parameters = &.{} },
-    .{ .kind = .tensor_operands, .name = "OutOfBoundsValueARM", .value = 2, .parameters = &.{.id_ref} },
-    .{ .kind = .tensor_operands, .name = "MakeElementAvailableARM", .value = 4, .parameters = &.{.id_ref} },
-    .{ .kind = .tensor_operands, .name = "MakeElementVisibleARM", .value = 8, .parameters = &.{.id_ref} },
+    .{ .kind = .tensor_operands, .name = "OutOfBoundsValueARM", .value = 2, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .tensor_operands, .name = "MakeElementAvailableARM", .value = 4, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .tensor_operands, .name = "MakeElementVisibleARM", .value = 8, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
     .{ .kind = .tensor_operands, .name = "NonPrivateElementARM", .value = 16, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "None", .value = 0, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIsProtected", .value = 1, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIsPrivate", .value = 2, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIsPublic", .value = 3, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIsLocal", .value = 4, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIsDefinition", .value = 8, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagFwdDecl", .value = 16, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagArtificial", .value = 32, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagExplicit", .value = 64, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagPrototyped", .value = 128, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagObjectPointer", .value = 256, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagStaticMember", .value = 512, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIndirectVariable", .value = 1024, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagLValueReference", .value = 2048, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagRValueReference", .value = 4096, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIsOptimized", .value = 8192, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagIsEnumClass", .value = 16384, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagTypePassByValue", .value = 32768, .parameters = &.{} },
-    .{ .kind = .debug_info_flags, .name = "FlagTypePassByReference", .value = 65536, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "Unspecified", .value = 0, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "Address", .value = 1, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "Boolean", .value = 2, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "Float", .value = 3, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "Signed", .value = 4, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "SignedChar", .value = 5, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "Unsigned", .value = 6, .parameters = &.{} },
-    .{ .kind = .debug_base_type_attribute_encoding, .name = "UnsignedChar", .value = 7, .parameters = &.{} },
-    .{ .kind = .debug_composite_type, .name = "Class", .value = 0, .parameters = &.{} },
-    .{ .kind = .debug_composite_type, .name = "Structure", .value = 1, .parameters = &.{} },
-    .{ .kind = .debug_composite_type, .name = "Union", .value = 2, .parameters = &.{} },
-    .{ .kind = .debug_type_qualifier, .name = "ConstType", .value = 0, .parameters = &.{} },
-    .{ .kind = .debug_type_qualifier, .name = "VolatileType", .value = 1, .parameters = &.{} },
-    .{ .kind = .debug_type_qualifier, .name = "RestrictType", .value = 2, .parameters = &.{} },
-    .{ .kind = .debug_type_qualifier, .name = "AtomicType", .value = 3, .parameters = &.{} },
-    .{ .kind = .debug_operation, .name = "Deref", .value = 0, .parameters = &.{} },
-    .{ .kind = .debug_operation, .name = "Plus", .value = 1, .parameters = &.{} },
-    .{ .kind = .debug_operation, .name = "Minus", .value = 2, .parameters = &.{} },
-    .{ .kind = .debug_operation, .name = "PlusUconst", .value = 3, .parameters = &.{.literal_integer} },
-    .{ .kind = .debug_operation, .name = "BitPiece", .value = 4, .parameters = &.{ .literal_integer, .literal_integer } },
-    .{ .kind = .debug_operation, .name = "Swap", .value = 5, .parameters = &.{} },
-    .{ .kind = .debug_operation, .name = "Xderef", .value = 6, .parameters = &.{} },
-    .{ .kind = .debug_operation, .name = "StackValue", .value = 7, .parameters = &.{} },
-    .{ .kind = .debug_operation, .name = "Constu", .value = 8, .parameters = &.{.literal_integer} },
-    .{ .kind = .debug_operation, .name = "Fragment", .value = 9, .parameters = &.{ .literal_integer, .literal_integer } },
-    .{ .kind = .debug_imported_entity, .name = "ImportedModule", .value = 0, .parameters = &.{} },
-    .{ .kind = .debug_imported_entity, .name = "ImportedDeclaration", .value = 1, .parameters = &.{} },
-    .{ .kind = .build_identifier_flags, .name = "IdentifierPossibleDuplicates", .value = 1, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "None", .value = 0, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIsProtected", .value = 1, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIsPrivate", .value = 2, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIsPublic", .value = 3, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIsLocal", .value = 4, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIsDefinition", .value = 8, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagFwdDecl", .value = 16, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagArtificial", .value = 32, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagExplicit", .value = 64, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagPrototyped", .value = 128, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagObjectPointer", .value = 256, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagStaticMember", .value = 512, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIndirectVariable", .value = 1024, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagLValueReference", .value = 2048, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagRValueReference", .value = 4096, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIsOptimized", .value = 8192, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagIsEnumClass", .value = 16384, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagTypePassByValue", .value = 32768, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .name = "FlagTypePassByReference", .value = 65536, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "Unspecified", .value = 0, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "Address", .value = 1, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "Boolean", .value = 2, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "Float", .value = 3, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "Signed", .value = 4, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "SignedChar", .value = 5, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "Unsigned", .value = 6, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .name = "UnsignedChar", .value = 7, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_composite_type, .name = "Class", .value = 0, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_composite_type, .name = "Structure", .value = 1, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_composite_type, .name = "Union", .value = 2, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_type_qualifier, .name = "ConstType", .value = 0, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_type_qualifier, .name = "VolatileType", .value = 1, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_type_qualifier, .name = "RestrictType", .value = 2, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_type_qualifier, .name = "AtomicType", .value = 3, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "Deref", .value = 0, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "Plus", .value = 1, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "Minus", .value = 2, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "PlusUconst", .value = 3, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "BitPiece", .value = 4, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "Swap", .value = 5, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "Xderef", .value = 6, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "StackValue", .value = 7, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "Constu", .value = 8, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .name = "Fragment", .value = 9, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .opencl_debug_info_100_debug_imported_entity, .name = "ImportedModule", .value = 0, .parameters = &.{} },
+    .{ .kind = .opencl_debug_info_100_debug_imported_entity, .name = "ImportedDeclaration", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "None", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIsProtected", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIsPrivate", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIsPublic", .value = 3, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIsLocal", .value = 4, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIsDefinition", .value = 8, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagFwdDecl", .value = 16, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagArtificial", .value = 32, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagExplicit", .value = 64, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagPrototyped", .value = 128, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagObjectPointer", .value = 256, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagStaticMember", .value = 512, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIndirectVariable", .value = 1024, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagLValueReference", .value = 2048, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagRValueReference", .value = 4096, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIsOptimized", .value = 8192, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagIsEnumClass", .value = 16384, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagTypePassByValue", .value = 32768, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagTypePassByReference", .value = 65536, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_info_flags, .name = "FlagUnknownPhysicalLayout", .value = 131072, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_build_identifier_flags, .name = "IdentifierPossibleDuplicates", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "Unspecified", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "Address", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "Boolean", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "Float", .value = 3, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "Signed", .value = 4, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "SignedChar", .value = 5, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "Unsigned", .value = 6, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding, .name = "UnsignedChar", .value = 7, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_composite_type, .name = "Class", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_composite_type, .name = "Structure", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_composite_type, .name = "Union", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_type_qualifier, .name = "ConstType", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_type_qualifier, .name = "VolatileType", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_type_qualifier, .name = "RestrictType", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_type_qualifier, .name = "AtomicType", .value = 3, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "Deref", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "Plus", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "Minus", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "PlusUconst", .value = 3, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "BitPiece", .value = 4, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "Swap", .value = 5, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "Xderef", .value = 6, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "StackValue", .value = 7, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "Constu", .value = 8, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_operation, .name = "Fragment", .value = 9, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_imported_entity, .name = "ImportedModule", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_100_debug_imported_entity, .name = "ImportedDeclaration", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "None", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIsProtected", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIsPrivate", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIsPublic", .value = 3, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIsLocal", .value = 4, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIsDefinition", .value = 8, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagFwdDecl", .value = 16, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagArtificial", .value = 32, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagExplicit", .value = 64, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagPrototyped", .value = 128, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagObjectPointer", .value = 256, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagStaticMember", .value = 512, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIndirectVariable", .value = 1024, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagLValueReference", .value = 2048, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagRValueReference", .value = 4096, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIsOptimized", .value = 8192, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagIsEnumClass", .value = 16384, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagTypePassByValue", .value = 32768, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagTypePassByReference", .value = 65536, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_info_flags, .name = "FlagUnknownPhysicalLayout", .value = 131072, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_build_identifier_flags, .name = "IdentifierPossibleDuplicates", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "Unspecified", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "Address", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "Boolean", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "Float", .value = 3, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "Signed", .value = 4, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "SignedChar", .value = 5, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "Unsigned", .value = 6, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding, .name = "UnsignedChar", .value = 7, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_composite_type, .name = "Class", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_composite_type, .name = "Structure", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_composite_type, .name = "Union", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_type_qualifier, .name = "ConstType", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_type_qualifier, .name = "VolatileType", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_type_qualifier, .name = "RestrictType", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_type_qualifier, .name = "AtomicType", .value = 3, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "Deref", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "Plus", .value = 1, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "Minus", .value = 2, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "PlusUconst", .value = 3, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "BitPiece", .value = 4, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "Swap", .value = 5, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "Xderef", .value = 6, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "StackValue", .value = 7, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "Constu", .value = 8, .parameters = &.{.{ .kind = .id_ref, .quantifier = .one }} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_operation, .name = "Fragment", .value = 9, .parameters = &.{ .{ .kind = .id_ref, .quantifier = .one }, .{ .kind = .id_ref, .quantifier = .one } } },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_imported_entity, .name = "ImportedModule", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_shader_debug_info_debug_imported_entity, .name = "ImportedDeclaration", .value = 1, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "None", .value = 0, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagIsProtected", .value = 1, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagIsPrivate", .value = 2, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagIsPublic", .value = 3, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagIsLocal", .value = 4, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagIsDefinition", .value = 8, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagFwdDecl", .value = 16, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagArtificial", .value = 32, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagExplicit", .value = 64, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagPrototyped", .value = 128, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagObjectPointer", .value = 256, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagStaticMember", .value = 512, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagIndirectVariable", .value = 1024, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagLValueReference", .value = 2048, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagRValueReference", .value = 4096, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_info_flags, .name = "FlagIsOptimized", .value = 8192, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "Unspecified", .value = 0, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "Address", .value = 1, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "Boolean", .value = 2, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "Float", .value = 4, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "Signed", .value = 5, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "SignedChar", .value = 6, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "Unsigned", .value = 7, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .name = "UnsignedChar", .value = 8, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_composite_type, .name = "Class", .value = 0, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_composite_type, .name = "Structure", .value = 1, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_composite_type, .name = "Union", .value = 2, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_type_qualifier, .name = "ConstType", .value = 0, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_type_qualifier, .name = "VolatileType", .value = 1, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_type_qualifier, .name = "RestrictType", .value = 2, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_operation, .name = "Deref", .value = 0, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_operation, .name = "Plus", .value = 1, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_operation, .name = "Minus", .value = 2, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_operation, .name = "PlusUconst", .value = 3, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .debug_info_debug_operation, .name = "BitPiece", .value = 4, .parameters = &.{ .{ .kind = .literal_integer, .quantifier = .one }, .{ .kind = .literal_integer, .quantifier = .one } } },
+    .{ .kind = .debug_info_debug_operation, .name = "Swap", .value = 5, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_operation, .name = "Xderef", .value = 6, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_operation, .name = "StackValue", .value = 7, .parameters = &.{} },
+    .{ .kind = .debug_info_debug_operation, .name = "Constu", .value = 8, .parameters = &.{.{ .kind = .literal_integer, .quantifier = .one }} },
+    .{ .kind = .nonsemantic_clspv_reflection_kernel_property_flags, .name = "None", .value = 0, .parameters = &.{} },
+    .{ .kind = .nonsemantic_clspv_reflection_kernel_property_flags, .name = "MayUsePrintf", .value = 1, .parameters = &.{} },
 };
 
-const spec_operands_undef = [_]OperandInfo{};
-const spec_operands_ext_inst = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_ext_inst_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_constant_true = [_]OperandInfo{};
-const spec_operands_constant_false = [_]OperandInfo{};
-const spec_operands_constant = [_]OperandInfo{
-    .{ .kind = .literal_context_dependent_number, .quantifier = .one },
-};
-const spec_operands_constant_composite = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_constant_sampler = [_]OperandInfo{
-    .{ .kind = .sampler_addressing_mode, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .sampler_filter_mode, .quantifier = .one },
-};
-const spec_operands_constant_null = [_]OperandInfo{};
-const spec_operands_spec_constant_true = [_]OperandInfo{};
-const spec_operands_spec_constant_false = [_]OperandInfo{};
-const spec_operands_spec_constant = [_]OperandInfo{
-    .{ .kind = .literal_context_dependent_number, .quantifier = .one },
-};
-const spec_operands_spec_constant_composite = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_function = [_]OperandInfo{
-    .{ .kind = .function_control, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_function_parameter = [_]OperandInfo{};
-const spec_operands_function_call = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_variable = [_]OperandInfo{
-    .{ .kind = .storage_class, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_image_texel_pointer = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_load = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .memory_access, .quantifier = .optional },
-};
 const spec_operands_access_chain = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .variable },
@@ -7821,34 +8095,15 @@ const spec_operands_ptr_access_chain = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .variable },
 };
-const spec_operands_array_length = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_generic_ptr_mem_semantics = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
 const spec_operands_in_bounds_ptr_access_chain = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .variable },
 };
-const spec_operands_vector_extract_dynamic = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_vector_insert_dynamic = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
 const spec_operands_vector_shuffle = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .variable },
-};
-const spec_operands_composite_construct = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .variable },
 };
 const spec_operands_composite_extract = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
@@ -7858,108 +8113,6 @@ const spec_operands_composite_insert = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .variable },
-};
-const spec_operands_copy_object = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_transpose = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_sampled_image = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_sample_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sample_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_sample_dref_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sample_dref_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_sample_proj_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sample_proj_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_sample_proj_dref_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sample_proj_dref_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_fetch = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_gather = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_dref_gather = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_read = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_query_format = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_query_order = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_query_size_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_query_size = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_query_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_query_levels = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_query_samples = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
 };
 const spec_operands_convert_f_to_u = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
@@ -7988,12 +8141,6 @@ const spec_operands_quantize_to_f16 = [_]OperandInfo{
 const spec_operands_convert_ptr_to_u = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
 };
-const spec_operands_sat_convert_s_to_u = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_sat_convert_u_to_s = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
 const spec_operands_convert_u_to_ptr = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
 };
@@ -8002,10 +8149,6 @@ const spec_operands_ptr_cast_to_generic = [_]OperandInfo{
 };
 const spec_operands_generic_cast_to_ptr = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_generic_cast_to_ptr_explicit = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .storage_class, .quantifier = .one },
 };
 const spec_operands_bitcast = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
@@ -8069,83 +8212,6 @@ const spec_operands_f_rem = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
 };
 const spec_operands_f_mod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_vector_times_scalar = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_matrix_times_scalar = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_vector_times_matrix = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_matrix_times_vector = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_matrix_times_matrix = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_outer_product = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_dot = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_i_add_carry = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_i_sub_borrow = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_mul_extended = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_s_mul_extended = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_any = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_all = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_is_nan = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_is_inf = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_is_finite = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_is_normal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_sign_bit_set = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_less_or_greater = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ordered = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_unordered = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
 };
@@ -8213,54 +8279,6 @@ const spec_operands_s_less_than_equal = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
 };
-const spec_operands_f_ord_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_unord_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_ord_not_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_unord_not_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_ord_less_than = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_unord_less_than = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_ord_greater_than = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_unord_greater_than = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_ord_less_than_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_unord_less_than_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_ord_greater_than_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_unord_greater_than_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
 const spec_operands_shift_right_logical = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
@@ -8288,2540 +8306,15 @@ const spec_operands_bitwise_and = [_]OperandInfo{
 const spec_operands_not = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
 };
-const spec_operands_bit_field_insert = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_bit_field_s_extract = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_bit_field_u_extract = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_bit_reverse = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_bit_count = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_d_pdx = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_d_pdy = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fwidth = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_d_pdx_fine = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_d_pdy_fine = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fwidth_fine = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_d_pdx_coarse = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_d_pdy_coarse = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fwidth_coarse = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_load = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-};
-const spec_operands_atomic_exchange = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_compare_exchange = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_compare_exchange_weak = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_i_increment = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-};
-const spec_operands_atomic_i_decrement = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-};
-const spec_operands_atomic_i_add = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_i_sub = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_s_min = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_u_min = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_s_max = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_u_max = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_and = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_or = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_xor = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_phi = [_]OperandInfo{
-    .{ .kind = .pair_id_ref_id_ref, .quantifier = .variable },
-};
-const spec_operands_group_async_copy = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_all = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_any = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_broadcast = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_i_add = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_f_add = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_f_min = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_u_min = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_s_min = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_f_max = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_u_max = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_s_max = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_read_pipe = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_write_pipe = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_reserved_read_pipe = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_reserved_write_pipe = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_reserve_read_pipe_packets = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_reserve_write_pipe_packets = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_is_valid_reserve_id = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_num_pipe_packets = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_max_pipe_packets = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_reserve_read_pipe_packets = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_reserve_write_pipe_packets = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_enqueue_marker = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_enqueue_kernel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_get_kernel_n_drange_sub_group_count = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_kernel_n_drange_max_sub_group_size = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_kernel_work_group_size = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_kernel_preferred_work_group_size_multiple = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_create_user_event = [_]OperandInfo{};
-const spec_operands_is_valid_event = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_default_queue = [_]OperandInfo{};
-const spec_operands_build_nd_range = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_sparse_sample_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sparse_sample_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_sparse_sample_dref_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sparse_sample_dref_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_sparse_sample_proj_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sparse_sample_proj_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_sparse_sample_proj_dref_implicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sparse_sample_proj_dref_explicit_lod = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .one },
-};
-const spec_operands_image_sparse_fetch = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sparse_gather = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sparse_dref_gather = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_image_sparse_texels_resident = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_flag_test_and_set = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-};
-const spec_operands_image_sparse_read = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_size_of = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_constant_pipe_storage = [_]OperandInfo{
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_create_pipe_from_pipe_storage = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_kernel_local_size_for_subgroup_count = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_get_kernel_max_num_subgroups = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_named_barrier_initialize = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_elect = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_all = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_any = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_all_equal = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_broadcast = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_broadcast_first = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_ballot = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_inverse_ballot = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_ballot_bit_extract = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_ballot_bit_count = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_ballot_find_lsb = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_ballot_find_msb = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_shuffle = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_shuffle_xor = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_shuffle_up = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_shuffle_down = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_i_add = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_f_add = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_i_mul = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_f_mul = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_s_min = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_u_min = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_f_min = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_s_max = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_u_max = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_f_max = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_bitwise_and = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_bitwise_or = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_bitwise_xor = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_logical_and = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_logical_or = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_logical_xor = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_group_non_uniform_quad_broadcast = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_quad_swap = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_copy_logical = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ptr_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ptr_not_equal = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ptr_diff = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_color_attachment_read_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_depth_attachment_read_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_stencil_attachment_read_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_tensor_read_arm = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .tensor_operands, .quantifier = .optional },
-};
-const spec_operands_tensor_query_size_arm = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_graph_constant_arm = [_]OperandInfo{
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_graph_arm = [_]OperandInfo{};
-const spec_operands_graph_input_arm = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_untyped_variable_khr = [_]OperandInfo{
-    .{ .kind = .storage_class, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_untyped_access_chain_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_untyped_in_bounds_access_chain_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_subgroup_ballot_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_first_invocation_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_untyped_ptr_access_chain_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_untyped_in_bounds_ptr_access_chain_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_untyped_array_length_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fma_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_all_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_any_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_all_equal_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_rotate_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-};
-const spec_operands_subgroup_read_invocation_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ext_inst_with_forward_refs_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_ext_inst_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_untyped_group_async_copy_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .memory_access, .quantifier = .optional },
-    .{ .kind = .memory_access, .quantifier = .optional },
-};
-const spec_operands_convert_u_to_acceleration_structure_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_s_dot = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .packed_vector_format, .quantifier = .optional },
-};
-const spec_operands_u_dot = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .packed_vector_format, .quantifier = .optional },
-};
-const spec_operands_su_dot = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .packed_vector_format, .quantifier = .optional },
-};
-const spec_operands_s_dot_acc_sat = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .packed_vector_format, .quantifier = .optional },
-};
-const spec_operands_u_dot_acc_sat = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .packed_vector_format, .quantifier = .optional },
-};
-const spec_operands_su_dot_acc_sat = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .packed_vector_format, .quantifier = .optional },
-};
-const spec_operands_cooperative_matrix_load_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-    .{ .kind = .memory_access, .quantifier = .optional },
-};
-const spec_operands_cooperative_matrix_mul_add_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .cooperative_matrix_operands, .quantifier = .optional },
-};
-const spec_operands_cooperative_matrix_length_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_constant_composite_replicate_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_spec_constant_composite_replicate_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_composite_construct_replicate_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_proceed_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_type_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_sample_weighted_qcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_box_filter_qcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_block_match_ssdqcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_block_match_sadqcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_bit_cast_array_qcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_block_match_window_ssdqcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_block_match_window_sadqcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_block_match_gather_ssdqcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_block_match_gather_sadqcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_composite_construct_coop_mat_qcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_composite_extract_coop_mat_qcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_extract_sub_array_qcom = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_i_add_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_f_add_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_f_min_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_u_min_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_s_min_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_f_max_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_u_max_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_s_max_non_uniform_amd = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fragment_mask_fetch_amd = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fragment_fetch_amd = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_read_clock_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-};
-const spec_operands_allocate_node_payloads_amdx = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_finish_writing_node_payload_amdx = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_node_payload_array_length_amdx = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_is_node_payload_valid_amdx = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_quad_all_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_quad_any_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_buffer_pointer_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_untyped_image_texel_pointer_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_constant_size_of_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_constant_data_khr = [_]OperandInfo{
-    .{ .kind = .literal_integer, .quantifier = .variable },
-};
-const spec_operands_spec_constant_data_khr = [_]OperandInfo{
-    .{ .kind = .literal_integer, .quantifier = .variable },
-};
-const spec_operands_poison_khr = [_]OperandInfo{};
-const spec_operands_freeze_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_world_to_object_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_object_to_world_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_object_ray_direction_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_object_ray_origin_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_shader_record_buffer_handle_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_shader_binding_table_record_index_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_current_time_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_hit_kind_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_primitive_index_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_geometry_index_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_instance_id_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_instance_custom_index_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_world_ray_direction_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_world_ray_origin_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_ray_t_max_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_ray_t_min_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_empty_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_hit_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_miss_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_image_sample_footprint_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .image_operands, .quantifier = .optional },
-};
-const spec_operands_cooperative_vector_matrix_mul_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-    .{ .kind = .cooperative_matrix_operands, .quantifier = .optional },
-};
-const spec_operands_cooperative_vector_matrix_mul_add_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .optional },
-    .{ .kind = .cooperative_matrix_operands, .quantifier = .optional },
-};
-const spec_operands_cooperative_matrix_convert_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_non_uniform_partition_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fetch_micro_triangle_vertex_position_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fetch_micro_triangle_vertex_barycentric_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_cooperative_vector_load_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .memory_access, .quantifier = .optional },
-};
-const spec_operands_hit_object_get_intersection_triangle_vertex_positions_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_ray_flags_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_current_time_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_hit_kind_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_primitive_index_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_geometry_index_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_instance_id_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_instance_custom_index_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_object_ray_origin_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_object_ray_direction_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_world_ray_direction_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_world_ray_origin_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_object_to_world_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_world_to_object_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_ray_t_max_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_report_intersection_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_triangle_vertex_positions_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_cluster_id_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_cluster_id_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_ray_t_min_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_shader_binding_table_record_index_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_shader_record_buffer_handle_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_empty_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_hit_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_miss_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_cooperative_matrix_load_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .memory_access, .quantifier = .optional },
-};
-const spec_operands_cooperative_matrix_mul_add_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_cooperative_matrix_length_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_cooperative_matrix_reduce_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .cooperative_matrix_reduce, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_cooperative_matrix_load_tensor_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .memory_access, .quantifier = .one },
-    .{ .kind = .tensor_addressing_operands, .quantifier = .one },
-};
-const spec_operands_cooperative_matrix_per_element_op_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_create_tensor_layout_nv = [_]OperandInfo{};
-const spec_operands_tensor_layout_set_dimension_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_tensor_layout_set_stride_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_tensor_layout_slice_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_tensor_layout_set_clamp_value_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_create_tensor_view_nv = [_]OperandInfo{};
-const spec_operands_tensor_view_set_dimension_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_tensor_view_set_stride_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_is_helper_invocation_ext = [_]OperandInfo{};
-const spec_operands_tensor_view_set_clip_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_tensor_layout_set_block_size_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_cooperative_matrix_transpose_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_u_to_image_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_u_to_sampler_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_image_to_unv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_sampler_to_unv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_u_to_sampled_image_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_sampled_image_to_unv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_raw_access_chain_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .raw_access_chain_operands, .quantifier = .optional },
-};
-const spec_operands_ray_query_get_intersection_sphere_position_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_sphere_radius_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_lss_positions_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_lss_radii_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_lss_hit_value_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_sphere_position_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_sphere_radius_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_lss_positions_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_get_lss_radii_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_sphere_hit_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_hit_object_is_lss_hit_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_is_sphere_hit_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_is_lss_hit_nv = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_shuffle_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_shuffle_down_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_shuffle_up_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_shuffle_xor_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_block_read_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_image_block_read_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_image_media_block_read_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_count_leading_zeros_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_count_trailing_zeros_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_abs_i_sub_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_abs_u_sub_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_i_add_sat_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_add_sat_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_i_average_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_average_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_i_average_rounded_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_average_rounded_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_i_sub_sat_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_sub_sat_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_i_mul32x16_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_u_mul32x16_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_constant_function_pointer_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_function_pointer_call_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_asm_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_string, .quantifier = .one },
-    .{ .kind = .literal_string, .quantifier = .one },
-};
-const spec_operands_asm_call_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_atomic_f_min_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_f_max_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_expect_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_vme_image_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_inter_base_multi_reference_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_set_inter_base_multi_reference_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_inter_shape_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_set_inter_shape_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_inter_direction_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_set_inter_direction_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_intra_luma_shape_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_inter_motion_vector_cost_table_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_high_penalty_cost_table_intel = [_]OperandInfo{};
-const spec_operands_subgroup_avc_mce_get_default_medium_penalty_cost_table_intel = [_]OperandInfo{};
-const spec_operands_subgroup_avc_mce_get_default_low_penalty_cost_table_intel = [_]OperandInfo{};
-const spec_operands_subgroup_avc_mce_set_motion_vector_cost_function_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_intra_luma_mode_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_default_non_dc_luma_intra_penalty_intel = [_]OperandInfo{};
-const spec_operands_subgroup_avc_mce_get_default_intra_chroma_mode_base_penalty_intel = [_]OperandInfo{};
-const spec_operands_subgroup_avc_mce_set_ac_only_haar_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_set_source_interlaced_field_polarity_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_set_single_reference_interlaced_field_polarity_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_set_dual_reference_interlaced_field_polarities_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_convert_to_ime_payload_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_convert_to_ime_result_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_convert_to_ref_payload_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_convert_to_ref_result_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_convert_to_sic_payload_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_convert_to_sic_result_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_motion_vectors_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_inter_distortions_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_best_inter_distortions_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_inter_major_shape_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_inter_minor_shape_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_inter_directions_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_inter_motion_vector_count_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_inter_reference_ids_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_mce_get_inter_reference_interlaced_field_polarities_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_initialize_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_set_single_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_set_dual_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_ref_window_size_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_adjust_ref_offset_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_convert_to_mce_payload_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_set_max_motion_vector_count_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_set_unidirectional_mix_disable_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_set_early_search_termination_threshold_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_set_weighted_sad_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_single_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_single_reference_streamin_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_streamin_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_single_reference_streamout_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_streamout_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_single_reference_streaminout_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_streaminout_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_convert_to_mce_result_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_single_reference_streamin_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_dual_reference_streamin_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_strip_single_reference_streamout_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_strip_dual_reference_streamout_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_streamout_single_reference_major_shape_motion_vectors_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_streamout_single_reference_major_shape_distortions_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_streamout_single_reference_major_shape_reference_ids_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_streamout_dual_reference_major_shape_motion_vectors_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_streamout_dual_reference_major_shape_distortions_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_streamout_dual_reference_major_shape_reference_ids_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_border_reached_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_truncated_search_indication_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_unidirectional_early_search_termination_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_weighting_pattern_minimum_motion_vector_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ime_get_weighting_pattern_minimum_distortion_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_fme_initialize_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_bme_initialize_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_convert_to_mce_payload_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_set_bidirectional_mix_disable_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_set_bilinear_filter_enable_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_evaluate_with_single_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_evaluate_with_dual_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_evaluate_with_multi_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_evaluate_with_multi_reference_interlaced_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_ref_convert_to_mce_result_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_initialize_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_configure_skc_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_configure_ipe_luma_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_configure_ipe_luma_chroma_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_motion_vector_mask_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_convert_to_mce_payload_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_set_intra_luma_shape_penalty_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_set_intra_luma_mode_cost_function_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_set_intra_chroma_mode_cost_function_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_set_bilinear_filter_enable_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_set_skc_forward_transform_enable_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_set_block_based_raw_skip_sad_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_evaluate_ipe_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_evaluate_with_single_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_evaluate_with_dual_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_evaluate_with_multi_reference_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_evaluate_with_multi_reference_interlaced_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_convert_to_mce_result_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_ipe_luma_shape_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_best_ipe_luma_distortion_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_best_ipe_chroma_distortion_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_packed_ipe_luma_modes_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_ipe_chroma_mode_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_packed_skc_luma_count_threshold_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_packed_skc_luma_sum_threshold_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_avc_sic_get_inter_raw_sads_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_variable_length_array_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_save_memory_intel = [_]OperandInfo{};
-const spec_operands_arbitrary_float_sin_cos_pi_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_cast_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_cast_from_int_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_cast_to_int_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_add_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_sub_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_mul_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_div_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_gtaltera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_gealtera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_ltaltera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_lealtera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_eqaltera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_recip_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_r_sqrt_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_cbrt_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_hypot_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_sqrt_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_log_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_log2_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_log10_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_log1p_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_exp_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_exp2_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_exp10_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_expm1_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_sin_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_cos_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_sin_cos_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_sin_pi_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_cos_pi_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_a_sin_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_a_sin_pi_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_a_cos_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_a_cos_pi_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_a_tan_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_a_tan_pi_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_a_tan2_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_pow_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_pow_rintel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_arbitrary_float_pow_nintel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_sqrt_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_recip_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_rsqrt_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_sin_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_cos_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_sin_cos_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_sin_pi_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_cos_pi_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_sin_cos_pi_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_log_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_fixed_exp_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_ptr_cast_to_cross_workgroup_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_cross_workgroup_cast_to_ptr_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_fpga_reg_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_ray_t_min_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_ray_flags_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_tkhr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_instance_custom_index_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_instance_id_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_instance_shader_binding_table_record_offset_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_geometry_index_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_primitive_index_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_barycentrics_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_front_face_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_candidate_aabb_opaque_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_object_ray_direction_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_object_ray_origin_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_world_ray_direction_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_world_ray_origin_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_object_to_world_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_ray_query_get_intersection_world_to_object_khr = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_atomic_f_add_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .id_memory_semantics, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_f_to_bf16_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_bf16_to_fintel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_arithmetic_fence_ext = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_task_sequence_create_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_task_sequence_get_altera = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_subgroup_matrix_multiply_accumulate_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .matrix_multiply_accumulate_operands, .quantifier = .optional },
-};
-const spec_operands_bitwise_function_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_untyped_variable_length_array_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_spec_constant_target_intel = [_]OperandInfo{
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .variable },
-};
-const spec_operands_spec_constant_architecture_intel = [_]OperandInfo{
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-};
-const spec_operands_spec_constant_capabilities_intel = [_]OperandInfo{
-    .{ .kind = .capability, .quantifier = .variable },
-};
-const spec_operands_conditional_copy_object_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .variable },
-};
-const spec_operands_predicated_load_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .memory_access, .quantifier = .optional },
-};
-const spec_operands_group_i_mul_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_f_mul_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_bitwise_and_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_bitwise_or_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_bitwise_xor_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_logical_and_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_logical_or_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_group_logical_xor_khr = [_]OperandInfo{
-    .{ .kind = .id_scope, .quantifier = .one },
-    .{ .kind = .group_operation, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_round_f_to_tf32_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_masked_gather_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .literal_integer, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_handle_to_image_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_handle_to_sampler_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_convert_handle_to_sampled_image_intel = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_dot2_mix_acc32_valve = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_dot2_mix_acc16_valve = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
-const spec_operands_f_dot4_mix_acc32_valve = [_]OperandInfo{
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .id_ref, .quantifier = .one },
-};
 
 pub const spec_constant_opcodes = [_]OpcodeInfo{
-    .{ .name = "Undef", .opcode = 1, .operands = &spec_operands_undef },
-    .{ .name = "ExtInst", .opcode = 12, .operands = &spec_operands_ext_inst },
-    .{ .name = "ConstantTrue", .opcode = 41, .operands = &spec_operands_constant_true },
-    .{ .name = "ConstantFalse", .opcode = 42, .operands = &spec_operands_constant_false },
-    .{ .name = "Constant", .opcode = 43, .operands = &spec_operands_constant },
-    .{ .name = "ConstantComposite", .opcode = 44, .operands = &spec_operands_constant_composite },
-    .{ .name = "ConstantSampler", .opcode = 45, .operands = &spec_operands_constant_sampler },
-    .{ .name = "ConstantNull", .opcode = 46, .operands = &spec_operands_constant_null },
-    .{ .name = "SpecConstantTrue", .opcode = 48, .operands = &spec_operands_spec_constant_true },
-    .{ .name = "SpecConstantFalse", .opcode = 49, .operands = &spec_operands_spec_constant_false },
-    .{ .name = "SpecConstant", .opcode = 50, .operands = &spec_operands_spec_constant },
-    .{ .name = "SpecConstantComposite", .opcode = 51, .operands = &spec_operands_spec_constant_composite },
-    .{ .name = "Function", .opcode = 54, .operands = &spec_operands_function },
-    .{ .name = "FunctionParameter", .opcode = 55, .operands = &spec_operands_function_parameter },
-    .{ .name = "FunctionCall", .opcode = 57, .operands = &spec_operands_function_call },
-    .{ .name = "Variable", .opcode = 59, .operands = &spec_operands_variable },
-    .{ .name = "ImageTexelPointer", .opcode = 60, .operands = &spec_operands_image_texel_pointer },
-    .{ .name = "Load", .opcode = 61, .operands = &spec_operands_load },
     .{ .name = "AccessChain", .opcode = 65, .operands = &spec_operands_access_chain },
     .{ .name = "InBoundsAccessChain", .opcode = 66, .operands = &spec_operands_in_bounds_access_chain },
     .{ .name = "PtrAccessChain", .opcode = 67, .operands = &spec_operands_ptr_access_chain },
-    .{ .name = "ArrayLength", .opcode = 68, .operands = &spec_operands_array_length },
-    .{ .name = "GenericPtrMemSemantics", .opcode = 69, .operands = &spec_operands_generic_ptr_mem_semantics },
     .{ .name = "InBoundsPtrAccessChain", .opcode = 70, .operands = &spec_operands_in_bounds_ptr_access_chain },
-    .{ .name = "VectorExtractDynamic", .opcode = 77, .operands = &spec_operands_vector_extract_dynamic },
-    .{ .name = "VectorInsertDynamic", .opcode = 78, .operands = &spec_operands_vector_insert_dynamic },
     .{ .name = "VectorShuffle", .opcode = 79, .operands = &spec_operands_vector_shuffle },
-    .{ .name = "CompositeConstruct", .opcode = 80, .operands = &spec_operands_composite_construct },
     .{ .name = "CompositeExtract", .opcode = 81, .operands = &spec_operands_composite_extract },
     .{ .name = "CompositeInsert", .opcode = 82, .operands = &spec_operands_composite_insert },
-    .{ .name = "CopyObject", .opcode = 83, .operands = &spec_operands_copy_object },
-    .{ .name = "Transpose", .opcode = 84, .operands = &spec_operands_transpose },
-    .{ .name = "SampledImage", .opcode = 86, .operands = &spec_operands_sampled_image },
-    .{ .name = "ImageSampleImplicitLod", .opcode = 87, .operands = &spec_operands_image_sample_implicit_lod },
-    .{ .name = "ImageSampleExplicitLod", .opcode = 88, .operands = &spec_operands_image_sample_explicit_lod },
-    .{ .name = "ImageSampleDrefImplicitLod", .opcode = 89, .operands = &spec_operands_image_sample_dref_implicit_lod },
-    .{ .name = "ImageSampleDrefExplicitLod", .opcode = 90, .operands = &spec_operands_image_sample_dref_explicit_lod },
-    .{ .name = "ImageSampleProjImplicitLod", .opcode = 91, .operands = &spec_operands_image_sample_proj_implicit_lod },
-    .{ .name = "ImageSampleProjExplicitLod", .opcode = 92, .operands = &spec_operands_image_sample_proj_explicit_lod },
-    .{ .name = "ImageSampleProjDrefImplicitLod", .opcode = 93, .operands = &spec_operands_image_sample_proj_dref_implicit_lod },
-    .{ .name = "ImageSampleProjDrefExplicitLod", .opcode = 94, .operands = &spec_operands_image_sample_proj_dref_explicit_lod },
-    .{ .name = "ImageFetch", .opcode = 95, .operands = &spec_operands_image_fetch },
-    .{ .name = "ImageGather", .opcode = 96, .operands = &spec_operands_image_gather },
-    .{ .name = "ImageDrefGather", .opcode = 97, .operands = &spec_operands_image_dref_gather },
-    .{ .name = "ImageRead", .opcode = 98, .operands = &spec_operands_image_read },
-    .{ .name = "Image", .opcode = 100, .operands = &spec_operands_image },
-    .{ .name = "ImageQueryFormat", .opcode = 101, .operands = &spec_operands_image_query_format },
-    .{ .name = "ImageQueryOrder", .opcode = 102, .operands = &spec_operands_image_query_order },
-    .{ .name = "ImageQuerySizeLod", .opcode = 103, .operands = &spec_operands_image_query_size_lod },
-    .{ .name = "ImageQuerySize", .opcode = 104, .operands = &spec_operands_image_query_size },
-    .{ .name = "ImageQueryLod", .opcode = 105, .operands = &spec_operands_image_query_lod },
-    .{ .name = "ImageQueryLevels", .opcode = 106, .operands = &spec_operands_image_query_levels },
-    .{ .name = "ImageQuerySamples", .opcode = 107, .operands = &spec_operands_image_query_samples },
     .{ .name = "ConvertFToU", .opcode = 109, .operands = &spec_operands_convert_f_to_u },
     .{ .name = "ConvertFToS", .opcode = 110, .operands = &spec_operands_convert_f_to_s },
     .{ .name = "ConvertSToF", .opcode = 111, .operands = &spec_operands_convert_s_to_f },
@@ -10831,12 +8324,9 @@ pub const spec_constant_opcodes = [_]OpcodeInfo{
     .{ .name = "FConvert", .opcode = 115, .operands = &spec_operands_f_convert },
     .{ .name = "QuantizeToF16", .opcode = 116, .operands = &spec_operands_quantize_to_f16 },
     .{ .name = "ConvertPtrToU", .opcode = 117, .operands = &spec_operands_convert_ptr_to_u },
-    .{ .name = "SatConvertSToU", .opcode = 118, .operands = &spec_operands_sat_convert_s_to_u },
-    .{ .name = "SatConvertUToS", .opcode = 119, .operands = &spec_operands_sat_convert_u_to_s },
     .{ .name = "ConvertUToPtr", .opcode = 120, .operands = &spec_operands_convert_u_to_ptr },
     .{ .name = "PtrCastToGeneric", .opcode = 121, .operands = &spec_operands_ptr_cast_to_generic },
     .{ .name = "GenericCastToPtr", .opcode = 122, .operands = &spec_operands_generic_cast_to_ptr },
-    .{ .name = "GenericCastToPtrExplicit", .opcode = 123, .operands = &spec_operands_generic_cast_to_ptr_explicit },
     .{ .name = "Bitcast", .opcode = 124, .operands = &spec_operands_bitcast },
     .{ .name = "SNegate", .opcode = 126, .operands = &spec_operands_s_negate },
     .{ .name = "FNegate", .opcode = 127, .operands = &spec_operands_f_negate },
@@ -10854,27 +8344,6 @@ pub const spec_constant_opcodes = [_]OpcodeInfo{
     .{ .name = "SMod", .opcode = 139, .operands = &spec_operands_s_mod },
     .{ .name = "FRem", .opcode = 140, .operands = &spec_operands_f_rem },
     .{ .name = "FMod", .opcode = 141, .operands = &spec_operands_f_mod },
-    .{ .name = "VectorTimesScalar", .opcode = 142, .operands = &spec_operands_vector_times_scalar },
-    .{ .name = "MatrixTimesScalar", .opcode = 143, .operands = &spec_operands_matrix_times_scalar },
-    .{ .name = "VectorTimesMatrix", .opcode = 144, .operands = &spec_operands_vector_times_matrix },
-    .{ .name = "MatrixTimesVector", .opcode = 145, .operands = &spec_operands_matrix_times_vector },
-    .{ .name = "MatrixTimesMatrix", .opcode = 146, .operands = &spec_operands_matrix_times_matrix },
-    .{ .name = "OuterProduct", .opcode = 147, .operands = &spec_operands_outer_product },
-    .{ .name = "Dot", .opcode = 148, .operands = &spec_operands_dot },
-    .{ .name = "IAddCarry", .opcode = 149, .operands = &spec_operands_i_add_carry },
-    .{ .name = "ISubBorrow", .opcode = 150, .operands = &spec_operands_i_sub_borrow },
-    .{ .name = "UMulExtended", .opcode = 151, .operands = &spec_operands_u_mul_extended },
-    .{ .name = "SMulExtended", .opcode = 152, .operands = &spec_operands_s_mul_extended },
-    .{ .name = "Any", .opcode = 154, .operands = &spec_operands_any },
-    .{ .name = "All", .opcode = 155, .operands = &spec_operands_all },
-    .{ .name = "IsNan", .opcode = 156, .operands = &spec_operands_is_nan },
-    .{ .name = "IsInf", .opcode = 157, .operands = &spec_operands_is_inf },
-    .{ .name = "IsFinite", .opcode = 158, .operands = &spec_operands_is_finite },
-    .{ .name = "IsNormal", .opcode = 159, .operands = &spec_operands_is_normal },
-    .{ .name = "SignBitSet", .opcode = 160, .operands = &spec_operands_sign_bit_set },
-    .{ .name = "LessOrGreater", .opcode = 161, .operands = &spec_operands_less_or_greater },
-    .{ .name = "Ordered", .opcode = 162, .operands = &spec_operands_ordered },
-    .{ .name = "Unordered", .opcode = 163, .operands = &spec_operands_unordered },
     .{ .name = "LogicalEqual", .opcode = 164, .operands = &spec_operands_logical_equal },
     .{ .name = "LogicalNotEqual", .opcode = 165, .operands = &spec_operands_logical_not_equal },
     .{ .name = "LogicalOr", .opcode = 166, .operands = &spec_operands_logical_or },
@@ -10891,18 +8360,6 @@ pub const spec_constant_opcodes = [_]OpcodeInfo{
     .{ .name = "SLessThan", .opcode = 177, .operands = &spec_operands_s_less_than },
     .{ .name = "ULessThanEqual", .opcode = 178, .operands = &spec_operands_u_less_than_equal },
     .{ .name = "SLessThanEqual", .opcode = 179, .operands = &spec_operands_s_less_than_equal },
-    .{ .name = "FOrdEqual", .opcode = 180, .operands = &spec_operands_f_ord_equal },
-    .{ .name = "FUnordEqual", .opcode = 181, .operands = &spec_operands_f_unord_equal },
-    .{ .name = "FOrdNotEqual", .opcode = 182, .operands = &spec_operands_f_ord_not_equal },
-    .{ .name = "FUnordNotEqual", .opcode = 183, .operands = &spec_operands_f_unord_not_equal },
-    .{ .name = "FOrdLessThan", .opcode = 184, .operands = &spec_operands_f_ord_less_than },
-    .{ .name = "FUnordLessThan", .opcode = 185, .operands = &spec_operands_f_unord_less_than },
-    .{ .name = "FOrdGreaterThan", .opcode = 186, .operands = &spec_operands_f_ord_greater_than },
-    .{ .name = "FUnordGreaterThan", .opcode = 187, .operands = &spec_operands_f_unord_greater_than },
-    .{ .name = "FOrdLessThanEqual", .opcode = 188, .operands = &spec_operands_f_ord_less_than_equal },
-    .{ .name = "FUnordLessThanEqual", .opcode = 189, .operands = &spec_operands_f_unord_less_than_equal },
-    .{ .name = "FOrdGreaterThanEqual", .opcode = 190, .operands = &spec_operands_f_ord_greater_than_equal },
-    .{ .name = "FUnordGreaterThanEqual", .opcode = 191, .operands = &spec_operands_f_unord_greater_than_equal },
     .{ .name = "ShiftRightLogical", .opcode = 194, .operands = &spec_operands_shift_right_logical },
     .{ .name = "ShiftRightArithmetic", .opcode = 195, .operands = &spec_operands_shift_right_arithmetic },
     .{ .name = "ShiftLeftLogical", .opcode = 196, .operands = &spec_operands_shift_left_logical },
@@ -10910,529 +8367,6 @@ pub const spec_constant_opcodes = [_]OpcodeInfo{
     .{ .name = "BitwiseXor", .opcode = 198, .operands = &spec_operands_bitwise_xor },
     .{ .name = "BitwiseAnd", .opcode = 199, .operands = &spec_operands_bitwise_and },
     .{ .name = "Not", .opcode = 200, .operands = &spec_operands_not },
-    .{ .name = "BitFieldInsert", .opcode = 201, .operands = &spec_operands_bit_field_insert },
-    .{ .name = "BitFieldSExtract", .opcode = 202, .operands = &spec_operands_bit_field_s_extract },
-    .{ .name = "BitFieldUExtract", .opcode = 203, .operands = &spec_operands_bit_field_u_extract },
-    .{ .name = "BitReverse", .opcode = 204, .operands = &spec_operands_bit_reverse },
-    .{ .name = "BitCount", .opcode = 205, .operands = &spec_operands_bit_count },
-    .{ .name = "DPdx", .opcode = 207, .operands = &spec_operands_d_pdx },
-    .{ .name = "DPdy", .opcode = 208, .operands = &spec_operands_d_pdy },
-    .{ .name = "Fwidth", .opcode = 209, .operands = &spec_operands_fwidth },
-    .{ .name = "DPdxFine", .opcode = 210, .operands = &spec_operands_d_pdx_fine },
-    .{ .name = "DPdyFine", .opcode = 211, .operands = &spec_operands_d_pdy_fine },
-    .{ .name = "FwidthFine", .opcode = 212, .operands = &spec_operands_fwidth_fine },
-    .{ .name = "DPdxCoarse", .opcode = 213, .operands = &spec_operands_d_pdx_coarse },
-    .{ .name = "DPdyCoarse", .opcode = 214, .operands = &spec_operands_d_pdy_coarse },
-    .{ .name = "FwidthCoarse", .opcode = 215, .operands = &spec_operands_fwidth_coarse },
-    .{ .name = "AtomicLoad", .opcode = 227, .operands = &spec_operands_atomic_load },
-    .{ .name = "AtomicExchange", .opcode = 229, .operands = &spec_operands_atomic_exchange },
-    .{ .name = "AtomicCompareExchange", .opcode = 230, .operands = &spec_operands_atomic_compare_exchange },
-    .{ .name = "AtomicCompareExchangeWeak", .opcode = 231, .operands = &spec_operands_atomic_compare_exchange_weak },
-    .{ .name = "AtomicIIncrement", .opcode = 232, .operands = &spec_operands_atomic_i_increment },
-    .{ .name = "AtomicIDecrement", .opcode = 233, .operands = &spec_operands_atomic_i_decrement },
-    .{ .name = "AtomicIAdd", .opcode = 234, .operands = &spec_operands_atomic_i_add },
-    .{ .name = "AtomicISub", .opcode = 235, .operands = &spec_operands_atomic_i_sub },
-    .{ .name = "AtomicSMin", .opcode = 236, .operands = &spec_operands_atomic_s_min },
-    .{ .name = "AtomicUMin", .opcode = 237, .operands = &spec_operands_atomic_u_min },
-    .{ .name = "AtomicSMax", .opcode = 238, .operands = &spec_operands_atomic_s_max },
-    .{ .name = "AtomicUMax", .opcode = 239, .operands = &spec_operands_atomic_u_max },
-    .{ .name = "AtomicAnd", .opcode = 240, .operands = &spec_operands_atomic_and },
-    .{ .name = "AtomicOr", .opcode = 241, .operands = &spec_operands_atomic_or },
-    .{ .name = "AtomicXor", .opcode = 242, .operands = &spec_operands_atomic_xor },
-    .{ .name = "Phi", .opcode = 245, .operands = &spec_operands_phi },
-    .{ .name = "GroupAsyncCopy", .opcode = 259, .operands = &spec_operands_group_async_copy },
-    .{ .name = "GroupAll", .opcode = 261, .operands = &spec_operands_group_all },
-    .{ .name = "GroupAny", .opcode = 262, .operands = &spec_operands_group_any },
-    .{ .name = "GroupBroadcast", .opcode = 263, .operands = &spec_operands_group_broadcast },
-    .{ .name = "GroupIAdd", .opcode = 264, .operands = &spec_operands_group_i_add },
-    .{ .name = "GroupFAdd", .opcode = 265, .operands = &spec_operands_group_f_add },
-    .{ .name = "GroupFMin", .opcode = 266, .operands = &spec_operands_group_f_min },
-    .{ .name = "GroupUMin", .opcode = 267, .operands = &spec_operands_group_u_min },
-    .{ .name = "GroupSMin", .opcode = 268, .operands = &spec_operands_group_s_min },
-    .{ .name = "GroupFMax", .opcode = 269, .operands = &spec_operands_group_f_max },
-    .{ .name = "GroupUMax", .opcode = 270, .operands = &spec_operands_group_u_max },
-    .{ .name = "GroupSMax", .opcode = 271, .operands = &spec_operands_group_s_max },
-    .{ .name = "ReadPipe", .opcode = 274, .operands = &spec_operands_read_pipe },
-    .{ .name = "WritePipe", .opcode = 275, .operands = &spec_operands_write_pipe },
-    .{ .name = "ReservedReadPipe", .opcode = 276, .operands = &spec_operands_reserved_read_pipe },
-    .{ .name = "ReservedWritePipe", .opcode = 277, .operands = &spec_operands_reserved_write_pipe },
-    .{ .name = "ReserveReadPipePackets", .opcode = 278, .operands = &spec_operands_reserve_read_pipe_packets },
-    .{ .name = "ReserveWritePipePackets", .opcode = 279, .operands = &spec_operands_reserve_write_pipe_packets },
-    .{ .name = "IsValidReserveId", .opcode = 282, .operands = &spec_operands_is_valid_reserve_id },
-    .{ .name = "GetNumPipePackets", .opcode = 283, .operands = &spec_operands_get_num_pipe_packets },
-    .{ .name = "GetMaxPipePackets", .opcode = 284, .operands = &spec_operands_get_max_pipe_packets },
-    .{ .name = "GroupReserveReadPipePackets", .opcode = 285, .operands = &spec_operands_group_reserve_read_pipe_packets },
-    .{ .name = "GroupReserveWritePipePackets", .opcode = 286, .operands = &spec_operands_group_reserve_write_pipe_packets },
-    .{ .name = "EnqueueMarker", .opcode = 291, .operands = &spec_operands_enqueue_marker },
-    .{ .name = "EnqueueKernel", .opcode = 292, .operands = &spec_operands_enqueue_kernel },
-    .{ .name = "GetKernelNDrangeSubGroupCount", .opcode = 293, .operands = &spec_operands_get_kernel_n_drange_sub_group_count },
-    .{ .name = "GetKernelNDrangeMaxSubGroupSize", .opcode = 294, .operands = &spec_operands_get_kernel_n_drange_max_sub_group_size },
-    .{ .name = "GetKernelWorkGroupSize", .opcode = 295, .operands = &spec_operands_get_kernel_work_group_size },
-    .{ .name = "GetKernelPreferredWorkGroupSizeMultiple", .opcode = 296, .operands = &spec_operands_get_kernel_preferred_work_group_size_multiple },
-    .{ .name = "CreateUserEvent", .opcode = 299, .operands = &spec_operands_create_user_event },
-    .{ .name = "IsValidEvent", .opcode = 300, .operands = &spec_operands_is_valid_event },
-    .{ .name = "GetDefaultQueue", .opcode = 303, .operands = &spec_operands_get_default_queue },
-    .{ .name = "BuildNDRange", .opcode = 304, .operands = &spec_operands_build_nd_range },
-    .{ .name = "ImageSparseSampleImplicitLod", .opcode = 305, .operands = &spec_operands_image_sparse_sample_implicit_lod },
-    .{ .name = "ImageSparseSampleExplicitLod", .opcode = 306, .operands = &spec_operands_image_sparse_sample_explicit_lod },
-    .{ .name = "ImageSparseSampleDrefImplicitLod", .opcode = 307, .operands = &spec_operands_image_sparse_sample_dref_implicit_lod },
-    .{ .name = "ImageSparseSampleDrefExplicitLod", .opcode = 308, .operands = &spec_operands_image_sparse_sample_dref_explicit_lod },
-    .{ .name = "ImageSparseSampleProjImplicitLod", .opcode = 309, .operands = &spec_operands_image_sparse_sample_proj_implicit_lod },
-    .{ .name = "ImageSparseSampleProjExplicitLod", .opcode = 310, .operands = &spec_operands_image_sparse_sample_proj_explicit_lod },
-    .{ .name = "ImageSparseSampleProjDrefImplicitLod", .opcode = 311, .operands = &spec_operands_image_sparse_sample_proj_dref_implicit_lod },
-    .{ .name = "ImageSparseSampleProjDrefExplicitLod", .opcode = 312, .operands = &spec_operands_image_sparse_sample_proj_dref_explicit_lod },
-    .{ .name = "ImageSparseFetch", .opcode = 313, .operands = &spec_operands_image_sparse_fetch },
-    .{ .name = "ImageSparseGather", .opcode = 314, .operands = &spec_operands_image_sparse_gather },
-    .{ .name = "ImageSparseDrefGather", .opcode = 315, .operands = &spec_operands_image_sparse_dref_gather },
-    .{ .name = "ImageSparseTexelsResident", .opcode = 316, .operands = &spec_operands_image_sparse_texels_resident },
-    .{ .name = "AtomicFlagTestAndSet", .opcode = 318, .operands = &spec_operands_atomic_flag_test_and_set },
-    .{ .name = "ImageSparseRead", .opcode = 320, .operands = &spec_operands_image_sparse_read },
-    .{ .name = "SizeOf", .opcode = 321, .operands = &spec_operands_size_of },
-    .{ .name = "ConstantPipeStorage", .opcode = 323, .operands = &spec_operands_constant_pipe_storage },
-    .{ .name = "CreatePipeFromPipeStorage", .opcode = 324, .operands = &spec_operands_create_pipe_from_pipe_storage },
-    .{ .name = "GetKernelLocalSizeForSubgroupCount", .opcode = 325, .operands = &spec_operands_get_kernel_local_size_for_subgroup_count },
-    .{ .name = "GetKernelMaxNumSubgroups", .opcode = 326, .operands = &spec_operands_get_kernel_max_num_subgroups },
-    .{ .name = "NamedBarrierInitialize", .opcode = 328, .operands = &spec_operands_named_barrier_initialize },
-    .{ .name = "GroupNonUniformElect", .opcode = 333, .operands = &spec_operands_group_non_uniform_elect },
-    .{ .name = "GroupNonUniformAll", .opcode = 334, .operands = &spec_operands_group_non_uniform_all },
-    .{ .name = "GroupNonUniformAny", .opcode = 335, .operands = &spec_operands_group_non_uniform_any },
-    .{ .name = "GroupNonUniformAllEqual", .opcode = 336, .operands = &spec_operands_group_non_uniform_all_equal },
-    .{ .name = "GroupNonUniformBroadcast", .opcode = 337, .operands = &spec_operands_group_non_uniform_broadcast },
-    .{ .name = "GroupNonUniformBroadcastFirst", .opcode = 338, .operands = &spec_operands_group_non_uniform_broadcast_first },
-    .{ .name = "GroupNonUniformBallot", .opcode = 339, .operands = &spec_operands_group_non_uniform_ballot },
-    .{ .name = "GroupNonUniformInverseBallot", .opcode = 340, .operands = &spec_operands_group_non_uniform_inverse_ballot },
-    .{ .name = "GroupNonUniformBallotBitExtract", .opcode = 341, .operands = &spec_operands_group_non_uniform_ballot_bit_extract },
-    .{ .name = "GroupNonUniformBallotBitCount", .opcode = 342, .operands = &spec_operands_group_non_uniform_ballot_bit_count },
-    .{ .name = "GroupNonUniformBallotFindLSB", .opcode = 343, .operands = &spec_operands_group_non_uniform_ballot_find_lsb },
-    .{ .name = "GroupNonUniformBallotFindMSB", .opcode = 344, .operands = &spec_operands_group_non_uniform_ballot_find_msb },
-    .{ .name = "GroupNonUniformShuffle", .opcode = 345, .operands = &spec_operands_group_non_uniform_shuffle },
-    .{ .name = "GroupNonUniformShuffleXor", .opcode = 346, .operands = &spec_operands_group_non_uniform_shuffle_xor },
-    .{ .name = "GroupNonUniformShuffleUp", .opcode = 347, .operands = &spec_operands_group_non_uniform_shuffle_up },
-    .{ .name = "GroupNonUniformShuffleDown", .opcode = 348, .operands = &spec_operands_group_non_uniform_shuffle_down },
-    .{ .name = "GroupNonUniformIAdd", .opcode = 349, .operands = &spec_operands_group_non_uniform_i_add },
-    .{ .name = "GroupNonUniformFAdd", .opcode = 350, .operands = &spec_operands_group_non_uniform_f_add },
-    .{ .name = "GroupNonUniformIMul", .opcode = 351, .operands = &spec_operands_group_non_uniform_i_mul },
-    .{ .name = "GroupNonUniformFMul", .opcode = 352, .operands = &spec_operands_group_non_uniform_f_mul },
-    .{ .name = "GroupNonUniformSMin", .opcode = 353, .operands = &spec_operands_group_non_uniform_s_min },
-    .{ .name = "GroupNonUniformUMin", .opcode = 354, .operands = &spec_operands_group_non_uniform_u_min },
-    .{ .name = "GroupNonUniformFMin", .opcode = 355, .operands = &spec_operands_group_non_uniform_f_min },
-    .{ .name = "GroupNonUniformSMax", .opcode = 356, .operands = &spec_operands_group_non_uniform_s_max },
-    .{ .name = "GroupNonUniformUMax", .opcode = 357, .operands = &spec_operands_group_non_uniform_u_max },
-    .{ .name = "GroupNonUniformFMax", .opcode = 358, .operands = &spec_operands_group_non_uniform_f_max },
-    .{ .name = "GroupNonUniformBitwiseAnd", .opcode = 359, .operands = &spec_operands_group_non_uniform_bitwise_and },
-    .{ .name = "GroupNonUniformBitwiseOr", .opcode = 360, .operands = &spec_operands_group_non_uniform_bitwise_or },
-    .{ .name = "GroupNonUniformBitwiseXor", .opcode = 361, .operands = &spec_operands_group_non_uniform_bitwise_xor },
-    .{ .name = "GroupNonUniformLogicalAnd", .opcode = 362, .operands = &spec_operands_group_non_uniform_logical_and },
-    .{ .name = "GroupNonUniformLogicalOr", .opcode = 363, .operands = &spec_operands_group_non_uniform_logical_or },
-    .{ .name = "GroupNonUniformLogicalXor", .opcode = 364, .operands = &spec_operands_group_non_uniform_logical_xor },
-    .{ .name = "GroupNonUniformQuadBroadcast", .opcode = 365, .operands = &spec_operands_group_non_uniform_quad_broadcast },
-    .{ .name = "GroupNonUniformQuadSwap", .opcode = 366, .operands = &spec_operands_group_non_uniform_quad_swap },
-    .{ .name = "CopyLogical", .opcode = 400, .operands = &spec_operands_copy_logical },
-    .{ .name = "PtrEqual", .opcode = 401, .operands = &spec_operands_ptr_equal },
-    .{ .name = "PtrNotEqual", .opcode = 402, .operands = &spec_operands_ptr_not_equal },
-    .{ .name = "PtrDiff", .opcode = 403, .operands = &spec_operands_ptr_diff },
-    .{ .name = "ColorAttachmentReadEXT", .opcode = 4160, .operands = &spec_operands_color_attachment_read_ext },
-    .{ .name = "DepthAttachmentReadEXT", .opcode = 4161, .operands = &spec_operands_depth_attachment_read_ext },
-    .{ .name = "StencilAttachmentReadEXT", .opcode = 4162, .operands = &spec_operands_stencil_attachment_read_ext },
-    .{ .name = "TensorReadARM", .opcode = 4164, .operands = &spec_operands_tensor_read_arm },
-    .{ .name = "TensorQuerySizeARM", .opcode = 4166, .operands = &spec_operands_tensor_query_size_arm },
-    .{ .name = "GraphConstantARM", .opcode = 4181, .operands = &spec_operands_graph_constant_arm },
-    .{ .name = "GraphARM", .opcode = 4183, .operands = &spec_operands_graph_arm },
-    .{ .name = "GraphInputARM", .opcode = 4184, .operands = &spec_operands_graph_input_arm },
-    .{ .name = "UntypedVariableKHR", .opcode = 4418, .operands = &spec_operands_untyped_variable_khr },
-    .{ .name = "UntypedAccessChainKHR", .opcode = 4419, .operands = &spec_operands_untyped_access_chain_khr },
-    .{ .name = "UntypedInBoundsAccessChainKHR", .opcode = 4420, .operands = &spec_operands_untyped_in_bounds_access_chain_khr },
-    .{ .name = "SubgroupBallotKHR", .opcode = 4421, .operands = &spec_operands_subgroup_ballot_khr },
-    .{ .name = "SubgroupFirstInvocationKHR", .opcode = 4422, .operands = &spec_operands_subgroup_first_invocation_khr },
-    .{ .name = "UntypedPtrAccessChainKHR", .opcode = 4423, .operands = &spec_operands_untyped_ptr_access_chain_khr },
-    .{ .name = "UntypedInBoundsPtrAccessChainKHR", .opcode = 4424, .operands = &spec_operands_untyped_in_bounds_ptr_access_chain_khr },
-    .{ .name = "UntypedArrayLengthKHR", .opcode = 4425, .operands = &spec_operands_untyped_array_length_khr },
-    .{ .name = "FmaKHR", .opcode = 4427, .operands = &spec_operands_fma_khr },
-    .{ .name = "SubgroupAllKHR", .opcode = 4428, .operands = &spec_operands_subgroup_all_khr },
-    .{ .name = "SubgroupAnyKHR", .opcode = 4429, .operands = &spec_operands_subgroup_any_khr },
-    .{ .name = "SubgroupAllEqualKHR", .opcode = 4430, .operands = &spec_operands_subgroup_all_equal_khr },
-    .{ .name = "GroupNonUniformRotateKHR", .opcode = 4431, .operands = &spec_operands_group_non_uniform_rotate_khr },
-    .{ .name = "SubgroupReadInvocationKHR", .opcode = 4432, .operands = &spec_operands_subgroup_read_invocation_khr },
-    .{ .name = "ExtInstWithForwardRefsKHR", .opcode = 4433, .operands = &spec_operands_ext_inst_with_forward_refs_khr },
-    .{ .name = "UntypedGroupAsyncCopyKHR", .opcode = 4434, .operands = &spec_operands_untyped_group_async_copy_khr },
-    .{ .name = "ConvertUToAccelerationStructureKHR", .opcode = 4447, .operands = &spec_operands_convert_u_to_acceleration_structure_khr },
-    .{ .name = "SDot", .opcode = 4450, .operands = &spec_operands_s_dot },
-    .{ .name = "UDot", .opcode = 4451, .operands = &spec_operands_u_dot },
-    .{ .name = "SUDot", .opcode = 4452, .operands = &spec_operands_su_dot },
-    .{ .name = "SDotAccSat", .opcode = 4453, .operands = &spec_operands_s_dot_acc_sat },
-    .{ .name = "UDotAccSat", .opcode = 4454, .operands = &spec_operands_u_dot_acc_sat },
-    .{ .name = "SUDotAccSat", .opcode = 4455, .operands = &spec_operands_su_dot_acc_sat },
-    .{ .name = "CooperativeMatrixLoadKHR", .opcode = 4457, .operands = &spec_operands_cooperative_matrix_load_khr },
-    .{ .name = "CooperativeMatrixMulAddKHR", .opcode = 4459, .operands = &spec_operands_cooperative_matrix_mul_add_khr },
-    .{ .name = "CooperativeMatrixLengthKHR", .opcode = 4460, .operands = &spec_operands_cooperative_matrix_length_khr },
-    .{ .name = "ConstantCompositeReplicateEXT", .opcode = 4461, .operands = &spec_operands_constant_composite_replicate_ext },
-    .{ .name = "SpecConstantCompositeReplicateEXT", .opcode = 4462, .operands = &spec_operands_spec_constant_composite_replicate_ext },
-    .{ .name = "CompositeConstructReplicateEXT", .opcode = 4463, .operands = &spec_operands_composite_construct_replicate_ext },
-    .{ .name = "RayQueryProceedKHR", .opcode = 4477, .operands = &spec_operands_ray_query_proceed_khr },
-    .{ .name = "RayQueryGetIntersectionTypeKHR", .opcode = 4479, .operands = &spec_operands_ray_query_get_intersection_type_khr },
-    .{ .name = "ImageSampleWeightedQCOM", .opcode = 4480, .operands = &spec_operands_image_sample_weighted_qcom },
-    .{ .name = "ImageBoxFilterQCOM", .opcode = 4481, .operands = &spec_operands_image_box_filter_qcom },
-    .{ .name = "ImageBlockMatchSSDQCOM", .opcode = 4482, .operands = &spec_operands_image_block_match_ssdqcom },
-    .{ .name = "ImageBlockMatchSADQCOM", .opcode = 4483, .operands = &spec_operands_image_block_match_sadqcom },
-    .{ .name = "BitCastArrayQCOM", .opcode = 4497, .operands = &spec_operands_bit_cast_array_qcom },
-    .{ .name = "ImageBlockMatchWindowSSDQCOM", .opcode = 4500, .operands = &spec_operands_image_block_match_window_ssdqcom },
-    .{ .name = "ImageBlockMatchWindowSADQCOM", .opcode = 4501, .operands = &spec_operands_image_block_match_window_sadqcom },
-    .{ .name = "ImageBlockMatchGatherSSDQCOM", .opcode = 4502, .operands = &spec_operands_image_block_match_gather_ssdqcom },
-    .{ .name = "ImageBlockMatchGatherSADQCOM", .opcode = 4503, .operands = &spec_operands_image_block_match_gather_sadqcom },
-    .{ .name = "CompositeConstructCoopMatQCOM", .opcode = 4540, .operands = &spec_operands_composite_construct_coop_mat_qcom },
-    .{ .name = "CompositeExtractCoopMatQCOM", .opcode = 4541, .operands = &spec_operands_composite_extract_coop_mat_qcom },
-    .{ .name = "ExtractSubArrayQCOM", .opcode = 4542, .operands = &spec_operands_extract_sub_array_qcom },
-    .{ .name = "GroupIAddNonUniformAMD", .opcode = 5000, .operands = &spec_operands_group_i_add_non_uniform_amd },
-    .{ .name = "GroupFAddNonUniformAMD", .opcode = 5001, .operands = &spec_operands_group_f_add_non_uniform_amd },
-    .{ .name = "GroupFMinNonUniformAMD", .opcode = 5002, .operands = &spec_operands_group_f_min_non_uniform_amd },
-    .{ .name = "GroupUMinNonUniformAMD", .opcode = 5003, .operands = &spec_operands_group_u_min_non_uniform_amd },
-    .{ .name = "GroupSMinNonUniformAMD", .opcode = 5004, .operands = &spec_operands_group_s_min_non_uniform_amd },
-    .{ .name = "GroupFMaxNonUniformAMD", .opcode = 5005, .operands = &spec_operands_group_f_max_non_uniform_amd },
-    .{ .name = "GroupUMaxNonUniformAMD", .opcode = 5006, .operands = &spec_operands_group_u_max_non_uniform_amd },
-    .{ .name = "GroupSMaxNonUniformAMD", .opcode = 5007, .operands = &spec_operands_group_s_max_non_uniform_amd },
-    .{ .name = "FragmentMaskFetchAMD", .opcode = 5011, .operands = &spec_operands_fragment_mask_fetch_amd },
-    .{ .name = "FragmentFetchAMD", .opcode = 5012, .operands = &spec_operands_fragment_fetch_amd },
-    .{ .name = "ReadClockKHR", .opcode = 5056, .operands = &spec_operands_read_clock_khr },
-    .{ .name = "AllocateNodePayloadsAMDX", .opcode = 5074, .operands = &spec_operands_allocate_node_payloads_amdx },
-    .{ .name = "FinishWritingNodePayloadAMDX", .opcode = 5078, .operands = &spec_operands_finish_writing_node_payload_amdx },
-    .{ .name = "NodePayloadArrayLengthAMDX", .opcode = 5090, .operands = &spec_operands_node_payload_array_length_amdx },
-    .{ .name = "IsNodePayloadValidAMDX", .opcode = 5101, .operands = &spec_operands_is_node_payload_valid_amdx },
-    .{ .name = "GroupNonUniformQuadAllKHR", .opcode = 5110, .operands = &spec_operands_group_non_uniform_quad_all_khr },
-    .{ .name = "GroupNonUniformQuadAnyKHR", .opcode = 5111, .operands = &spec_operands_group_non_uniform_quad_any_khr },
-    .{ .name = "BufferPointerEXT", .opcode = 5119, .operands = &spec_operands_buffer_pointer_ext },
-    .{ .name = "UntypedImageTexelPointerEXT", .opcode = 5126, .operands = &spec_operands_untyped_image_texel_pointer_ext },
-    .{ .name = "ConstantSizeOfEXT", .opcode = 5129, .operands = &spec_operands_constant_size_of_ext },
-    .{ .name = "ConstantDataKHR", .opcode = 5147, .operands = &spec_operands_constant_data_khr },
-    .{ .name = "SpecConstantDataKHR", .opcode = 5148, .operands = &spec_operands_spec_constant_data_khr },
-    .{ .name = "PoisonKHR", .opcode = 5158, .operands = &spec_operands_poison_khr },
-    .{ .name = "FreezeKHR", .opcode = 5159, .operands = &spec_operands_freeze_khr },
-    .{ .name = "HitObjectGetWorldToObjectNV", .opcode = 5252, .operands = &spec_operands_hit_object_get_world_to_object_nv },
-    .{ .name = "HitObjectGetObjectToWorldNV", .opcode = 5253, .operands = &spec_operands_hit_object_get_object_to_world_nv },
-    .{ .name = "HitObjectGetObjectRayDirectionNV", .opcode = 5254, .operands = &spec_operands_hit_object_get_object_ray_direction_nv },
-    .{ .name = "HitObjectGetObjectRayOriginNV", .opcode = 5255, .operands = &spec_operands_hit_object_get_object_ray_origin_nv },
-    .{ .name = "HitObjectGetShaderRecordBufferHandleNV", .opcode = 5257, .operands = &spec_operands_hit_object_get_shader_record_buffer_handle_nv },
-    .{ .name = "HitObjectGetShaderBindingTableRecordIndexNV", .opcode = 5258, .operands = &spec_operands_hit_object_get_shader_binding_table_record_index_nv },
-    .{ .name = "HitObjectGetCurrentTimeNV", .opcode = 5265, .operands = &spec_operands_hit_object_get_current_time_nv },
-    .{ .name = "HitObjectGetHitKindNV", .opcode = 5267, .operands = &spec_operands_hit_object_get_hit_kind_nv },
-    .{ .name = "HitObjectGetPrimitiveIndexNV", .opcode = 5268, .operands = &spec_operands_hit_object_get_primitive_index_nv },
-    .{ .name = "HitObjectGetGeometryIndexNV", .opcode = 5269, .operands = &spec_operands_hit_object_get_geometry_index_nv },
-    .{ .name = "HitObjectGetInstanceIdNV", .opcode = 5270, .operands = &spec_operands_hit_object_get_instance_id_nv },
-    .{ .name = "HitObjectGetInstanceCustomIndexNV", .opcode = 5271, .operands = &spec_operands_hit_object_get_instance_custom_index_nv },
-    .{ .name = "HitObjectGetWorldRayDirectionNV", .opcode = 5272, .operands = &spec_operands_hit_object_get_world_ray_direction_nv },
-    .{ .name = "HitObjectGetWorldRayOriginNV", .opcode = 5273, .operands = &spec_operands_hit_object_get_world_ray_origin_nv },
-    .{ .name = "HitObjectGetRayTMaxNV", .opcode = 5274, .operands = &spec_operands_hit_object_get_ray_t_max_nv },
-    .{ .name = "HitObjectGetRayTMinNV", .opcode = 5275, .operands = &spec_operands_hit_object_get_ray_t_min_nv },
-    .{ .name = "HitObjectIsEmptyNV", .opcode = 5276, .operands = &spec_operands_hit_object_is_empty_nv },
-    .{ .name = "HitObjectIsHitNV", .opcode = 5277, .operands = &spec_operands_hit_object_is_hit_nv },
-    .{ .name = "HitObjectIsMissNV", .opcode = 5278, .operands = &spec_operands_hit_object_is_miss_nv },
-    .{ .name = "ImageSampleFootprintNV", .opcode = 5283, .operands = &spec_operands_image_sample_footprint_nv },
-    .{ .name = "CooperativeVectorMatrixMulNV", .opcode = 5289, .operands = &spec_operands_cooperative_vector_matrix_mul_nv },
-    .{ .name = "CooperativeVectorMatrixMulAddNV", .opcode = 5292, .operands = &spec_operands_cooperative_vector_matrix_mul_add_nv },
-    .{ .name = "CooperativeMatrixConvertNV", .opcode = 5293, .operands = &spec_operands_cooperative_matrix_convert_nv },
-    .{ .name = "GroupNonUniformPartitionEXT", .opcode = 5296, .operands = &spec_operands_group_non_uniform_partition_ext },
-    .{ .name = "FetchMicroTriangleVertexPositionNV", .opcode = 5300, .operands = &spec_operands_fetch_micro_triangle_vertex_position_nv },
-    .{ .name = "FetchMicroTriangleVertexBarycentricNV", .opcode = 5301, .operands = &spec_operands_fetch_micro_triangle_vertex_barycentric_nv },
-    .{ .name = "CooperativeVectorLoadNV", .opcode = 5302, .operands = &spec_operands_cooperative_vector_load_nv },
-    .{ .name = "HitObjectGetIntersectionTriangleVertexPositionsEXT", .opcode = 5307, .operands = &spec_operands_hit_object_get_intersection_triangle_vertex_positions_ext },
-    .{ .name = "HitObjectGetRayFlagsEXT", .opcode = 5308, .operands = &spec_operands_hit_object_get_ray_flags_ext },
-    .{ .name = "HitObjectGetCurrentTimeEXT", .opcode = 5320, .operands = &spec_operands_hit_object_get_current_time_ext },
-    .{ .name = "HitObjectGetHitKindEXT", .opcode = 5322, .operands = &spec_operands_hit_object_get_hit_kind_ext },
-    .{ .name = "HitObjectGetPrimitiveIndexEXT", .opcode = 5323, .operands = &spec_operands_hit_object_get_primitive_index_ext },
-    .{ .name = "HitObjectGetGeometryIndexEXT", .opcode = 5324, .operands = &spec_operands_hit_object_get_geometry_index_ext },
-    .{ .name = "HitObjectGetInstanceIdEXT", .opcode = 5325, .operands = &spec_operands_hit_object_get_instance_id_ext },
-    .{ .name = "HitObjectGetInstanceCustomIndexEXT", .opcode = 5326, .operands = &spec_operands_hit_object_get_instance_custom_index_ext },
-    .{ .name = "HitObjectGetObjectRayOriginEXT", .opcode = 5327, .operands = &spec_operands_hit_object_get_object_ray_origin_ext },
-    .{ .name = "HitObjectGetObjectRayDirectionEXT", .opcode = 5328, .operands = &spec_operands_hit_object_get_object_ray_direction_ext },
-    .{ .name = "HitObjectGetWorldRayDirectionEXT", .opcode = 5329, .operands = &spec_operands_hit_object_get_world_ray_direction_ext },
-    .{ .name = "HitObjectGetWorldRayOriginEXT", .opcode = 5330, .operands = &spec_operands_hit_object_get_world_ray_origin_ext },
-    .{ .name = "HitObjectGetObjectToWorldEXT", .opcode = 5331, .operands = &spec_operands_hit_object_get_object_to_world_ext },
-    .{ .name = "HitObjectGetWorldToObjectEXT", .opcode = 5332, .operands = &spec_operands_hit_object_get_world_to_object_ext },
-    .{ .name = "HitObjectGetRayTMaxEXT", .opcode = 5333, .operands = &spec_operands_hit_object_get_ray_t_max_ext },
-    .{ .name = "ReportIntersectionKHR", .opcode = 5334, .operands = &spec_operands_report_intersection_khr },
-    .{ .name = "RayQueryGetIntersectionTriangleVertexPositionsKHR", .opcode = 5340, .operands = &spec_operands_ray_query_get_intersection_triangle_vertex_positions_khr },
-    .{ .name = "RayQueryGetIntersectionClusterIdNV", .opcode = 5345, .operands = &spec_operands_ray_query_get_intersection_cluster_id_nv },
-    .{ .name = "HitObjectGetClusterIdNV", .opcode = 5346, .operands = &spec_operands_hit_object_get_cluster_id_nv },
-    .{ .name = "HitObjectGetRayTMinEXT", .opcode = 5347, .operands = &spec_operands_hit_object_get_ray_t_min_ext },
-    .{ .name = "HitObjectGetShaderBindingTableRecordIndexEXT", .opcode = 5348, .operands = &spec_operands_hit_object_get_shader_binding_table_record_index_ext },
-    .{ .name = "HitObjectGetShaderRecordBufferHandleEXT", .opcode = 5349, .operands = &spec_operands_hit_object_get_shader_record_buffer_handle_ext },
-    .{ .name = "HitObjectIsEmptyEXT", .opcode = 5350, .operands = &spec_operands_hit_object_is_empty_ext },
-    .{ .name = "HitObjectIsHitEXT", .opcode = 5351, .operands = &spec_operands_hit_object_is_hit_ext },
-    .{ .name = "HitObjectIsMissEXT", .opcode = 5352, .operands = &spec_operands_hit_object_is_miss_ext },
-    .{ .name = "CooperativeMatrixLoadNV", .opcode = 5359, .operands = &spec_operands_cooperative_matrix_load_nv },
-    .{ .name = "CooperativeMatrixMulAddNV", .opcode = 5361, .operands = &spec_operands_cooperative_matrix_mul_add_nv },
-    .{ .name = "CooperativeMatrixLengthNV", .opcode = 5362, .operands = &spec_operands_cooperative_matrix_length_nv },
-    .{ .name = "CooperativeMatrixReduceNV", .opcode = 5366, .operands = &spec_operands_cooperative_matrix_reduce_nv },
-    .{ .name = "CooperativeMatrixLoadTensorNV", .opcode = 5367, .operands = &spec_operands_cooperative_matrix_load_tensor_nv },
-    .{ .name = "CooperativeMatrixPerElementOpNV", .opcode = 5369, .operands = &spec_operands_cooperative_matrix_per_element_op_nv },
-    .{ .name = "CreateTensorLayoutNV", .opcode = 5372, .operands = &spec_operands_create_tensor_layout_nv },
-    .{ .name = "TensorLayoutSetDimensionNV", .opcode = 5373, .operands = &spec_operands_tensor_layout_set_dimension_nv },
-    .{ .name = "TensorLayoutSetStrideNV", .opcode = 5374, .operands = &spec_operands_tensor_layout_set_stride_nv },
-    .{ .name = "TensorLayoutSliceNV", .opcode = 5375, .operands = &spec_operands_tensor_layout_slice_nv },
-    .{ .name = "TensorLayoutSetClampValueNV", .opcode = 5376, .operands = &spec_operands_tensor_layout_set_clamp_value_nv },
-    .{ .name = "CreateTensorViewNV", .opcode = 5377, .operands = &spec_operands_create_tensor_view_nv },
-    .{ .name = "TensorViewSetDimensionNV", .opcode = 5378, .operands = &spec_operands_tensor_view_set_dimension_nv },
-    .{ .name = "TensorViewSetStrideNV", .opcode = 5379, .operands = &spec_operands_tensor_view_set_stride_nv },
-    .{ .name = "IsHelperInvocationEXT", .opcode = 5381, .operands = &spec_operands_is_helper_invocation_ext },
-    .{ .name = "TensorViewSetClipNV", .opcode = 5382, .operands = &spec_operands_tensor_view_set_clip_nv },
-    .{ .name = "TensorLayoutSetBlockSizeNV", .opcode = 5384, .operands = &spec_operands_tensor_layout_set_block_size_nv },
-    .{ .name = "CooperativeMatrixTransposeNV", .opcode = 5390, .operands = &spec_operands_cooperative_matrix_transpose_nv },
-    .{ .name = "ConvertUToImageNV", .opcode = 5391, .operands = &spec_operands_convert_u_to_image_nv },
-    .{ .name = "ConvertUToSamplerNV", .opcode = 5392, .operands = &spec_operands_convert_u_to_sampler_nv },
-    .{ .name = "ConvertImageToUNV", .opcode = 5393, .operands = &spec_operands_convert_image_to_unv },
-    .{ .name = "ConvertSamplerToUNV", .opcode = 5394, .operands = &spec_operands_convert_sampler_to_unv },
-    .{ .name = "ConvertUToSampledImageNV", .opcode = 5395, .operands = &spec_operands_convert_u_to_sampled_image_nv },
-    .{ .name = "ConvertSampledImageToUNV", .opcode = 5396, .operands = &spec_operands_convert_sampled_image_to_unv },
-    .{ .name = "RawAccessChainNV", .opcode = 5398, .operands = &spec_operands_raw_access_chain_nv },
-    .{ .name = "RayQueryGetIntersectionSpherePositionNV", .opcode = 5427, .operands = &spec_operands_ray_query_get_intersection_sphere_position_nv },
-    .{ .name = "RayQueryGetIntersectionSphereRadiusNV", .opcode = 5428, .operands = &spec_operands_ray_query_get_intersection_sphere_radius_nv },
-    .{ .name = "RayQueryGetIntersectionLSSPositionsNV", .opcode = 5429, .operands = &spec_operands_ray_query_get_intersection_lss_positions_nv },
-    .{ .name = "RayQueryGetIntersectionLSSRadiiNV", .opcode = 5430, .operands = &spec_operands_ray_query_get_intersection_lss_radii_nv },
-    .{ .name = "RayQueryGetIntersectionLSSHitValueNV", .opcode = 5431, .operands = &spec_operands_ray_query_get_intersection_lss_hit_value_nv },
-    .{ .name = "HitObjectGetSpherePositionNV", .opcode = 5432, .operands = &spec_operands_hit_object_get_sphere_position_nv },
-    .{ .name = "HitObjectGetSphereRadiusNV", .opcode = 5433, .operands = &spec_operands_hit_object_get_sphere_radius_nv },
-    .{ .name = "HitObjectGetLSSPositionsNV", .opcode = 5434, .operands = &spec_operands_hit_object_get_lss_positions_nv },
-    .{ .name = "HitObjectGetLSSRadiiNV", .opcode = 5435, .operands = &spec_operands_hit_object_get_lss_radii_nv },
-    .{ .name = "HitObjectIsSphereHitNV", .opcode = 5436, .operands = &spec_operands_hit_object_is_sphere_hit_nv },
-    .{ .name = "HitObjectIsLSSHitNV", .opcode = 5437, .operands = &spec_operands_hit_object_is_lss_hit_nv },
-    .{ .name = "RayQueryIsSphereHitNV", .opcode = 5438, .operands = &spec_operands_ray_query_is_sphere_hit_nv },
-    .{ .name = "RayQueryIsLSSHitNV", .opcode = 5439, .operands = &spec_operands_ray_query_is_lss_hit_nv },
-    .{ .name = "SubgroupShuffleINTEL", .opcode = 5571, .operands = &spec_operands_subgroup_shuffle_intel },
-    .{ .name = "SubgroupShuffleDownINTEL", .opcode = 5572, .operands = &spec_operands_subgroup_shuffle_down_intel },
-    .{ .name = "SubgroupShuffleUpINTEL", .opcode = 5573, .operands = &spec_operands_subgroup_shuffle_up_intel },
-    .{ .name = "SubgroupShuffleXorINTEL", .opcode = 5574, .operands = &spec_operands_subgroup_shuffle_xor_intel },
-    .{ .name = "SubgroupBlockReadINTEL", .opcode = 5575, .operands = &spec_operands_subgroup_block_read_intel },
-    .{ .name = "SubgroupImageBlockReadINTEL", .opcode = 5577, .operands = &spec_operands_subgroup_image_block_read_intel },
-    .{ .name = "SubgroupImageMediaBlockReadINTEL", .opcode = 5580, .operands = &spec_operands_subgroup_image_media_block_read_intel },
-    .{ .name = "UCountLeadingZerosINTEL", .opcode = 5585, .operands = &spec_operands_u_count_leading_zeros_intel },
-    .{ .name = "UCountTrailingZerosINTEL", .opcode = 5586, .operands = &spec_operands_u_count_trailing_zeros_intel },
-    .{ .name = "AbsISubINTEL", .opcode = 5587, .operands = &spec_operands_abs_i_sub_intel },
-    .{ .name = "AbsUSubINTEL", .opcode = 5588, .operands = &spec_operands_abs_u_sub_intel },
-    .{ .name = "IAddSatINTEL", .opcode = 5589, .operands = &spec_operands_i_add_sat_intel },
-    .{ .name = "UAddSatINTEL", .opcode = 5590, .operands = &spec_operands_u_add_sat_intel },
-    .{ .name = "IAverageINTEL", .opcode = 5591, .operands = &spec_operands_i_average_intel },
-    .{ .name = "UAverageINTEL", .opcode = 5592, .operands = &spec_operands_u_average_intel },
-    .{ .name = "IAverageRoundedINTEL", .opcode = 5593, .operands = &spec_operands_i_average_rounded_intel },
-    .{ .name = "UAverageRoundedINTEL", .opcode = 5594, .operands = &spec_operands_u_average_rounded_intel },
-    .{ .name = "ISubSatINTEL", .opcode = 5595, .operands = &spec_operands_i_sub_sat_intel },
-    .{ .name = "USubSatINTEL", .opcode = 5596, .operands = &spec_operands_u_sub_sat_intel },
-    .{ .name = "IMul32x16INTEL", .opcode = 5597, .operands = &spec_operands_i_mul32x16_intel },
-    .{ .name = "UMul32x16INTEL", .opcode = 5598, .operands = &spec_operands_u_mul32x16_intel },
-    .{ .name = "ConstantFunctionPointerINTEL", .opcode = 5600, .operands = &spec_operands_constant_function_pointer_intel },
-    .{ .name = "FunctionPointerCallINTEL", .opcode = 5601, .operands = &spec_operands_function_pointer_call_intel },
-    .{ .name = "AsmINTEL", .opcode = 5610, .operands = &spec_operands_asm_intel },
-    .{ .name = "AsmCallINTEL", .opcode = 5611, .operands = &spec_operands_asm_call_intel },
-    .{ .name = "AtomicFMinEXT", .opcode = 5614, .operands = &spec_operands_atomic_f_min_ext },
-    .{ .name = "AtomicFMaxEXT", .opcode = 5615, .operands = &spec_operands_atomic_f_max_ext },
-    .{ .name = "ExpectKHR", .opcode = 5631, .operands = &spec_operands_expect_khr },
-    .{ .name = "VmeImageINTEL", .opcode = 5699, .operands = &spec_operands_vme_image_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultInterBaseMultiReferencePenaltyINTEL", .opcode = 5713, .operands = &spec_operands_subgroup_avc_mce_get_default_inter_base_multi_reference_penalty_intel },
-    .{ .name = "SubgroupAvcMceSetInterBaseMultiReferencePenaltyINTEL", .opcode = 5714, .operands = &spec_operands_subgroup_avc_mce_set_inter_base_multi_reference_penalty_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultInterShapePenaltyINTEL", .opcode = 5715, .operands = &spec_operands_subgroup_avc_mce_get_default_inter_shape_penalty_intel },
-    .{ .name = "SubgroupAvcMceSetInterShapePenaltyINTEL", .opcode = 5716, .operands = &spec_operands_subgroup_avc_mce_set_inter_shape_penalty_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultInterDirectionPenaltyINTEL", .opcode = 5717, .operands = &spec_operands_subgroup_avc_mce_get_default_inter_direction_penalty_intel },
-    .{ .name = "SubgroupAvcMceSetInterDirectionPenaltyINTEL", .opcode = 5718, .operands = &spec_operands_subgroup_avc_mce_set_inter_direction_penalty_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultIntraLumaShapePenaltyINTEL", .opcode = 5719, .operands = &spec_operands_subgroup_avc_mce_get_default_intra_luma_shape_penalty_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultInterMotionVectorCostTableINTEL", .opcode = 5720, .operands = &spec_operands_subgroup_avc_mce_get_default_inter_motion_vector_cost_table_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultHighPenaltyCostTableINTEL", .opcode = 5721, .operands = &spec_operands_subgroup_avc_mce_get_default_high_penalty_cost_table_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultMediumPenaltyCostTableINTEL", .opcode = 5722, .operands = &spec_operands_subgroup_avc_mce_get_default_medium_penalty_cost_table_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultLowPenaltyCostTableINTEL", .opcode = 5723, .operands = &spec_operands_subgroup_avc_mce_get_default_low_penalty_cost_table_intel },
-    .{ .name = "SubgroupAvcMceSetMotionVectorCostFunctionINTEL", .opcode = 5724, .operands = &spec_operands_subgroup_avc_mce_set_motion_vector_cost_function_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultIntraLumaModePenaltyINTEL", .opcode = 5725, .operands = &spec_operands_subgroup_avc_mce_get_default_intra_luma_mode_penalty_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultNonDcLumaIntraPenaltyINTEL", .opcode = 5726, .operands = &spec_operands_subgroup_avc_mce_get_default_non_dc_luma_intra_penalty_intel },
-    .{ .name = "SubgroupAvcMceGetDefaultIntraChromaModeBasePenaltyINTEL", .opcode = 5727, .operands = &spec_operands_subgroup_avc_mce_get_default_intra_chroma_mode_base_penalty_intel },
-    .{ .name = "SubgroupAvcMceSetAcOnlyHaarINTEL", .opcode = 5728, .operands = &spec_operands_subgroup_avc_mce_set_ac_only_haar_intel },
-    .{ .name = "SubgroupAvcMceSetSourceInterlacedFieldPolarityINTEL", .opcode = 5729, .operands = &spec_operands_subgroup_avc_mce_set_source_interlaced_field_polarity_intel },
-    .{ .name = "SubgroupAvcMceSetSingleReferenceInterlacedFieldPolarityINTEL", .opcode = 5730, .operands = &spec_operands_subgroup_avc_mce_set_single_reference_interlaced_field_polarity_intel },
-    .{ .name = "SubgroupAvcMceSetDualReferenceInterlacedFieldPolaritiesINTEL", .opcode = 5731, .operands = &spec_operands_subgroup_avc_mce_set_dual_reference_interlaced_field_polarities_intel },
-    .{ .name = "SubgroupAvcMceConvertToImePayloadINTEL", .opcode = 5732, .operands = &spec_operands_subgroup_avc_mce_convert_to_ime_payload_intel },
-    .{ .name = "SubgroupAvcMceConvertToImeResultINTEL", .opcode = 5733, .operands = &spec_operands_subgroup_avc_mce_convert_to_ime_result_intel },
-    .{ .name = "SubgroupAvcMceConvertToRefPayloadINTEL", .opcode = 5734, .operands = &spec_operands_subgroup_avc_mce_convert_to_ref_payload_intel },
-    .{ .name = "SubgroupAvcMceConvertToRefResultINTEL", .opcode = 5735, .operands = &spec_operands_subgroup_avc_mce_convert_to_ref_result_intel },
-    .{ .name = "SubgroupAvcMceConvertToSicPayloadINTEL", .opcode = 5736, .operands = &spec_operands_subgroup_avc_mce_convert_to_sic_payload_intel },
-    .{ .name = "SubgroupAvcMceConvertToSicResultINTEL", .opcode = 5737, .operands = &spec_operands_subgroup_avc_mce_convert_to_sic_result_intel },
-    .{ .name = "SubgroupAvcMceGetMotionVectorsINTEL", .opcode = 5738, .operands = &spec_operands_subgroup_avc_mce_get_motion_vectors_intel },
-    .{ .name = "SubgroupAvcMceGetInterDistortionsINTEL", .opcode = 5739, .operands = &spec_operands_subgroup_avc_mce_get_inter_distortions_intel },
-    .{ .name = "SubgroupAvcMceGetBestInterDistortionsINTEL", .opcode = 5740, .operands = &spec_operands_subgroup_avc_mce_get_best_inter_distortions_intel },
-    .{ .name = "SubgroupAvcMceGetInterMajorShapeINTEL", .opcode = 5741, .operands = &spec_operands_subgroup_avc_mce_get_inter_major_shape_intel },
-    .{ .name = "SubgroupAvcMceGetInterMinorShapeINTEL", .opcode = 5742, .operands = &spec_operands_subgroup_avc_mce_get_inter_minor_shape_intel },
-    .{ .name = "SubgroupAvcMceGetInterDirectionsINTEL", .opcode = 5743, .operands = &spec_operands_subgroup_avc_mce_get_inter_directions_intel },
-    .{ .name = "SubgroupAvcMceGetInterMotionVectorCountINTEL", .opcode = 5744, .operands = &spec_operands_subgroup_avc_mce_get_inter_motion_vector_count_intel },
-    .{ .name = "SubgroupAvcMceGetInterReferenceIdsINTEL", .opcode = 5745, .operands = &spec_operands_subgroup_avc_mce_get_inter_reference_ids_intel },
-    .{ .name = "SubgroupAvcMceGetInterReferenceInterlacedFieldPolaritiesINTEL", .opcode = 5746, .operands = &spec_operands_subgroup_avc_mce_get_inter_reference_interlaced_field_polarities_intel },
-    .{ .name = "SubgroupAvcImeInitializeINTEL", .opcode = 5747, .operands = &spec_operands_subgroup_avc_ime_initialize_intel },
-    .{ .name = "SubgroupAvcImeSetSingleReferenceINTEL", .opcode = 5748, .operands = &spec_operands_subgroup_avc_ime_set_single_reference_intel },
-    .{ .name = "SubgroupAvcImeSetDualReferenceINTEL", .opcode = 5749, .operands = &spec_operands_subgroup_avc_ime_set_dual_reference_intel },
-    .{ .name = "SubgroupAvcImeRefWindowSizeINTEL", .opcode = 5750, .operands = &spec_operands_subgroup_avc_ime_ref_window_size_intel },
-    .{ .name = "SubgroupAvcImeAdjustRefOffsetINTEL", .opcode = 5751, .operands = &spec_operands_subgroup_avc_ime_adjust_ref_offset_intel },
-    .{ .name = "SubgroupAvcImeConvertToMcePayloadINTEL", .opcode = 5752, .operands = &spec_operands_subgroup_avc_ime_convert_to_mce_payload_intel },
-    .{ .name = "SubgroupAvcImeSetMaxMotionVectorCountINTEL", .opcode = 5753, .operands = &spec_operands_subgroup_avc_ime_set_max_motion_vector_count_intel },
-    .{ .name = "SubgroupAvcImeSetUnidirectionalMixDisableINTEL", .opcode = 5754, .operands = &spec_operands_subgroup_avc_ime_set_unidirectional_mix_disable_intel },
-    .{ .name = "SubgroupAvcImeSetEarlySearchTerminationThresholdINTEL", .opcode = 5755, .operands = &spec_operands_subgroup_avc_ime_set_early_search_termination_threshold_intel },
-    .{ .name = "SubgroupAvcImeSetWeightedSadINTEL", .opcode = 5756, .operands = &spec_operands_subgroup_avc_ime_set_weighted_sad_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithSingleReferenceINTEL", .opcode = 5757, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_single_reference_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithDualReferenceINTEL", .opcode = 5758, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithSingleReferenceStreaminINTEL", .opcode = 5759, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_single_reference_streamin_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithDualReferenceStreaminINTEL", .opcode = 5760, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_streamin_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithSingleReferenceStreamoutINTEL", .opcode = 5761, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_single_reference_streamout_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithDualReferenceStreamoutINTEL", .opcode = 5762, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_streamout_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithSingleReferenceStreaminoutINTEL", .opcode = 5763, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_single_reference_streaminout_intel },
-    .{ .name = "SubgroupAvcImeEvaluateWithDualReferenceStreaminoutINTEL", .opcode = 5764, .operands = &spec_operands_subgroup_avc_ime_evaluate_with_dual_reference_streaminout_intel },
-    .{ .name = "SubgroupAvcImeConvertToMceResultINTEL", .opcode = 5765, .operands = &spec_operands_subgroup_avc_ime_convert_to_mce_result_intel },
-    .{ .name = "SubgroupAvcImeGetSingleReferenceStreaminINTEL", .opcode = 5766, .operands = &spec_operands_subgroup_avc_ime_get_single_reference_streamin_intel },
-    .{ .name = "SubgroupAvcImeGetDualReferenceStreaminINTEL", .opcode = 5767, .operands = &spec_operands_subgroup_avc_ime_get_dual_reference_streamin_intel },
-    .{ .name = "SubgroupAvcImeStripSingleReferenceStreamoutINTEL", .opcode = 5768, .operands = &spec_operands_subgroup_avc_ime_strip_single_reference_streamout_intel },
-    .{ .name = "SubgroupAvcImeStripDualReferenceStreamoutINTEL", .opcode = 5769, .operands = &spec_operands_subgroup_avc_ime_strip_dual_reference_streamout_intel },
-    .{ .name = "SubgroupAvcImeGetStreamoutSingleReferenceMajorShapeMotionVectorsINTEL", .opcode = 5770, .operands = &spec_operands_subgroup_avc_ime_get_streamout_single_reference_major_shape_motion_vectors_intel },
-    .{ .name = "SubgroupAvcImeGetStreamoutSingleReferenceMajorShapeDistortionsINTEL", .opcode = 5771, .operands = &spec_operands_subgroup_avc_ime_get_streamout_single_reference_major_shape_distortions_intel },
-    .{ .name = "SubgroupAvcImeGetStreamoutSingleReferenceMajorShapeReferenceIdsINTEL", .opcode = 5772, .operands = &spec_operands_subgroup_avc_ime_get_streamout_single_reference_major_shape_reference_ids_intel },
-    .{ .name = "SubgroupAvcImeGetStreamoutDualReferenceMajorShapeMotionVectorsINTEL", .opcode = 5773, .operands = &spec_operands_subgroup_avc_ime_get_streamout_dual_reference_major_shape_motion_vectors_intel },
-    .{ .name = "SubgroupAvcImeGetStreamoutDualReferenceMajorShapeDistortionsINTEL", .opcode = 5774, .operands = &spec_operands_subgroup_avc_ime_get_streamout_dual_reference_major_shape_distortions_intel },
-    .{ .name = "SubgroupAvcImeGetStreamoutDualReferenceMajorShapeReferenceIdsINTEL", .opcode = 5775, .operands = &spec_operands_subgroup_avc_ime_get_streamout_dual_reference_major_shape_reference_ids_intel },
-    .{ .name = "SubgroupAvcImeGetBorderReachedINTEL", .opcode = 5776, .operands = &spec_operands_subgroup_avc_ime_get_border_reached_intel },
-    .{ .name = "SubgroupAvcImeGetTruncatedSearchIndicationINTEL", .opcode = 5777, .operands = &spec_operands_subgroup_avc_ime_get_truncated_search_indication_intel },
-    .{ .name = "SubgroupAvcImeGetUnidirectionalEarlySearchTerminationINTEL", .opcode = 5778, .operands = &spec_operands_subgroup_avc_ime_get_unidirectional_early_search_termination_intel },
-    .{ .name = "SubgroupAvcImeGetWeightingPatternMinimumMotionVectorINTEL", .opcode = 5779, .operands = &spec_operands_subgroup_avc_ime_get_weighting_pattern_minimum_motion_vector_intel },
-    .{ .name = "SubgroupAvcImeGetWeightingPatternMinimumDistortionINTEL", .opcode = 5780, .operands = &spec_operands_subgroup_avc_ime_get_weighting_pattern_minimum_distortion_intel },
-    .{ .name = "SubgroupAvcFmeInitializeINTEL", .opcode = 5781, .operands = &spec_operands_subgroup_avc_fme_initialize_intel },
-    .{ .name = "SubgroupAvcBmeInitializeINTEL", .opcode = 5782, .operands = &spec_operands_subgroup_avc_bme_initialize_intel },
-    .{ .name = "SubgroupAvcRefConvertToMcePayloadINTEL", .opcode = 5783, .operands = &spec_operands_subgroup_avc_ref_convert_to_mce_payload_intel },
-    .{ .name = "SubgroupAvcRefSetBidirectionalMixDisableINTEL", .opcode = 5784, .operands = &spec_operands_subgroup_avc_ref_set_bidirectional_mix_disable_intel },
-    .{ .name = "SubgroupAvcRefSetBilinearFilterEnableINTEL", .opcode = 5785, .operands = &spec_operands_subgroup_avc_ref_set_bilinear_filter_enable_intel },
-    .{ .name = "SubgroupAvcRefEvaluateWithSingleReferenceINTEL", .opcode = 5786, .operands = &spec_operands_subgroup_avc_ref_evaluate_with_single_reference_intel },
-    .{ .name = "SubgroupAvcRefEvaluateWithDualReferenceINTEL", .opcode = 5787, .operands = &spec_operands_subgroup_avc_ref_evaluate_with_dual_reference_intel },
-    .{ .name = "SubgroupAvcRefEvaluateWithMultiReferenceINTEL", .opcode = 5788, .operands = &spec_operands_subgroup_avc_ref_evaluate_with_multi_reference_intel },
-    .{ .name = "SubgroupAvcRefEvaluateWithMultiReferenceInterlacedINTEL", .opcode = 5789, .operands = &spec_operands_subgroup_avc_ref_evaluate_with_multi_reference_interlaced_intel },
-    .{ .name = "SubgroupAvcRefConvertToMceResultINTEL", .opcode = 5790, .operands = &spec_operands_subgroup_avc_ref_convert_to_mce_result_intel },
-    .{ .name = "SubgroupAvcSicInitializeINTEL", .opcode = 5791, .operands = &spec_operands_subgroup_avc_sic_initialize_intel },
-    .{ .name = "SubgroupAvcSicConfigureSkcINTEL", .opcode = 5792, .operands = &spec_operands_subgroup_avc_sic_configure_skc_intel },
-    .{ .name = "SubgroupAvcSicConfigureIpeLumaINTEL", .opcode = 5793, .operands = &spec_operands_subgroup_avc_sic_configure_ipe_luma_intel },
-    .{ .name = "SubgroupAvcSicConfigureIpeLumaChromaINTEL", .opcode = 5794, .operands = &spec_operands_subgroup_avc_sic_configure_ipe_luma_chroma_intel },
-    .{ .name = "SubgroupAvcSicGetMotionVectorMaskINTEL", .opcode = 5795, .operands = &spec_operands_subgroup_avc_sic_get_motion_vector_mask_intel },
-    .{ .name = "SubgroupAvcSicConvertToMcePayloadINTEL", .opcode = 5796, .operands = &spec_operands_subgroup_avc_sic_convert_to_mce_payload_intel },
-    .{ .name = "SubgroupAvcSicSetIntraLumaShapePenaltyINTEL", .opcode = 5797, .operands = &spec_operands_subgroup_avc_sic_set_intra_luma_shape_penalty_intel },
-    .{ .name = "SubgroupAvcSicSetIntraLumaModeCostFunctionINTEL", .opcode = 5798, .operands = &spec_operands_subgroup_avc_sic_set_intra_luma_mode_cost_function_intel },
-    .{ .name = "SubgroupAvcSicSetIntraChromaModeCostFunctionINTEL", .opcode = 5799, .operands = &spec_operands_subgroup_avc_sic_set_intra_chroma_mode_cost_function_intel },
-    .{ .name = "SubgroupAvcSicSetBilinearFilterEnableINTEL", .opcode = 5800, .operands = &spec_operands_subgroup_avc_sic_set_bilinear_filter_enable_intel },
-    .{ .name = "SubgroupAvcSicSetSkcForwardTransformEnableINTEL", .opcode = 5801, .operands = &spec_operands_subgroup_avc_sic_set_skc_forward_transform_enable_intel },
-    .{ .name = "SubgroupAvcSicSetBlockBasedRawSkipSadINTEL", .opcode = 5802, .operands = &spec_operands_subgroup_avc_sic_set_block_based_raw_skip_sad_intel },
-    .{ .name = "SubgroupAvcSicEvaluateIpeINTEL", .opcode = 5803, .operands = &spec_operands_subgroup_avc_sic_evaluate_ipe_intel },
-    .{ .name = "SubgroupAvcSicEvaluateWithSingleReferenceINTEL", .opcode = 5804, .operands = &spec_operands_subgroup_avc_sic_evaluate_with_single_reference_intel },
-    .{ .name = "SubgroupAvcSicEvaluateWithDualReferenceINTEL", .opcode = 5805, .operands = &spec_operands_subgroup_avc_sic_evaluate_with_dual_reference_intel },
-    .{ .name = "SubgroupAvcSicEvaluateWithMultiReferenceINTEL", .opcode = 5806, .operands = &spec_operands_subgroup_avc_sic_evaluate_with_multi_reference_intel },
-    .{ .name = "SubgroupAvcSicEvaluateWithMultiReferenceInterlacedINTEL", .opcode = 5807, .operands = &spec_operands_subgroup_avc_sic_evaluate_with_multi_reference_interlaced_intel },
-    .{ .name = "SubgroupAvcSicConvertToMceResultINTEL", .opcode = 5808, .operands = &spec_operands_subgroup_avc_sic_convert_to_mce_result_intel },
-    .{ .name = "SubgroupAvcSicGetIpeLumaShapeINTEL", .opcode = 5809, .operands = &spec_operands_subgroup_avc_sic_get_ipe_luma_shape_intel },
-    .{ .name = "SubgroupAvcSicGetBestIpeLumaDistortionINTEL", .opcode = 5810, .operands = &spec_operands_subgroup_avc_sic_get_best_ipe_luma_distortion_intel },
-    .{ .name = "SubgroupAvcSicGetBestIpeChromaDistortionINTEL", .opcode = 5811, .operands = &spec_operands_subgroup_avc_sic_get_best_ipe_chroma_distortion_intel },
-    .{ .name = "SubgroupAvcSicGetPackedIpeLumaModesINTEL", .opcode = 5812, .operands = &spec_operands_subgroup_avc_sic_get_packed_ipe_luma_modes_intel },
-    .{ .name = "SubgroupAvcSicGetIpeChromaModeINTEL", .opcode = 5813, .operands = &spec_operands_subgroup_avc_sic_get_ipe_chroma_mode_intel },
-    .{ .name = "SubgroupAvcSicGetPackedSkcLumaCountThresholdINTEL", .opcode = 5814, .operands = &spec_operands_subgroup_avc_sic_get_packed_skc_luma_count_threshold_intel },
-    .{ .name = "SubgroupAvcSicGetPackedSkcLumaSumThresholdINTEL", .opcode = 5815, .operands = &spec_operands_subgroup_avc_sic_get_packed_skc_luma_sum_threshold_intel },
-    .{ .name = "SubgroupAvcSicGetInterRawSadsINTEL", .opcode = 5816, .operands = &spec_operands_subgroup_avc_sic_get_inter_raw_sads_intel },
-    .{ .name = "VariableLengthArrayINTEL", .opcode = 5818, .operands = &spec_operands_variable_length_array_intel },
-    .{ .name = "SaveMemoryINTEL", .opcode = 5819, .operands = &spec_operands_save_memory_intel },
-    .{ .name = "ArbitraryFloatSinCosPiALTERA", .opcode = 5840, .operands = &spec_operands_arbitrary_float_sin_cos_pi_altera },
-    .{ .name = "ArbitraryFloatCastALTERA", .opcode = 5841, .operands = &spec_operands_arbitrary_float_cast_altera },
-    .{ .name = "ArbitraryFloatCastFromIntALTERA", .opcode = 5842, .operands = &spec_operands_arbitrary_float_cast_from_int_altera },
-    .{ .name = "ArbitraryFloatCastToIntALTERA", .opcode = 5843, .operands = &spec_operands_arbitrary_float_cast_to_int_altera },
-    .{ .name = "ArbitraryFloatAddALTERA", .opcode = 5846, .operands = &spec_operands_arbitrary_float_add_altera },
-    .{ .name = "ArbitraryFloatSubALTERA", .opcode = 5847, .operands = &spec_operands_arbitrary_float_sub_altera },
-    .{ .name = "ArbitraryFloatMulALTERA", .opcode = 5848, .operands = &spec_operands_arbitrary_float_mul_altera },
-    .{ .name = "ArbitraryFloatDivALTERA", .opcode = 5849, .operands = &spec_operands_arbitrary_float_div_altera },
-    .{ .name = "ArbitraryFloatGTALTERA", .opcode = 5850, .operands = &spec_operands_arbitrary_float_gtaltera },
-    .{ .name = "ArbitraryFloatGEALTERA", .opcode = 5851, .operands = &spec_operands_arbitrary_float_gealtera },
-    .{ .name = "ArbitraryFloatLTALTERA", .opcode = 5852, .operands = &spec_operands_arbitrary_float_ltaltera },
-    .{ .name = "ArbitraryFloatLEALTERA", .opcode = 5853, .operands = &spec_operands_arbitrary_float_lealtera },
-    .{ .name = "ArbitraryFloatEQALTERA", .opcode = 5854, .operands = &spec_operands_arbitrary_float_eqaltera },
-    .{ .name = "ArbitraryFloatRecipALTERA", .opcode = 5855, .operands = &spec_operands_arbitrary_float_recip_altera },
-    .{ .name = "ArbitraryFloatRSqrtALTERA", .opcode = 5856, .operands = &spec_operands_arbitrary_float_r_sqrt_altera },
-    .{ .name = "ArbitraryFloatCbrtALTERA", .opcode = 5857, .operands = &spec_operands_arbitrary_float_cbrt_altera },
-    .{ .name = "ArbitraryFloatHypotALTERA", .opcode = 5858, .operands = &spec_operands_arbitrary_float_hypot_altera },
-    .{ .name = "ArbitraryFloatSqrtALTERA", .opcode = 5859, .operands = &spec_operands_arbitrary_float_sqrt_altera },
-    .{ .name = "ArbitraryFloatLogINTEL", .opcode = 5860, .operands = &spec_operands_arbitrary_float_log_intel },
-    .{ .name = "ArbitraryFloatLog2INTEL", .opcode = 5861, .operands = &spec_operands_arbitrary_float_log2_intel },
-    .{ .name = "ArbitraryFloatLog10INTEL", .opcode = 5862, .operands = &spec_operands_arbitrary_float_log10_intel },
-    .{ .name = "ArbitraryFloatLog1pINTEL", .opcode = 5863, .operands = &spec_operands_arbitrary_float_log1p_intel },
-    .{ .name = "ArbitraryFloatExpINTEL", .opcode = 5864, .operands = &spec_operands_arbitrary_float_exp_intel },
-    .{ .name = "ArbitraryFloatExp2INTEL", .opcode = 5865, .operands = &spec_operands_arbitrary_float_exp2_intel },
-    .{ .name = "ArbitraryFloatExp10INTEL", .opcode = 5866, .operands = &spec_operands_arbitrary_float_exp10_intel },
-    .{ .name = "ArbitraryFloatExpm1INTEL", .opcode = 5867, .operands = &spec_operands_arbitrary_float_expm1_intel },
-    .{ .name = "ArbitraryFloatSinINTEL", .opcode = 5868, .operands = &spec_operands_arbitrary_float_sin_intel },
-    .{ .name = "ArbitraryFloatCosINTEL", .opcode = 5869, .operands = &spec_operands_arbitrary_float_cos_intel },
-    .{ .name = "ArbitraryFloatSinCosINTEL", .opcode = 5870, .operands = &spec_operands_arbitrary_float_sin_cos_intel },
-    .{ .name = "ArbitraryFloatSinPiINTEL", .opcode = 5871, .operands = &spec_operands_arbitrary_float_sin_pi_intel },
-    .{ .name = "ArbitraryFloatCosPiINTEL", .opcode = 5872, .operands = &spec_operands_arbitrary_float_cos_pi_intel },
-    .{ .name = "ArbitraryFloatASinINTEL", .opcode = 5873, .operands = &spec_operands_arbitrary_float_a_sin_intel },
-    .{ .name = "ArbitraryFloatASinPiINTEL", .opcode = 5874, .operands = &spec_operands_arbitrary_float_a_sin_pi_intel },
-    .{ .name = "ArbitraryFloatACosINTEL", .opcode = 5875, .operands = &spec_operands_arbitrary_float_a_cos_intel },
-    .{ .name = "ArbitraryFloatACosPiINTEL", .opcode = 5876, .operands = &spec_operands_arbitrary_float_a_cos_pi_intel },
-    .{ .name = "ArbitraryFloatATanINTEL", .opcode = 5877, .operands = &spec_operands_arbitrary_float_a_tan_intel },
-    .{ .name = "ArbitraryFloatATanPiINTEL", .opcode = 5878, .operands = &spec_operands_arbitrary_float_a_tan_pi_intel },
-    .{ .name = "ArbitraryFloatATan2INTEL", .opcode = 5879, .operands = &spec_operands_arbitrary_float_a_tan2_intel },
-    .{ .name = "ArbitraryFloatPowINTEL", .opcode = 5880, .operands = &spec_operands_arbitrary_float_pow_intel },
-    .{ .name = "ArbitraryFloatPowRINTEL", .opcode = 5881, .operands = &spec_operands_arbitrary_float_pow_rintel },
-    .{ .name = "ArbitraryFloatPowNINTEL", .opcode = 5882, .operands = &spec_operands_arbitrary_float_pow_nintel },
-    .{ .name = "FixedSqrtALTERA", .opcode = 5923, .operands = &spec_operands_fixed_sqrt_altera },
-    .{ .name = "FixedRecipALTERA", .opcode = 5924, .operands = &spec_operands_fixed_recip_altera },
-    .{ .name = "FixedRsqrtALTERA", .opcode = 5925, .operands = &spec_operands_fixed_rsqrt_altera },
-    .{ .name = "FixedSinALTERA", .opcode = 5926, .operands = &spec_operands_fixed_sin_altera },
-    .{ .name = "FixedCosALTERA", .opcode = 5927, .operands = &spec_operands_fixed_cos_altera },
-    .{ .name = "FixedSinCosALTERA", .opcode = 5928, .operands = &spec_operands_fixed_sin_cos_altera },
-    .{ .name = "FixedSinPiALTERA", .opcode = 5929, .operands = &spec_operands_fixed_sin_pi_altera },
-    .{ .name = "FixedCosPiALTERA", .opcode = 5930, .operands = &spec_operands_fixed_cos_pi_altera },
-    .{ .name = "FixedSinCosPiALTERA", .opcode = 5931, .operands = &spec_operands_fixed_sin_cos_pi_altera },
-    .{ .name = "FixedLogALTERA", .opcode = 5932, .operands = &spec_operands_fixed_log_altera },
-    .{ .name = "FixedExpALTERA", .opcode = 5933, .operands = &spec_operands_fixed_exp_altera },
-    .{ .name = "PtrCastToCrossWorkgroupALTERA", .opcode = 5934, .operands = &spec_operands_ptr_cast_to_cross_workgroup_altera },
-    .{ .name = "CrossWorkgroupCastToPtrALTERA", .opcode = 5938, .operands = &spec_operands_cross_workgroup_cast_to_ptr_altera },
-    .{ .name = "FPGARegALTERA", .opcode = 5949, .operands = &spec_operands_fpga_reg_altera },
-    .{ .name = "RayQueryGetRayTMinKHR", .opcode = 6016, .operands = &spec_operands_ray_query_get_ray_t_min_khr },
-    .{ .name = "RayQueryGetRayFlagsKHR", .opcode = 6017, .operands = &spec_operands_ray_query_get_ray_flags_khr },
-    .{ .name = "RayQueryGetIntersectionTKHR", .opcode = 6018, .operands = &spec_operands_ray_query_get_intersection_tkhr },
-    .{ .name = "RayQueryGetIntersectionInstanceCustomIndexKHR", .opcode = 6019, .operands = &spec_operands_ray_query_get_intersection_instance_custom_index_khr },
-    .{ .name = "RayQueryGetIntersectionInstanceIdKHR", .opcode = 6020, .operands = &spec_operands_ray_query_get_intersection_instance_id_khr },
-    .{ .name = "RayQueryGetIntersectionInstanceShaderBindingTableRecordOffsetKHR", .opcode = 6021, .operands = &spec_operands_ray_query_get_intersection_instance_shader_binding_table_record_offset_khr },
-    .{ .name = "RayQueryGetIntersectionGeometryIndexKHR", .opcode = 6022, .operands = &spec_operands_ray_query_get_intersection_geometry_index_khr },
-    .{ .name = "RayQueryGetIntersectionPrimitiveIndexKHR", .opcode = 6023, .operands = &spec_operands_ray_query_get_intersection_primitive_index_khr },
-    .{ .name = "RayQueryGetIntersectionBarycentricsKHR", .opcode = 6024, .operands = &spec_operands_ray_query_get_intersection_barycentrics_khr },
-    .{ .name = "RayQueryGetIntersectionFrontFaceKHR", .opcode = 6025, .operands = &spec_operands_ray_query_get_intersection_front_face_khr },
-    .{ .name = "RayQueryGetIntersectionCandidateAABBOpaqueKHR", .opcode = 6026, .operands = &spec_operands_ray_query_get_intersection_candidate_aabb_opaque_khr },
-    .{ .name = "RayQueryGetIntersectionObjectRayDirectionKHR", .opcode = 6027, .operands = &spec_operands_ray_query_get_intersection_object_ray_direction_khr },
-    .{ .name = "RayQueryGetIntersectionObjectRayOriginKHR", .opcode = 6028, .operands = &spec_operands_ray_query_get_intersection_object_ray_origin_khr },
-    .{ .name = "RayQueryGetWorldRayDirectionKHR", .opcode = 6029, .operands = &spec_operands_ray_query_get_world_ray_direction_khr },
-    .{ .name = "RayQueryGetWorldRayOriginKHR", .opcode = 6030, .operands = &spec_operands_ray_query_get_world_ray_origin_khr },
-    .{ .name = "RayQueryGetIntersectionObjectToWorldKHR", .opcode = 6031, .operands = &spec_operands_ray_query_get_intersection_object_to_world_khr },
-    .{ .name = "RayQueryGetIntersectionWorldToObjectKHR", .opcode = 6032, .operands = &spec_operands_ray_query_get_intersection_world_to_object_khr },
-    .{ .name = "AtomicFAddEXT", .opcode = 6035, .operands = &spec_operands_atomic_f_add_ext },
-    .{ .name = "ConvertFToBF16INTEL", .opcode = 6116, .operands = &spec_operands_convert_f_to_bf16_intel },
-    .{ .name = "ConvertBF16ToFINTEL", .opcode = 6117, .operands = &spec_operands_convert_bf16_to_fintel },
-    .{ .name = "ArithmeticFenceEXT", .opcode = 6145, .operands = &spec_operands_arithmetic_fence_ext },
-    .{ .name = "TaskSequenceCreateALTERA", .opcode = 6163, .operands = &spec_operands_task_sequence_create_altera },
-    .{ .name = "TaskSequenceGetALTERA", .opcode = 6165, .operands = &spec_operands_task_sequence_get_altera },
-    .{ .name = "SubgroupMatrixMultiplyAccumulateINTEL", .opcode = 6237, .operands = &spec_operands_subgroup_matrix_multiply_accumulate_intel },
-    .{ .name = "BitwiseFunctionINTEL", .opcode = 6242, .operands = &spec_operands_bitwise_function_intel },
-    .{ .name = "UntypedVariableLengthArrayINTEL", .opcode = 6244, .operands = &spec_operands_untyped_variable_length_array_intel },
-    .{ .name = "SpecConstantTargetINTEL", .opcode = 6251, .operands = &spec_operands_spec_constant_target_intel },
-    .{ .name = "SpecConstantArchitectureINTEL", .opcode = 6252, .operands = &spec_operands_spec_constant_architecture_intel },
-    .{ .name = "SpecConstantCapabilitiesINTEL", .opcode = 6253, .operands = &spec_operands_spec_constant_capabilities_intel },
-    .{ .name = "ConditionalCopyObjectINTEL", .opcode = 6254, .operands = &spec_operands_conditional_copy_object_intel },
-    .{ .name = "PredicatedLoadINTEL", .opcode = 6258, .operands = &spec_operands_predicated_load_intel },
-    .{ .name = "GroupIMulKHR", .opcode = 6401, .operands = &spec_operands_group_i_mul_khr },
-    .{ .name = "GroupFMulKHR", .opcode = 6402, .operands = &spec_operands_group_f_mul_khr },
-    .{ .name = "GroupBitwiseAndKHR", .opcode = 6403, .operands = &spec_operands_group_bitwise_and_khr },
-    .{ .name = "GroupBitwiseOrKHR", .opcode = 6404, .operands = &spec_operands_group_bitwise_or_khr },
-    .{ .name = "GroupBitwiseXorKHR", .opcode = 6405, .operands = &spec_operands_group_bitwise_xor_khr },
-    .{ .name = "GroupLogicalAndKHR", .opcode = 6406, .operands = &spec_operands_group_logical_and_khr },
-    .{ .name = "GroupLogicalOrKHR", .opcode = 6407, .operands = &spec_operands_group_logical_or_khr },
-    .{ .name = "GroupLogicalXorKHR", .opcode = 6408, .operands = &spec_operands_group_logical_xor_khr },
-    .{ .name = "RoundFToTF32INTEL", .opcode = 6426, .operands = &spec_operands_round_f_to_tf32_intel },
-    .{ .name = "MaskedGatherINTEL", .opcode = 6428, .operands = &spec_operands_masked_gather_intel },
-    .{ .name = "ConvertHandleToImageINTEL", .opcode = 6529, .operands = &spec_operands_convert_handle_to_image_intel },
-    .{ .name = "ConvertHandleToSamplerINTEL", .opcode = 6530, .operands = &spec_operands_convert_handle_to_sampler_intel },
-    .{ .name = "ConvertHandleToSampledImageINTEL", .opcode = 6531, .operands = &spec_operands_convert_handle_to_sampled_image_intel },
-    .{ .name = "FDot2MixAcc32VALVE", .opcode = 6916, .operands = &spec_operands_f_dot2_mix_acc32_valve },
-    .{ .name = "FDot2MixAcc16VALVE", .opcode = 6917, .operands = &spec_operands_f_dot2_mix_acc16_valve },
-    .{ .name = "FDot4MixAcc32VALVE", .opcode = 6918, .operands = &spec_operands_f_dot4_mix_acc32_valve },
 };
 
 const glsl_std_450_ext_operands_round = [_]OperandInfo{
@@ -12578,16 +9512,16 @@ const opencl_debug_info_100_ext_operands_debug_compilation_unit = [_]OperandInfo
 const opencl_debug_info_100_ext_operands_debug_type_basic = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_base_type_attribute_encoding, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_base_type_attribute_encoding, .quantifier = .one },
 };
 const opencl_debug_info_100_ext_operands_debug_type_pointer = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .storage_class, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
 };
 const opencl_debug_info_100_ext_operands_debug_type_qualifier = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_type_qualifier, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_type_qualifier, .quantifier = .one },
 };
 const opencl_debug_info_100_ext_operands_debug_type_array = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
@@ -12606,7 +9540,7 @@ const opencl_debug_info_100_ext_operands_debug_typedef = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
 };
 const opencl_debug_info_100_ext_operands_debug_type_function = [_]OperandInfo{
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .variable },
 };
@@ -12618,19 +9552,19 @@ const opencl_debug_info_100_ext_operands_debug_type_enum = [_]OperandInfo{
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
     .{ .kind = .pair_id_ref_id_ref, .quantifier = .variable },
 };
 const opencl_debug_info_100_ext_operands_debug_type_composite = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_composite_type, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_composite_type, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .variable },
 };
 const opencl_debug_info_100_ext_operands_debug_type_member = [_]OperandInfo{
@@ -12642,7 +9576,7 @@ const opencl_debug_info_100_ext_operands_debug_type_member = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .optional },
 };
 const opencl_debug_info_100_ext_operands_debug_type_inheritance = [_]OperandInfo{
@@ -12650,7 +9584,7 @@ const opencl_debug_info_100_ext_operands_debug_type_inheritance = [_]OperandInfo
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
 };
 const opencl_debug_info_100_ext_operands_debug_type_ptr_to_member = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
@@ -12691,7 +9625,7 @@ const opencl_debug_info_100_ext_operands_debug_global_variable = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .optional },
 };
 const opencl_debug_info_100_ext_operands_debug_function_declaration = [_]OperandInfo{
@@ -12702,7 +9636,7 @@ const opencl_debug_info_100_ext_operands_debug_function_declaration = [_]Operand
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
 };
 const opencl_debug_info_100_ext_operands_debug_function = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
@@ -12712,7 +9646,7 @@ const opencl_debug_info_100_ext_operands_debug_function = [_]OperandInfo{
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .optional },
@@ -12746,7 +9680,7 @@ const opencl_debug_info_100_ext_operands_debug_local_variable = [_]OperandInfo{
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_info_flags, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_info_flags, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .optional },
 };
 const opencl_debug_info_100_ext_operands_debug_inlined_variable = [_]OperandInfo{
@@ -12765,7 +9699,7 @@ const opencl_debug_info_100_ext_operands_debug_value = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .variable },
 };
 const opencl_debug_info_100_ext_operands_debug_operation = [_]OperandInfo{
-    .{ .kind = .debug_operation, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_operation, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .variable },
 };
 const opencl_debug_info_100_ext_operands_debug_expression = [_]OperandInfo{
@@ -12784,7 +9718,7 @@ const opencl_debug_info_100_ext_operands_debug_macro_undef = [_]OperandInfo{
 };
 const opencl_debug_info_100_ext_operands_debug_imported_entity = [_]OperandInfo{
     .{ .kind = .id_ref, .quantifier = .one },
-    .{ .kind = .debug_imported_entity, .quantifier = .one },
+    .{ .kind = .opencl_debug_info_100_debug_imported_entity, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .id_ref, .quantifier = .one },
     .{ .kind = .literal_integer, .quantifier = .one },
@@ -13153,11 +10087,1557 @@ pub const nonsemantic_shader_debug_info_100_extinsts = [_]ExtInstInfo{
     .{ .name = "DebugTypeMatrix", .value = 108, .operands = &nonsemantic_shader_debug_info_100_ext_operands_debug_type_matrix },
 };
 
+const nonsemantic_shader_debug_info_ext_operands_debug_info_none = [_]OperandInfo{};
+const nonsemantic_shader_debug_info_ext_operands_debug_compilation_unit = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_basic = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_pointer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_qualifier = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_array = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_vector = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_typedef = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_function = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_enum = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .pair_id_ref_id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_composite = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_member = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_inheritance = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_ptr_to_member = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_template = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_template_parameter = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_template_template_parameter = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_template_parameter_pack = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_global_variable = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_function_declaration = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_function = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_lexical_block = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_lexical_block_discriminator = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_scope = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_no_scope = [_]OperandInfo{};
+const nonsemantic_shader_debug_info_ext_operands_debug_inlined_at = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_local_variable = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_inlined_variable = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_declare = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_value = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_operation = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_expression = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_macro_def = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_macro_undef = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_imported_entity = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_source = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_function_definition = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_source_continued = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_line = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_no_line = [_]OperandInfo{};
+const nonsemantic_shader_debug_info_ext_operands_debug_build_identifier = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_storage_path = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_entry_point = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_matrix = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_vector_id_ext = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_shader_debug_info_ext_operands_debug_type_cooperative_matrix_khr = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const nonsemantic_shader_debug_info_extinsts = [_]ExtInstInfo{
+    .{ .name = "DebugInfoNone", .value = 0, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_info_none },
+    .{ .name = "DebugCompilationUnit", .value = 1, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_compilation_unit },
+    .{ .name = "DebugTypeBasic", .value = 2, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_basic },
+    .{ .name = "DebugTypePointer", .value = 3, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_pointer },
+    .{ .name = "DebugTypeQualifier", .value = 4, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_qualifier },
+    .{ .name = "DebugTypeArray", .value = 5, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_array },
+    .{ .name = "DebugTypeVector", .value = 6, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_vector },
+    .{ .name = "DebugTypedef", .value = 7, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_typedef },
+    .{ .name = "DebugTypeFunction", .value = 8, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_function },
+    .{ .name = "DebugTypeEnum", .value = 9, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_enum },
+    .{ .name = "DebugTypeComposite", .value = 10, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_composite },
+    .{ .name = "DebugTypeMember", .value = 11, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_member },
+    .{ .name = "DebugTypeInheritance", .value = 12, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_inheritance },
+    .{ .name = "DebugTypePtrToMember", .value = 13, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_ptr_to_member },
+    .{ .name = "DebugTypeTemplate", .value = 14, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_template },
+    .{ .name = "DebugTypeTemplateParameter", .value = 15, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_template_parameter },
+    .{ .name = "DebugTypeTemplateTemplateParameter", .value = 16, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_template_template_parameter },
+    .{ .name = "DebugTypeTemplateParameterPack", .value = 17, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_template_parameter_pack },
+    .{ .name = "DebugGlobalVariable", .value = 18, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_global_variable },
+    .{ .name = "DebugFunctionDeclaration", .value = 19, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_function_declaration },
+    .{ .name = "DebugFunction", .value = 20, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_function },
+    .{ .name = "DebugLexicalBlock", .value = 21, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_lexical_block },
+    .{ .name = "DebugLexicalBlockDiscriminator", .value = 22, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_lexical_block_discriminator },
+    .{ .name = "DebugScope", .value = 23, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_scope },
+    .{ .name = "DebugNoScope", .value = 24, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_no_scope },
+    .{ .name = "DebugInlinedAt", .value = 25, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_inlined_at },
+    .{ .name = "DebugLocalVariable", .value = 26, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_local_variable },
+    .{ .name = "DebugInlinedVariable", .value = 27, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_inlined_variable },
+    .{ .name = "DebugDeclare", .value = 28, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_declare },
+    .{ .name = "DebugValue", .value = 29, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_value },
+    .{ .name = "DebugOperation", .value = 30, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_operation },
+    .{ .name = "DebugExpression", .value = 31, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_expression },
+    .{ .name = "DebugMacroDef", .value = 32, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_macro_def },
+    .{ .name = "DebugMacroUndef", .value = 33, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_macro_undef },
+    .{ .name = "DebugImportedEntity", .value = 34, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_imported_entity },
+    .{ .name = "DebugSource", .value = 35, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_source },
+    .{ .name = "DebugFunctionDefinition", .value = 101, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_function_definition },
+    .{ .name = "DebugSourceContinued", .value = 102, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_source_continued },
+    .{ .name = "DebugLine", .value = 103, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_line },
+    .{ .name = "DebugNoLine", .value = 104, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_no_line },
+    .{ .name = "DebugBuildIdentifier", .value = 105, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_build_identifier },
+    .{ .name = "DebugStoragePath", .value = 106, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_storage_path },
+    .{ .name = "DebugEntryPoint", .value = 107, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_entry_point },
+    .{ .name = "DebugTypeMatrix", .value = 108, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_matrix },
+    .{ .name = "DebugTypeVectorIdEXT", .value = 109, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_vector_id_ext },
+    .{ .name = "DebugTypeCooperativeMatrixKHR", .value = 110, .operands = &nonsemantic_shader_debug_info_ext_operands_debug_type_cooperative_matrix_khr },
+};
+
+const debug_info_ext_operands_debug_info_none = [_]OperandInfo{};
+const debug_info_ext_operands_debug_compilation_unit = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_basic = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_base_type_attribute_encoding, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_pointer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .storage_class, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_qualifier = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_type_qualifier, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_array = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_type_vector = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_typedef = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_function = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_type_enum = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+    .{ .kind = .pair_id_ref_id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_type_composite = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_composite_type, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_type_member = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_type_inheritance = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_ptr_to_member = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_template = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_type_template_parameter = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_template_template_parameter = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_type_template_parameter_pack = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_global_variable = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_function_declaration = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_function = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .debug_info_debug_info_flags, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_lexical_block = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_lexical_block_discriminator = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_scope = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_no_scope = [_]OperandInfo{};
+const debug_info_ext_operands_debug_inlined_at = [_]OperandInfo{
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_local_variable = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_inlined_variable = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_declare = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const debug_info_ext_operands_debug_value = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_operation = [_]OperandInfo{
+    .{ .kind = .debug_info_debug_operation, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_expression = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const debug_info_ext_operands_debug_macro_def = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const debug_info_ext_operands_debug_macro_undef = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const debug_info_extinsts = [_]ExtInstInfo{
+    .{ .name = "DebugInfoNone", .value = 0, .operands = &debug_info_ext_operands_debug_info_none },
+    .{ .name = "DebugCompilationUnit", .value = 1, .operands = &debug_info_ext_operands_debug_compilation_unit },
+    .{ .name = "DebugTypeBasic", .value = 2, .operands = &debug_info_ext_operands_debug_type_basic },
+    .{ .name = "DebugTypePointer", .value = 3, .operands = &debug_info_ext_operands_debug_type_pointer },
+    .{ .name = "DebugTypeQualifier", .value = 4, .operands = &debug_info_ext_operands_debug_type_qualifier },
+    .{ .name = "DebugTypeArray", .value = 5, .operands = &debug_info_ext_operands_debug_type_array },
+    .{ .name = "DebugTypeVector", .value = 6, .operands = &debug_info_ext_operands_debug_type_vector },
+    .{ .name = "DebugTypedef", .value = 7, .operands = &debug_info_ext_operands_debug_typedef },
+    .{ .name = "DebugTypeFunction", .value = 8, .operands = &debug_info_ext_operands_debug_type_function },
+    .{ .name = "DebugTypeEnum", .value = 9, .operands = &debug_info_ext_operands_debug_type_enum },
+    .{ .name = "DebugTypeComposite", .value = 10, .operands = &debug_info_ext_operands_debug_type_composite },
+    .{ .name = "DebugTypeMember", .value = 11, .operands = &debug_info_ext_operands_debug_type_member },
+    .{ .name = "DebugTypeInheritance", .value = 12, .operands = &debug_info_ext_operands_debug_type_inheritance },
+    .{ .name = "DebugTypePtrToMember", .value = 13, .operands = &debug_info_ext_operands_debug_type_ptr_to_member },
+    .{ .name = "DebugTypeTemplate", .value = 14, .operands = &debug_info_ext_operands_debug_type_template },
+    .{ .name = "DebugTypeTemplateParameter", .value = 15, .operands = &debug_info_ext_operands_debug_type_template_parameter },
+    .{ .name = "DebugTypeTemplateTemplateParameter", .value = 16, .operands = &debug_info_ext_operands_debug_type_template_template_parameter },
+    .{ .name = "DebugTypeTemplateParameterPack", .value = 17, .operands = &debug_info_ext_operands_debug_type_template_parameter_pack },
+    .{ .name = "DebugGlobalVariable", .value = 18, .operands = &debug_info_ext_operands_debug_global_variable },
+    .{ .name = "DebugFunctionDeclaration", .value = 19, .operands = &debug_info_ext_operands_debug_function_declaration },
+    .{ .name = "DebugFunction", .value = 20, .operands = &debug_info_ext_operands_debug_function },
+    .{ .name = "DebugLexicalBlock", .value = 21, .operands = &debug_info_ext_operands_debug_lexical_block },
+    .{ .name = "DebugLexicalBlockDiscriminator", .value = 22, .operands = &debug_info_ext_operands_debug_lexical_block_discriminator },
+    .{ .name = "DebugScope", .value = 23, .operands = &debug_info_ext_operands_debug_scope },
+    .{ .name = "DebugNoScope", .value = 24, .operands = &debug_info_ext_operands_debug_no_scope },
+    .{ .name = "DebugInlinedAt", .value = 25, .operands = &debug_info_ext_operands_debug_inlined_at },
+    .{ .name = "DebugLocalVariable", .value = 26, .operands = &debug_info_ext_operands_debug_local_variable },
+    .{ .name = "DebugInlinedVariable", .value = 27, .operands = &debug_info_ext_operands_debug_inlined_variable },
+    .{ .name = "DebugDeclare", .value = 28, .operands = &debug_info_ext_operands_debug_declare },
+    .{ .name = "DebugValue", .value = 29, .operands = &debug_info_ext_operands_debug_value },
+    .{ .name = "DebugOperation", .value = 30, .operands = &debug_info_ext_operands_debug_operation },
+    .{ .name = "DebugExpression", .value = 31, .operands = &debug_info_ext_operands_debug_expression },
+    .{ .name = "DebugMacroDef", .value = 32, .operands = &debug_info_ext_operands_debug_macro_def },
+    .{ .name = "DebugMacroUndef", .value = 33, .operands = &debug_info_ext_operands_debug_macro_undef },
+};
+
+const nonsemantic_debug_printf_ext_operands_debug_printf = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+
+pub const nonsemantic_debug_printf_extinsts = [_]ExtInstInfo{
+    .{ .name = "DebugPrintf", .value = 1, .operands = &nonsemantic_debug_printf_ext_operands_debug_printf },
+};
+
+const amd_trinary_minmax_ext_operands_f_min3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_u_min3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_s_min3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_f_max3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_u_max3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_s_max3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_f_mid3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_u_mid3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_trinary_minmax_ext_operands_s_mid3_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const amd_trinary_minmax_extinsts = [_]ExtInstInfo{
+    .{ .name = "FMin3AMD", .value = 1, .operands = &amd_trinary_minmax_ext_operands_f_min3_amd },
+    .{ .name = "UMin3AMD", .value = 2, .operands = &amd_trinary_minmax_ext_operands_u_min3_amd },
+    .{ .name = "SMin3AMD", .value = 3, .operands = &amd_trinary_minmax_ext_operands_s_min3_amd },
+    .{ .name = "FMax3AMD", .value = 4, .operands = &amd_trinary_minmax_ext_operands_f_max3_amd },
+    .{ .name = "UMax3AMD", .value = 5, .operands = &amd_trinary_minmax_ext_operands_u_max3_amd },
+    .{ .name = "SMax3AMD", .value = 6, .operands = &amd_trinary_minmax_ext_operands_s_max3_amd },
+    .{ .name = "FMid3AMD", .value = 7, .operands = &amd_trinary_minmax_ext_operands_f_mid3_amd },
+    .{ .name = "UMid3AMD", .value = 8, .operands = &amd_trinary_minmax_ext_operands_u_mid3_amd },
+    .{ .name = "SMid3AMD", .value = 9, .operands = &amd_trinary_minmax_ext_operands_s_mid3_amd },
+};
+
+const amd_explicit_vertex_parameter_ext_operands_interpolate_at_vertex_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const amd_explicit_vertex_parameter_extinsts = [_]ExtInstInfo{
+    .{ .name = "InterpolateAtVertexAMD", .value = 1, .operands = &amd_explicit_vertex_parameter_ext_operands_interpolate_at_vertex_amd },
+};
+
+const amd_gcn_shader_ext_operands_cube_face_index_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_gcn_shader_ext_operands_cube_face_coord_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_gcn_shader_ext_operands_time_amd = [_]OperandInfo{};
+
+pub const amd_gcn_shader_extinsts = [_]ExtInstInfo{
+    .{ .name = "CubeFaceIndexAMD", .value = 1, .operands = &amd_gcn_shader_ext_operands_cube_face_index_amd },
+    .{ .name = "CubeFaceCoordAMD", .value = 2, .operands = &amd_gcn_shader_ext_operands_cube_face_coord_amd },
+    .{ .name = "TimeAMD", .value = 3, .operands = &amd_gcn_shader_ext_operands_time_amd },
+};
+
+const amd_shader_ballot_ext_operands_swizzle_invocations_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_shader_ballot_ext_operands_swizzle_invocations_masked_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_shader_ballot_ext_operands_write_invocation_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const amd_shader_ballot_ext_operands_mbcnt_amd = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const amd_shader_ballot_extinsts = [_]ExtInstInfo{
+    .{ .name = "SwizzleInvocationsAMD", .value = 1, .operands = &amd_shader_ballot_ext_operands_swizzle_invocations_amd },
+    .{ .name = "SwizzleInvocationsMaskedAMD", .value = 2, .operands = &amd_shader_ballot_ext_operands_swizzle_invocations_masked_amd },
+    .{ .name = "WriteInvocationAMD", .value = 3, .operands = &amd_shader_ballot_ext_operands_write_invocation_amd },
+    .{ .name = "MbcntAMD", .value = 4, .operands = &amd_shader_ballot_ext_operands_mbcnt_amd },
+};
+
+const nonsemantic_clspv_reflection_ext_operands_kernel = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+    .{ .kind = .id_ref, .quantifier = .optional },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_info = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+    .{ .kind = .id_ref, .quantifier = .optional },
+    .{ .kind = .id_ref, .quantifier = .optional },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_storage_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_uniform = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_pod_storage_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_pod_uniform = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_pod_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_sampled_image = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_storage_image = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_sampler = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_workgroup = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_spec_constant_workgroup_size = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_spec_constant_global_offset = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_spec_constant_work_dim = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_push_constant_global_offset = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_push_constant_enqueued_local_size = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_push_constant_global_size = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_push_constant_region_offset = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_push_constant_num_workgroups = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_push_constant_region_group_offset = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_constant_data_storage_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_constant_data_uniform = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_literal_sampler = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_property_required_workgroup_size = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_spec_constant_subgroup_max_size = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_pointer_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_pointer_uniform = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_program_scope_variables_storage_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_program_scope_variable_pointer_relocation = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_order_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_data_type_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_order_uniform = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_data_type_uniform = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_storage_texel_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_argument_uniform_texel_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+const nonsemantic_clspv_reflection_ext_operands_constant_data_pointer_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_program_scope_variable_pointer_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_printf_info = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_clspv_reflection_ext_operands_printf_buffer_storage_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_printf_buffer_pointer_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_normalized_sampler_mask_push_constant = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_clspv_reflection_ext_operands_workgroup_variable_size = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const nonsemantic_clspv_reflection_extinsts = [_]ExtInstInfo{
+    .{ .name = "Kernel", .value = 1, .operands = &nonsemantic_clspv_reflection_ext_operands_kernel },
+    .{ .name = "ArgumentInfo", .value = 2, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_info },
+    .{ .name = "ArgumentStorageBuffer", .value = 3, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_storage_buffer },
+    .{ .name = "ArgumentUniform", .value = 4, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_uniform },
+    .{ .name = "ArgumentPodStorageBuffer", .value = 5, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_pod_storage_buffer },
+    .{ .name = "ArgumentPodUniform", .value = 6, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_pod_uniform },
+    .{ .name = "ArgumentPodPushConstant", .value = 7, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_pod_push_constant },
+    .{ .name = "ArgumentSampledImage", .value = 8, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_sampled_image },
+    .{ .name = "ArgumentStorageImage", .value = 9, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_storage_image },
+    .{ .name = "ArgumentSampler", .value = 10, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_sampler },
+    .{ .name = "ArgumentWorkgroup", .value = 11, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_workgroup },
+    .{ .name = "SpecConstantWorkgroupSize", .value = 12, .operands = &nonsemantic_clspv_reflection_ext_operands_spec_constant_workgroup_size },
+    .{ .name = "SpecConstantGlobalOffset", .value = 13, .operands = &nonsemantic_clspv_reflection_ext_operands_spec_constant_global_offset },
+    .{ .name = "SpecConstantWorkDim", .value = 14, .operands = &nonsemantic_clspv_reflection_ext_operands_spec_constant_work_dim },
+    .{ .name = "PushConstantGlobalOffset", .value = 15, .operands = &nonsemantic_clspv_reflection_ext_operands_push_constant_global_offset },
+    .{ .name = "PushConstantEnqueuedLocalSize", .value = 16, .operands = &nonsemantic_clspv_reflection_ext_operands_push_constant_enqueued_local_size },
+    .{ .name = "PushConstantGlobalSize", .value = 17, .operands = &nonsemantic_clspv_reflection_ext_operands_push_constant_global_size },
+    .{ .name = "PushConstantRegionOffset", .value = 18, .operands = &nonsemantic_clspv_reflection_ext_operands_push_constant_region_offset },
+    .{ .name = "PushConstantNumWorkgroups", .value = 19, .operands = &nonsemantic_clspv_reflection_ext_operands_push_constant_num_workgroups },
+    .{ .name = "PushConstantRegionGroupOffset", .value = 20, .operands = &nonsemantic_clspv_reflection_ext_operands_push_constant_region_group_offset },
+    .{ .name = "ConstantDataStorageBuffer", .value = 21, .operands = &nonsemantic_clspv_reflection_ext_operands_constant_data_storage_buffer },
+    .{ .name = "ConstantDataUniform", .value = 22, .operands = &nonsemantic_clspv_reflection_ext_operands_constant_data_uniform },
+    .{ .name = "LiteralSampler", .value = 23, .operands = &nonsemantic_clspv_reflection_ext_operands_literal_sampler },
+    .{ .name = "PropertyRequiredWorkgroupSize", .value = 24, .operands = &nonsemantic_clspv_reflection_ext_operands_property_required_workgroup_size },
+    .{ .name = "SpecConstantSubgroupMaxSize", .value = 25, .operands = &nonsemantic_clspv_reflection_ext_operands_spec_constant_subgroup_max_size },
+    .{ .name = "ArgumentPointerPushConstant", .value = 26, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_pointer_push_constant },
+    .{ .name = "ArgumentPointerUniform", .value = 27, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_pointer_uniform },
+    .{ .name = "ProgramScopeVariablesStorageBuffer", .value = 28, .operands = &nonsemantic_clspv_reflection_ext_operands_program_scope_variables_storage_buffer },
+    .{ .name = "ProgramScopeVariablePointerRelocation", .value = 29, .operands = &nonsemantic_clspv_reflection_ext_operands_program_scope_variable_pointer_relocation },
+    .{ .name = "ImageArgumentInfoChannelOrderPushConstant", .value = 30, .operands = &nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_order_push_constant },
+    .{ .name = "ImageArgumentInfoChannelDataTypePushConstant", .value = 31, .operands = &nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_data_type_push_constant },
+    .{ .name = "ImageArgumentInfoChannelOrderUniform", .value = 32, .operands = &nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_order_uniform },
+    .{ .name = "ImageArgumentInfoChannelDataTypeUniform", .value = 33, .operands = &nonsemantic_clspv_reflection_ext_operands_image_argument_info_channel_data_type_uniform },
+    .{ .name = "ArgumentStorageTexelBuffer", .value = 34, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_storage_texel_buffer },
+    .{ .name = "ArgumentUniformTexelBuffer", .value = 35, .operands = &nonsemantic_clspv_reflection_ext_operands_argument_uniform_texel_buffer },
+    .{ .name = "ConstantDataPointerPushConstant", .value = 36, .operands = &nonsemantic_clspv_reflection_ext_operands_constant_data_pointer_push_constant },
+    .{ .name = "ProgramScopeVariablePointerPushConstant", .value = 37, .operands = &nonsemantic_clspv_reflection_ext_operands_program_scope_variable_pointer_push_constant },
+    .{ .name = "PrintfInfo", .value = 38, .operands = &nonsemantic_clspv_reflection_ext_operands_printf_info },
+    .{ .name = "PrintfBufferStorageBuffer", .value = 39, .operands = &nonsemantic_clspv_reflection_ext_operands_printf_buffer_storage_buffer },
+    .{ .name = "PrintfBufferPointerPushConstant", .value = 40, .operands = &nonsemantic_clspv_reflection_ext_operands_printf_buffer_pointer_push_constant },
+    .{ .name = "NormalizedSamplerMaskPushConstant", .value = 41, .operands = &nonsemantic_clspv_reflection_ext_operands_normalized_sampler_mask_push_constant },
+    .{ .name = "WorkgroupVariableSize", .value = 42, .operands = &nonsemantic_clspv_reflection_ext_operands_workgroup_variable_size },
+};
+
+const nonsemantic_graph_debug_info_ext_operands_debug_graph = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_graph_debug_info_ext_operands_debug_operation = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const nonsemantic_graph_debug_info_ext_operands_debug_tensor = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .optional },
+};
+
+pub const nonsemantic_graph_debug_info_extinsts = [_]ExtInstInfo{
+    .{ .name = "DebugGraph", .value = 1, .operands = &nonsemantic_graph_debug_info_ext_operands_debug_graph },
+    .{ .name = "DebugOperation", .value = 2, .operands = &nonsemantic_graph_debug_info_ext_operands_debug_operation },
+    .{ .name = "DebugTensor", .value = 3, .operands = &nonsemantic_graph_debug_info_ext_operands_debug_tensor },
+};
+
+const nonsemantic_vksp_reflection_ext_operands_configuration = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_vksp_reflection_ext_operands_start_counter = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_vksp_reflection_ext_operands_stop_counter = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_vksp_reflection_ext_operands_push_constants = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_vksp_reflection_ext_operands_specialization_map_entry = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_vksp_reflection_ext_operands_descriptor_set_buffer = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_vksp_reflection_ext_operands_descriptor_set_image = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const nonsemantic_vksp_reflection_ext_operands_descriptor_set_sampler = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const nonsemantic_vksp_reflection_extinsts = [_]ExtInstInfo{
+    .{ .name = "Configuration", .value = 1, .operands = &nonsemantic_vksp_reflection_ext_operands_configuration },
+    .{ .name = "StartCounter", .value = 2, .operands = &nonsemantic_vksp_reflection_ext_operands_start_counter },
+    .{ .name = "StopCounter", .value = 3, .operands = &nonsemantic_vksp_reflection_ext_operands_stop_counter },
+    .{ .name = "PushConstants", .value = 4, .operands = &nonsemantic_vksp_reflection_ext_operands_push_constants },
+    .{ .name = "SpecializationMapEntry", .value = 5, .operands = &nonsemantic_vksp_reflection_ext_operands_specialization_map_entry },
+    .{ .name = "DescriptorSetBuffer", .value = 6, .operands = &nonsemantic_vksp_reflection_ext_operands_descriptor_set_buffer },
+    .{ .name = "DescriptorSetImage", .value = 7, .operands = &nonsemantic_vksp_reflection_ext_operands_descriptor_set_image },
+    .{ .name = "DescriptorSetSampler", .value = 8, .operands = &nonsemantic_vksp_reflection_ext_operands_descriptor_set_sampler },
+};
+
+const nonsemantic_debug_break_ext_operands_debug_break = [_]OperandInfo{};
+
+pub const nonsemantic_debug_break_extinsts = [_]ExtInstInfo{
+    .{ .name = "DebugBreak", .value = 1, .operands = &nonsemantic_debug_break_ext_operands_debug_break },
+};
+
+const arm_motion_engine_100_ext_operands_min_sad = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const arm_motion_engine_100_ext_operands_min_sad_cost = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const arm_motion_engine_100_ext_operands_raw_sad = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const arm_motion_engine_100_extinsts = [_]ExtInstInfo{
+    .{ .name = "MIN_SAD", .value = 0, .operands = &arm_motion_engine_100_ext_operands_min_sad },
+    .{ .name = "MIN_SAD_COST", .value = 1, .operands = &arm_motion_engine_100_ext_operands_min_sad_cost },
+    .{ .name = "RAW_SAD", .value = 2, .operands = &arm_motion_engine_100_ext_operands_raw_sad },
+};
+
+const arm_experimental_ml_operations_ext_operands_call = [_]OperandInfo{
+    .{ .kind = .literal_integer, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+
+pub const arm_experimental_ml_operations_extinsts = [_]ExtInstInfo{
+    .{ .name = "CALL", .value = 0, .operands = &arm_experimental_ml_operations_ext_operands_call },
+};
+
+const tosa_001000_1_ext_operands_argmax = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_avg_pool2_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_conv2_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_conv3_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_depthwise_conv2_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_fft2_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_matmul = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_max_pool2_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_rfft2_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_transpose_conv2_d = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_clamp = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_erf = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_sigmoid = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_tanh = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_add = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_arithmetic_right_shift = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_bitwise_and = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_bitwise_or = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_bitwise_xor = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_intdiv = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_logical_and = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_logical_left_shift = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_logical_right_shift = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_logical_or = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_logical_xor = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_maximum = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_minimum = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_mul = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_pow = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_sub = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_table = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_abs = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_bitwise_not = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_ceil = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_clz = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_cos = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_exp = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_floor = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_log = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_logical_not = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_negate = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reciprocal = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_rsqrt = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_sin = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_select = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_equal = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_greater = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_greater_equal = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reduce_all = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reduce_any = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reduce_max = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reduce_min = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reduce_product = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reduce_sum = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_concat = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .variable },
+};
+const tosa_001000_1_ext_operands_pad = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reshape = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_reverse = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_slice = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_tile = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_transpose = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_gather = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_scatter = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_resize = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_cast = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+const tosa_001000_1_ext_operands_rescale = [_]OperandInfo{
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+    .{ .kind = .id_ref, .quantifier = .one },
+};
+
+pub const tosa_001000_1_extinsts = [_]ExtInstInfo{
+    .{ .name = "ARGMAX", .value = 0, .operands = &tosa_001000_1_ext_operands_argmax },
+    .{ .name = "AVG_POOL2D", .value = 1, .operands = &tosa_001000_1_ext_operands_avg_pool2_d },
+    .{ .name = "CONV2D", .value = 2, .operands = &tosa_001000_1_ext_operands_conv2_d },
+    .{ .name = "CONV3D", .value = 3, .operands = &tosa_001000_1_ext_operands_conv3_d },
+    .{ .name = "DEPTHWISE_CONV2D", .value = 4, .operands = &tosa_001000_1_ext_operands_depthwise_conv2_d },
+    .{ .name = "FFT2D", .value = 5, .operands = &tosa_001000_1_ext_operands_fft2_d },
+    .{ .name = "MATMUL", .value = 6, .operands = &tosa_001000_1_ext_operands_matmul },
+    .{ .name = "MAX_POOL2D", .value = 7, .operands = &tosa_001000_1_ext_operands_max_pool2_d },
+    .{ .name = "RFFT2D", .value = 8, .operands = &tosa_001000_1_ext_operands_rfft2_d },
+    .{ .name = "TRANSPOSE_CONV2D", .value = 9, .operands = &tosa_001000_1_ext_operands_transpose_conv2_d },
+    .{ .name = "CLAMP", .value = 10, .operands = &tosa_001000_1_ext_operands_clamp },
+    .{ .name = "ERF", .value = 11, .operands = &tosa_001000_1_ext_operands_erf },
+    .{ .name = "SIGMOID", .value = 12, .operands = &tosa_001000_1_ext_operands_sigmoid },
+    .{ .name = "TANH", .value = 13, .operands = &tosa_001000_1_ext_operands_tanh },
+    .{ .name = "ADD", .value = 14, .operands = &tosa_001000_1_ext_operands_add },
+    .{ .name = "ARITHMETIC_RIGHT_SHIFT", .value = 15, .operands = &tosa_001000_1_ext_operands_arithmetic_right_shift },
+    .{ .name = "BITWISE_AND", .value = 16, .operands = &tosa_001000_1_ext_operands_bitwise_and },
+    .{ .name = "BITWISE_OR", .value = 17, .operands = &tosa_001000_1_ext_operands_bitwise_or },
+    .{ .name = "BITWISE_XOR", .value = 18, .operands = &tosa_001000_1_ext_operands_bitwise_xor },
+    .{ .name = "INTDIV", .value = 19, .operands = &tosa_001000_1_ext_operands_intdiv },
+    .{ .name = "LOGICAL_AND", .value = 20, .operands = &tosa_001000_1_ext_operands_logical_and },
+    .{ .name = "LOGICAL_LEFT_SHIFT", .value = 21, .operands = &tosa_001000_1_ext_operands_logical_left_shift },
+    .{ .name = "LOGICAL_RIGHT_SHIFT", .value = 22, .operands = &tosa_001000_1_ext_operands_logical_right_shift },
+    .{ .name = "LOGICAL_OR", .value = 23, .operands = &tosa_001000_1_ext_operands_logical_or },
+    .{ .name = "LOGICAL_XOR", .value = 24, .operands = &tosa_001000_1_ext_operands_logical_xor },
+    .{ .name = "MAXIMUM", .value = 25, .operands = &tosa_001000_1_ext_operands_maximum },
+    .{ .name = "MINIMUM", .value = 26, .operands = &tosa_001000_1_ext_operands_minimum },
+    .{ .name = "MUL", .value = 27, .operands = &tosa_001000_1_ext_operands_mul },
+    .{ .name = "POW", .value = 28, .operands = &tosa_001000_1_ext_operands_pow },
+    .{ .name = "SUB", .value = 29, .operands = &tosa_001000_1_ext_operands_sub },
+    .{ .name = "TABLE", .value = 30, .operands = &tosa_001000_1_ext_operands_table },
+    .{ .name = "ABS", .value = 31, .operands = &tosa_001000_1_ext_operands_abs },
+    .{ .name = "BITWISE_NOT", .value = 32, .operands = &tosa_001000_1_ext_operands_bitwise_not },
+    .{ .name = "CEIL", .value = 33, .operands = &tosa_001000_1_ext_operands_ceil },
+    .{ .name = "CLZ", .value = 34, .operands = &tosa_001000_1_ext_operands_clz },
+    .{ .name = "COS", .value = 35, .operands = &tosa_001000_1_ext_operands_cos },
+    .{ .name = "EXP", .value = 36, .operands = &tosa_001000_1_ext_operands_exp },
+    .{ .name = "FLOOR", .value = 37, .operands = &tosa_001000_1_ext_operands_floor },
+    .{ .name = "LOG", .value = 38, .operands = &tosa_001000_1_ext_operands_log },
+    .{ .name = "LOGICAL_NOT", .value = 39, .operands = &tosa_001000_1_ext_operands_logical_not },
+    .{ .name = "NEGATE", .value = 40, .operands = &tosa_001000_1_ext_operands_negate },
+    .{ .name = "RECIPROCAL", .value = 41, .operands = &tosa_001000_1_ext_operands_reciprocal },
+    .{ .name = "RSQRT", .value = 42, .operands = &tosa_001000_1_ext_operands_rsqrt },
+    .{ .name = "SIN", .value = 43, .operands = &tosa_001000_1_ext_operands_sin },
+    .{ .name = "SELECT", .value = 44, .operands = &tosa_001000_1_ext_operands_select },
+    .{ .name = "EQUAL", .value = 45, .operands = &tosa_001000_1_ext_operands_equal },
+    .{ .name = "GREATER", .value = 46, .operands = &tosa_001000_1_ext_operands_greater },
+    .{ .name = "GREATER_EQUAL", .value = 47, .operands = &tosa_001000_1_ext_operands_greater_equal },
+    .{ .name = "REDUCE_ALL", .value = 48, .operands = &tosa_001000_1_ext_operands_reduce_all },
+    .{ .name = "REDUCE_ANY", .value = 49, .operands = &tosa_001000_1_ext_operands_reduce_any },
+    .{ .name = "REDUCE_MAX", .value = 50, .operands = &tosa_001000_1_ext_operands_reduce_max },
+    .{ .name = "REDUCE_MIN", .value = 51, .operands = &tosa_001000_1_ext_operands_reduce_min },
+    .{ .name = "REDUCE_PRODUCT", .value = 52, .operands = &tosa_001000_1_ext_operands_reduce_product },
+    .{ .name = "REDUCE_SUM", .value = 53, .operands = &tosa_001000_1_ext_operands_reduce_sum },
+    .{ .name = "CONCAT", .value = 54, .operands = &tosa_001000_1_ext_operands_concat },
+    .{ .name = "PAD", .value = 55, .operands = &tosa_001000_1_ext_operands_pad },
+    .{ .name = "RESHAPE", .value = 56, .operands = &tosa_001000_1_ext_operands_reshape },
+    .{ .name = "REVERSE", .value = 57, .operands = &tosa_001000_1_ext_operands_reverse },
+    .{ .name = "SLICE", .value = 58, .operands = &tosa_001000_1_ext_operands_slice },
+    .{ .name = "TILE", .value = 59, .operands = &tosa_001000_1_ext_operands_tile },
+    .{ .name = "TRANSPOSE", .value = 60, .operands = &tosa_001000_1_ext_operands_transpose },
+    .{ .name = "GATHER", .value = 61, .operands = &tosa_001000_1_ext_operands_gather },
+    .{ .name = "SCATTER", .value = 62, .operands = &tosa_001000_1_ext_operands_scatter },
+    .{ .name = "RESIZE", .value = 63, .operands = &tosa_001000_1_ext_operands_resize },
+    .{ .name = "CAST", .value = 64, .operands = &tosa_001000_1_ext_operands_cast },
+    .{ .name = "RESCALE", .value = 65, .operands = &tosa_001000_1_ext_operands_rescale },
+};
+
 pub fn operandCategory(kind: OperandKind) OperandCategory {
     return switch (kind) {
         .access_qualifier => .value_enum,
         .addressing_model => .value_enum,
-        .build_identifier_flags => .bit_enum,
         .built_in => .value_enum,
         .capability => .value_enum,
         .component_type => .value_enum,
@@ -13166,12 +11646,6 @@ pub fn operandCategory(kind: OperandKind) OperandCategory {
         .cooperative_matrix_reduce => .bit_enum,
         .cooperative_matrix_use => .value_enum,
         .cooperative_vector_matrix_layout => .value_enum,
-        .debug_base_type_attribute_encoding => .value_enum,
-        .debug_composite_type => .value_enum,
-        .debug_imported_entity => .value_enum,
-        .debug_info_flags => .bit_enum,
-        .debug_operation => .value_enum,
-        .debug_type_qualifier => .value_enum,
         .decoration => .value_enum,
         .dim => .value_enum,
         .execution_mode => .value_enum,
@@ -13184,6 +11658,7 @@ pub fn operandCategory(kind: OperandKind) OperandCategory {
         .fragment_shading_rate => .bit_enum,
         .function_control => .bit_enum,
         .function_parameter_attribute => .value_enum,
+        .gather_modes => .value_enum,
         .group_operation => .value_enum,
         .host_access_qualifier => .value_enum,
         .id_memory_semantics => .id,
@@ -13233,6 +11708,32 @@ pub fn operandCategory(kind: OperandKind) OperandCategory {
         .tensor_addressing_operands => .bit_enum,
         .tensor_clamp_mode => .value_enum,
         .tensor_operands => .bit_enum,
+        .debug_info_debug_base_type_attribute_encoding => .value_enum,
+        .debug_info_debug_composite_type => .value_enum,
+        .debug_info_debug_info_flags => .bit_enum,
+        .debug_info_debug_operation => .value_enum,
+        .debug_info_debug_type_qualifier => .value_enum,
+        .nonsemantic_clspv_reflection_kernel_property_flags => .bit_enum,
+        .nonsemantic_shader_debug_info_100_build_identifier_flags => .bit_enum,
+        .nonsemantic_shader_debug_info_100_debug_base_type_attribute_encoding => .value_enum,
+        .nonsemantic_shader_debug_info_100_debug_composite_type => .value_enum,
+        .nonsemantic_shader_debug_info_100_debug_imported_entity => .value_enum,
+        .nonsemantic_shader_debug_info_100_debug_info_flags => .bit_enum,
+        .nonsemantic_shader_debug_info_100_debug_operation => .value_enum,
+        .nonsemantic_shader_debug_info_100_debug_type_qualifier => .value_enum,
+        .nonsemantic_shader_debug_info_build_identifier_flags => .bit_enum,
+        .nonsemantic_shader_debug_info_debug_base_type_attribute_encoding => .value_enum,
+        .nonsemantic_shader_debug_info_debug_composite_type => .value_enum,
+        .nonsemantic_shader_debug_info_debug_imported_entity => .value_enum,
+        .nonsemantic_shader_debug_info_debug_info_flags => .bit_enum,
+        .nonsemantic_shader_debug_info_debug_operation => .value_enum,
+        .nonsemantic_shader_debug_info_debug_type_qualifier => .value_enum,
+        .opencl_debug_info_100_debug_base_type_attribute_encoding => .value_enum,
+        .opencl_debug_info_100_debug_composite_type => .value_enum,
+        .opencl_debug_info_100_debug_imported_entity => .value_enum,
+        .opencl_debug_info_100_debug_info_flags => .bit_enum,
+        .opencl_debug_info_100_debug_operation => .value_enum,
+        .opencl_debug_info_100_debug_type_qualifier => .value_enum,
     };
 }
 
@@ -13257,9 +11758,17 @@ pub fn lookupSpecConstantOpcode(name: []const u8) ?OpcodeInfo {
     return null;
 }
 
+pub fn lookupSpecConstantOpcodeValue(value: Word) ?OpcodeInfo {
+    for (spec_constant_opcodes) |info| {
+        if (info.opcode == value) return info;
+    }
+    return null;
+}
+
 pub fn lookupExtInstSet(name: []const u8) ?ExtInstSet {
     for (ext_inst_sets) |info| {
         if (asciiEql(info.name, name)) return info.set;
+        if (info.prefix and name.len >= info.name.len and asciiEql(info.name, name[0..info.name.len])) return info.set;
     }
     return null;
 }
@@ -13270,6 +11779,20 @@ pub fn lookupExtInst(set: ExtInstSet, name: []const u8) ?ExtInstInfo {
         .opencl_std => &opencl_std_extinsts,
         .opencl_debug_info_100 => &opencl_debug_info_100_extinsts,
         .nonsemantic_shader_debug_info_100 => &nonsemantic_shader_debug_info_100_extinsts,
+        .nonsemantic_shader_debug_info => &nonsemantic_shader_debug_info_extinsts,
+        .debug_info => &debug_info_extinsts,
+        .nonsemantic_debug_printf => &nonsemantic_debug_printf_extinsts,
+        .amd_trinary_minmax => &amd_trinary_minmax_extinsts,
+        .amd_explicit_vertex_parameter => &amd_explicit_vertex_parameter_extinsts,
+        .amd_gcn_shader => &amd_gcn_shader_extinsts,
+        .amd_shader_ballot => &amd_shader_ballot_extinsts,
+        .nonsemantic_clspv_reflection => &nonsemantic_clspv_reflection_extinsts,
+        .nonsemantic_graph_debug_info => &nonsemantic_graph_debug_info_extinsts,
+        .nonsemantic_vksp_reflection => &nonsemantic_vksp_reflection_extinsts,
+        .nonsemantic_debug_break => &nonsemantic_debug_break_extinsts,
+        .arm_motion_engine_100 => &arm_motion_engine_100_extinsts,
+        .arm_experimental_ml_operations => &arm_experimental_ml_operations_extinsts,
+        .tosa_001000_1 => &tosa_001000_1_extinsts,
     };
     for (instructions) |info| {
         if (asciiEql(info.name, name)) return info;

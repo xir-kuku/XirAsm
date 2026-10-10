@@ -17,6 +17,24 @@ const lowerSource = root.lowerSource;
 const lowerSourceIntoModule = root.lowerSourceIntoModule;
 const lowerSourceIntoModuleWithPathOptions = root.lowerSourceIntoModuleWithPathOptions;
 
+test "SPIR-V ID names and quoted builtin spelling survive Meta lowering" {
+    var module = try lowerSource(std.testing.allocator,
+        \\spv.use()
+        \\const main: u64 = 29
+        \\const entry: u64 = 30
+        \\OpName %main "here()"
+        \\OpName %main "label_addr(\"entry\")"
+        \\%main = OpTypeVoid
+        \\%entry = OpTypeFunction %main
+    , .{});
+    defer module.deinit();
+    try std.testing.expectEqual(@as(usize, 4), module.fragments.items.items.len);
+    try std.testing.expectEqualStrings("OpName %main \"here()\"", module.fragments.items.items[0].isa_instruction.text);
+    try std.testing.expectEqualStrings("OpName %main \"label_addr(\\\"entry\\\")\"", module.fragments.items.items[1].isa_instruction.text);
+    try std.testing.expectEqualStrings("%main = OpTypeVoid", module.fragments.items.items[2].isa_instruction.text);
+    try std.testing.expectEqualStrings("%entry = OpTypeFunction %main", module.fragments.items.items[3].isa_instruction.text);
+}
+
 test "lowering records labels and ISA fragments in the frontend container" {
     var module = try lowerSource(
         std.testing.allocator,

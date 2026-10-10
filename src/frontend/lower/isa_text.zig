@@ -58,8 +58,16 @@ pub fn substituteIntegerSymbols(
 
 pub fn findBuiltinCall(text: []const u8, start_index: usize) ?TextRange {
     var index = start_index;
-    while (index < text.len) : (index += 1) {
-        if (!identifier.isStart(text[index])) continue;
+    while (index < text.len) {
+        if (text[index] == '"' or text[index] == '\'') {
+            const end = skipQuotedText(text, index) orelse return null;
+            index = end + 1;
+            continue;
+        }
+        if (!identifier.isStart(text[index])) {
+            index += 1;
+            continue;
+        }
 
         const name_start = index;
         index += 1;
@@ -83,6 +91,8 @@ pub fn findBuiltinCall(text: []const u8, start_index: usize) ?TextRange {
 }
 
 fn shouldKeepIsaIdentifier(active_target: target.Target, text: []const u8, start: usize, name: []const u8) bool {
+    // SPIR-V IDs have their own module namespace, independent of Meta bindings.
+    if (active_target.isa() == .spirv and start > 0 and text[start - 1] == '%') return true;
     if (isFirstIsaIdentifier(text, start)) return true;
     if (isX86MnemonicAfterPrefix(text, start)) return true;
     return switch (active_target) {

@@ -217,6 +217,7 @@ fn mapSpirvTextError(err: backend.spirv.text.ParseError) SpirvAdapterError {
         error.TooManyOperands,
         error.InvalidInteger,
         error.InvalidString,
+        error.UnsupportedFloatEncoding,
         error.InstructionTooLong,
         error.InvalidHeaderBound,
         error.IdBoundOverflow,
