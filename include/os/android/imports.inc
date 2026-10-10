@@ -5,7 +5,7 @@
 
 // Every platform library the catalog knows about.
 // Import os/android/imports/<library>.inc directly when one library is enough;
-// the full set below is 25 files and 4416 constants.
+// the full set below is 25 files and 4684 constants.
 
 import("os/android/imports/libEGL.inc")
 import("os/android/imports/libGLESv1_CM.inc")

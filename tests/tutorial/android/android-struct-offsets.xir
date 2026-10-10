@@ -1,0 +1,9 @@
+import("os/android/structs/native_window.inc")
+import("arm/a64-macros.inc")
+
+// ANativeWindow_lock 填好的缓冲区：宽、高、行距、像素格式、像素指针
+ldr w3, [x0, #offset_of(ANativeWindow_Buffer, width)]
+ldr w4, [x0, #offset_of(ANativeWindow_Buffer, height)]
+ldr w5, [x0, #offset_of(ANativeWindow_Buffer, stride)]
+ldr w6, [x0, #offset_of(ANativeWindow_Buffer, format)]
+ldr x7, [x0, #offset_of(ANativeWindow_Buffer, bits)]

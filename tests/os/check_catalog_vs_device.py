@@ -54,12 +54,13 @@ def main() -> int:
     claimed: dict[str, set[str]] = defaultdict(set)
     versioned: dict[tuple[str, str], bool] = {}
     for symbol, row in data["symbols"].items():
-        if not row["abis"] & bit:
-            continue
-        for entry in row["lib"].split(","):
-            library = entry.rsplit(":", 1)[0]
+        abi_key = ("a64", "arm", "x86", "riscv64", "x64")[bit.bit_length() - 1]
+        for providers in row["providers"].values():
+            library = providers["library"]
+            if abi_key not in providers:
+                continue
             claimed[library].add(symbol)
-            versioned[(library, symbol)] = bool(row.get("ver"))
+            versioned[(library, symbol)] = bool(providers[abi_key]["ver"])
 
     total_claimed = total_missing = 0
     for library in sorted(claimed):

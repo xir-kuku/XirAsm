@@ -1,5 +1,9 @@
 const std = @import("std");
 
+test {
+    _ = @import("float_fields_tests.zig");
+}
+
 const module_mod = @import("../module.zig");
 const pass = @import("../pass.zig");
 const source_path = @import("../source_path.zig");

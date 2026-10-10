@@ -22,4 +22,5 @@ app = apk_icon_bytes(app, "mdpi", "res/mipmap-mdpi-v4/ic_launcher.png", icon)
 app = apk_asset_bytes_compressed(app, "assets/notes.txt", notes)
 app = apk_asset_compressed(app, "assets/strings.txt", "apk_zh_strings.txt")
 app = apk_asset(app, "assets/stored.txt", "apk_zh_strings.txt")
+app = apk_native_lib(app, "x86_64", "libmain.so", "apk-native-fixture.so")
 apk_emit(app);

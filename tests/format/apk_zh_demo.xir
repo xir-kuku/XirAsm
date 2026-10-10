@@ -22,4 +22,5 @@ app = apk_label_string(app, "app_name", trim(list.get(values, 0)));
 app = apk_string_resource(app, "emoji_name", trim(list.get(values, 1)));
 app = apk_icon_bytes(app, "mdpi", "res/mipmap-mdpi-v4/ic_launcher.png", icon_mdpi);
 app = apk_icon_bytes(app, "hdpi", "res/mipmap-hdpi-v4/ic_launcher.png", icon_hdpi);
+app = apk_native_lib(app, "x86_64", "libmain.so", "apk-native-fixture.so")
 apk_emit(app);

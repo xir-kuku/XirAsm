@@ -278,7 +278,7 @@ fn lowerStatement(
             try advanceActiveOutput(active, module.fragments.items.items[fragment_id.index]);
         },
         .struct_decl => |declaration| {
-            try type_declaration.lower(allocator, module, declaration, typeDeclarationCallbacks());
+            try type_declaration.lower(allocator, module, context, active.*, declaration, typeDeclarationCallbacks());
         },
         .api_call => |call| {
             if (call.text.len > call.callee.len and std.ascii.isWhitespace(call.text[call.callee.len]) and context.macros.contains(call.callee)) {
@@ -781,10 +781,6 @@ fn evalBooleanAtContext(
     );
 }
 
-fn evalInteger(module: *module_mod.Module, node: *const expr.Node) LowerError!u64 {
-    return expression_bridge.evalInteger(module, node);
-}
-
 fn evalIntegerAtContext(
     module: *module_mod.Module,
     context: *LowerContext,
@@ -881,7 +877,8 @@ fn dataEmissionCallbacks() data_emission.Callbacks {
 
 fn typeDeclarationCallbacks() type_declaration.Callbacks {
     return .{
-        .eval_integer = evalInteger,
+        .eval_integer_at_context = evalIntegerAtContext,
+        .eval_value_at_context = evalValueAtContext,
     };
 }
 

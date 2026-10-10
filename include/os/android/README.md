@@ -1,221 +1,141 @@
-# XIRASM Android Includes
+# XIRASM Android SDK Includes
 
 [简体中文](README.zh-CN.md)
 
-These includes carry the Android platform symbol catalog: which platform library
-provides a symbol, the first API level it appears in, and the ABIs that have it.
-The table is generated from the NDK stub libraries (release r27d) and covers 25
-libraries, 4137 symbols and 4416 symbol/library rows across API 21 to 35 and five
-ABIs. Counts, provenance and a digest of the exact stub files are in
-`catalog/manifest.json`.
+These declarations cover Android NDK r27d platform symbols, constants and native record layouts. API, symbol kind and GNU version are stored separately for each provider library and ABI. All five catalog ABI bits are preserved; AArch64 and x86-64 each have 4,562 symbol/library pairs, including 265 objects. ELF import helpers support those two 64-bit machines.
 
-The point of the catalog is that a source never spells a platform library name by
-hand: the generated helper welds the library onto the import list, so a symbol
-cannot be imported from a library that does not export it.
+The header partitions provide 1,168 constants. The structure partitions provide 25 native record types for LP64 and 25 explicitly named ARM32 variants, with nested records, unions, fixed arrays and callback addresses.
 
-## Choose What to Import
+## Choose Declarations
 
-For a small source scan, import only the libraries the program uses:
+`os/android/sdk.inc` imports all constants, structure types and catalog queries. `os/android.inc` adds the usual eight platform libraries. `imports.inc` declares all 25 libraries. For a smaller source, import individual files under `defs/`, `structs/` and `imports/`. Declarations emit no bytes or dynamic imports by themselves.
 
 ```asm
-import("format/format.inc")
-import("os/android/imports/libandroid.inc")
-import("os/android/imports/libEGL.inc")
-import("os/android/imports/libGLESv2.inc")
+import("os/android/sdk.inc")
+assert(sizeof(ANativeWindow_Buffer) == 48)
+assert(sizeof(ANativeWindow_Buffer_arm32) == 44)
+assert(android_native_window_WINDOW_FORMAT_RGBA_8888 == 1)
 ```
 
-`import("os/android.inc")` is a convenient starter containing libandroid, liblog,
-libEGL, libGLESv2, libGLESv3, libm, libdl and libz. `imports.inc` imports all 25
-libraries, and `catalog.inc` exposes the lookup queries; ordinary sources should
-import the library files they use.
+## Allocate and Initialize Native Structures
 
-## Add Platform Imports to a Shared Object
+Use the actual types with literals, `emit.struct`, `pack`, `sizeof` and `offset_of`:
 
-Each library file exposes one name constant per symbol plus two procedures, one
-per import mechanism, and the target picks the right one:
+```asm
+import("os/android/structs/native_window.inc")
+import("os/android/structs/rect.inc")
+const buffer: ANativeWindow_Buffer = ANativeWindow_Buffer {
+    width: 640,
+    height: 480,
+    stride: 640,
+    format: 1,
+    reserved: android_ANativeWindow_Buffer_reserved { }
+}
+const dirty: ARect = ARect { right: 640, bottom: 480 }
+assert(buffer.width == 640)
+assert(offset_of(ANativeWindow_Buffer, bits) == 16)
+assert(sizeof(ARect) == 16)
+emit.struct(buffer)
+emit.struct(dirty)
+```
 
-| Procedure | Import mechanism |
+Default names use the LP64 layout shared by AArch64 and x86-64. `_arm32` types describe ARM32 and must not be treated as i686 types. Align storage according to the ABI; preserve 16-byte stack alignment around 64-bit calls. `sizeof` includes record padding and does not align the address at which a record is emitted.
+
+Pointers and callbacks are `u64` addresses in LP64 and `u32` in ARM32. C `float` fields are `f32`; initialize them with exact-width values such as `f32(1.5)`. A fixed array is a helper structure with `element0`, `element1`, and so on. Anonymous C unions have named containers, such as `ASensorEvent.payload.values.acceleration.components.cartesian.x`; use the declared path with `offset_of`.
+
+Platform-owned records can be accessed through the same types:
+
+```asm
+import("os/android/structs/native_activity.inc")
+x86.use64()
+mov rax, [rdi + offset_of(ANativeActivity, callbacks)]
+lea rdx, [rel on_destroy]
+mov [rax + offset_of(ANativeActivityCallbacks, onDestroy)], rdx
+ret
+on_destroy:
+ret
+```
+
+The old `android_layout_<Type>_size64/size32` and field-offset constants remain available for compatibility. New sources should use the native types.
+
+## Check Each Import's API and ABI
+
+Create the ELF image first, then choose imports through the checked helper before `format_begin`. It checks the image machine, provider library, minimum API and symbol kind.
+
+| Helper | Use |
 | --- | --- |
-| `android_import_<alias>_add_mut(imports, names)` | x86-64: a `.plt` stub with a `.got.plt` slot and `R_X86_64_JUMP_SLOT`; call it as `call <symbol>_plt` |
-| `android_import_<alias>_add_slots_mut(imports, names)` | AArch64: a `.got` slot with `R_AARCH64_GLOB_DAT`; call it as `ldr x8, <symbol>` then `blr x8` |
+| `android_import_<alias>_add_checked_mut(imports, image, names, minimum_api, abi_bit)` | x86-64 function PLT imports |
+| `android_import_<alias>_add_slots_checked_mut(imports, image, names, minimum_api, abi_bit)` | AArch64/x86-64 eager GOT imports for functions or objects |
+| `android_import_<alias>_import_mut(imports, image, local_name, name, minimum_api, abi_bit, plt)` | One import with a local alias |
+| `android_import_<alias>_add_pairs_checked_mut(imports, image, pairs, minimum_api, abi_bit, plt)` | Alternating local/public names |
 
-The alias is the soname without its `lib` prefix and `.so` suffix, lowercased:
-`libGLESv2.so` is `glesv2`, `libandroid.so` is `android`.
-
-```asm
-// x86-64
-import("os/android/imports/liblog.inc")
-import("os/android/imports/libGLESv2.inc")
-
-let imports: list = format_elfso_import_new()
-android_import_log_add_mut(imports, list.of(android_import_log___android_log_write))
-android_import_glesv2_add_mut(imports, list.of(
-    android_import_glesv2_glClearColor,
-    android_import_glesv2_glClear))
-```
+Stable ABI bits are `android_abi_aarch64=1`, `android_abi_arm=2`, `android_abi_x86=4`, `android_abi_riscv64=8`, `android_abi_x86_64=16`. Pass one bit; the ELF64 helpers accept AArch64 or x86-64.
 
 ```asm
-// AArch64: the same selection through GOT slots, inside a shared object
 import("format/format.inc")
-import("os/android/imports/libGLESv2.inc")
+import("os/android/imports/liblog.inc")
 import("arm/a64-macros.inc")
-
-let image: map = format_elf64_so_aarch64(
-    "libclear.so",
-    list.of(format_segment(".text", format_load | format_readable | format_executable))
-)
+let image: map = format_elf64_so_aarch64("libwrite.so",
+    list.of(format_segment(".text", format_load | format_readable | format_executable)))
 let exports: list = format_elfso_export_new()
-format_elfso_export_many_mut(exports, list.of("ANativeActivity_onCreate"), ".text", 12)
+format_elfso_export_many_mut(exports, list.of("write_wrapper"), ".text", 8)
 let imports: list = format_elfso_import_new()
-android_import_glesv2_add_slots_mut(imports, list.of(
-    android_import_glesv2_glClearColor,
-    android_import_glesv2_glClear))
+android_import_log_add_slots_checked_mut(imports, image,
+    list.of(android_import_log___android_log_write), 26, android_abi_aarch64)
 format_elfso_tables_mut(image, exports, imports)
-format_begin(image);
-format_segment_begin(image, ".text");
-ANativeActivity_onCreate:
-    ldr x8, glClearColor
-    blr x8
-    ret
-format_segment_end(image, ".text");
-format_finish(image);
+format_begin(image)
+format_segment_begin(image, ".text")
+write_wrapper:
+    ldr x8, __android_log_write
+    br x8
+format_segment_end(image, ".text")
+format_finish(image)
 ```
 
-The import slot carries the symbol name, so the call site loads that slot and
-branches to it. Both procedures append to the same import list, so a library can
-be added in one call per library and the emitted `DT_NEEDED`, dynamic symbol table
-and relocations follow from it. A larger worked example -- the GLES2 renderer for
-both ABIs, packaged as an APK -- is `tests/format/android_gl_demo/`.
+The old two-argument `add_mut` and `add_slots_mut` helpers check library ownership and reject object PLT imports, but cannot check the caller's minimum API or image ABI. Prefer the checked helpers. Both GLES examples under `tests/format/android_gl_demo/` use checked imports and native callback types.
 
-## Look a Symbol Up by Name
+## Object Imports
 
-Tooling and diagnostics can ask the catalog instead of importing a library file:
+An object GOT slot contains the object's address. OpenSL interface IDs such as `SL_IID_ENGINE` are pointer-valued objects: read the object once more to obtain the interface ID. Objects cannot be called through a PLT.
+
+```asm
+import("format/format.inc")
+import("os/android/imports/libOpenSLES.inc")
+let image: map = format_elf64_so("libengineid.so",
+    list.of(format_segment(".text", format_load | format_readable | format_executable)))
+let exports: list = format_elfso_export_new()
+format_elfso_export_many_mut(exports, list.of("read_engine_id"), ".text", 11)
+let imports: list = format_elfso_import_new()
+android_import_opensles_add_slots_checked_mut(imports, image,
+    list.of(android_import_opensles_SL_IID_ENGINE), 26, android_abi_x86_64)
+format_elfso_tables_mut(image, exports, imports)
+format_begin(image)
+format_segment_begin(image, ".text")
+read_engine_id:
+    mov rax, [rel SL_IID_ENGINE]
+    mov rax, [rax]
+    ret
+format_segment_end(image, ".text")
+format_finish(image)
+```
+
+## Query Exact Provider Metadata
 
 ```asm
 import("os/android/catalog.inc")
-
 const syms: map = android_symbols()
-const library: string = android_symbol_library(syms, "__android_log_write")
-const api: u64 = android_symbol_min_api(syms, "__android_log_write")
-const now: bool = android_symbol_available_at(syms, "dlvsym", 24)
-const early: bool = android_symbol_available_at(syms, "dlvsym", 21)
-assert(library == "liblog.so", "liblog provides __android_log_write");
-assert(api == 21, "__android_log_write appears in API 21");
-assert(now, "dlvsym appears in API 24");
-assert(!early, "dlvsym is not available in API 21");
+assert(android_symbol_min_api_for(syms, "__tls_get_addr", "libc.so", android_abi_aarch64) == 30)
+assert(android_symbol_min_api_for(syms, "__tls_get_addr", "libc.so", android_abi_x86_64) == 29)
+assert(!android_symbol_available_for(syms, "__tls_get_addr", "libc.so", 29, android_abi_aarch64))
+assert(android_symbol_kind_for(syms, "SL_IID_ENGINE", "libOpenSLES.so", android_abi_aarch64) == "object")
 ```
 
-Loading the table is deferred until the first query reads it, and one load
-answers any number of queries. The queries are
-`android_symbol_library`, `android_symbol_libraries`, `android_symbol_min_api`,
-`android_symbol_library_api`, `android_symbol_available_at`, `android_symbol_abis`,
-`android_symbol_version` and `android_symbol_kind`; `android_catalog_meta()`
-returns the `[meta]` table.
+`android_symbol_provider` returns the exact `api`, `kind` and `ver` row. `android_symbol_version_for` reads its GNU version. Existing aggregate queries remain useful for searching, but an earliest API across several ABIs is insufficient to validate a target import.
 
-## API Levels
+## Scope and Validation
 
-Every symbol records the first API level in which the stubs declare it. Each
-library file exposes that level for the library itself, which is what a project
-usually has to compare against its minimum SDK:
+Constants and native layouts are checked against NDK Clang; structure tests also inspect actual typed instance bytes. Symbol records are checked against NDK ELF tables. Generated manifests record source hashes. An NDK installation is not needed to use these includes.
 
-```asm
-import("os/android/imports/libGLESv2.inc")
+NDK stubs describe a link-time surface; a device can export fewer or additional names. GNU versions are metadata and imports resolve unversioned names. TLS relocation declarations, IFUNC resolvers, complete C prototypes, complete JNI/POSIX or graphics/audio bindings, and Java/Kotlin tooling remain outside these declarations. Generic Vulkan bindings belong in the separate Vulkan API layer.
 
-assert(android_import_glesv2_min_api <= 26, "libGLESv2 is newer than the project's minimum SDK");
-```
-
-Read the same fact for one symbol with `android_symbol_min_api(syms, name)` or
-`android_symbol_available_at(syms, name, min_sdk)`.
-
-## Constants and Structure Offsets
-
-The same headers declare the enumerators a native program passes to the platform
-(window formats, event actions, key codes, asset modes) and the structures the
-platform hands back. `defs/*.inc` carries both, one file per header, so a source
-neither spells a magic number nor counts a structure field by hand.
-
-```asm
-import("os/android/defs/native_activity.inc")
-import("os/android/defs/native_window.inc")
-import("arm/a64-macros.inc")
-
-// ANativeActivityCallbacks: sixteen function pointers, in declaration order.
-str x2, [x1, #android_layout_ANativeActivityCallbacks_onDestroy_offset64]
-
-// The buffer ANativeWindow_lock fills, read back field by field.
-ldr w3, [x0, #android_layout_ANativeWindow_Buffer_width_offset64]
-ldr w4, [x0, #android_layout_ANativeWindow_Buffer_height_offset64]
-ldr w5, [x0, #android_layout_ANativeWindow_Buffer_format_offset64]
-
-assert(android_native_window_WINDOW_FORMAT_RGBA_8888 == 1, "the legacy RGBA format");
-```
-
-Naming:
-
-| Surface | Pattern |
-| --- | --- |
-| Enumerator or macro | `android_<header>_<NAME>` |
-| Structure size | `android_layout_<Struct>_size64` / `_size32` |
-| Field offset | `android_layout_<Struct>_<field>_offset64` / `_offset32` |
-
-The `64` and `32` suffixes are the two Android data models (LP64 for arm64 and
-x86-64, ILP32 for armv7 and i686); a structure whose members are pointers or
-`size_t` is a different size in each. Members of an anonymous `struct` or `union`
-are reported on the outer structure, the way C11 makes them accessible.
-
-Every number is checked against clang: `tests/os/validate_android_constants.py`
-rewrites the generated partitions as `_Static_assert`s, includes the NDK headers
-and compiles them for both data models, so a value that the headers do not imply
-fails there rather than in a program months later. `defs.inc` imports every
-partition; ordinary sources import the headers they use.
-
-## What the Catalog Is Not
-
-- **A device exports more than the catalog lists.** The stubs are a link-time
-  view and a curated subset: on Android 15, liblog exports 63 symbols where the
-  catalog names 18, and libGLESv2 exports 846 where the catalog names 204. A
-  symbol missing here is therefore not proof that no device provides it.
-- **A few catalogued symbols are not exported at run time.** The stub of libz
-  declares internals that the platform library keeps private. On the Android 15
-  images used during development the entries concerned are the eight libz
-  internals (`_dist_code`, `_length_code`, `_tr_align`, `_tr_flush_bits`,
-  `_tr_flush_block`, `_tr_init`, `_tr_stored_block`, `_tr_tally`),
-  `vkGetImageSubresourceLayout2EXT` in libvulkan and
-  `eglCreateNativeClientBufferANDROID` in libEGL. Importing one of them fails the
-  load of the whole library, in both ABIs, because the loader binds imports
-  before the first instruction runs.
-- **Check a target device instead of assuming.** Copy that device's own
-  libraries out and compare their exports against the catalog:
-
-  ```powershell
-  python tests/os/check_catalog_vs_device.py --catalog include/os/android `
-      --device-libs <directory of copied libraries> --abi arm64 --llvm-nm <path to llvm-nm>
-  ```
-
-  `--abi` matters: a library file per ABI directory, so compare an ARM64 device
-  against the ARM64 copy. For the Android 15 images used here, 3906 of 3916
-  catalogued symbols were exported for both x86_64 and ARM64 (99.74%), with the
-  entries above as the only gaps.
-- **A load-time check is cheap.** `tests/os/make_android_smoke.py` writes a source
-  that imports a sample from every library, so assembling and loading it checks the
-  symbol-to-library mapping on the device in one shot. `--only-libraries` restricts
-  the sample to libraries the device actually has, and `--avoid` skips symbols it
-  does not export.
-- **One symbol, several libraries.** 212 symbols are provided by more than one
-  library (`glClearColor` is in GLESv1, GLESv2 and GLESv3). An import slot is
-  keyed by symbol name, so a single import list can only pick one provider; the
-  catalog lists every provider and the choice is the program's.
-
-## Naming Summary
-
-| Surface | Pattern |
-| --- | --- |
-| Library soname | `android_import_<alias>_so` |
-| Library API level | `android_import_<alias>_min_api` |
-| Symbol name | `android_import_<alias>_<Symbol>` |
-| Add imports, x86-64 | `android_import_<alias>_add_mut(imports, names)` |
-| Add imports, AArch64 | `android_import_<alias>_add_slots_mut(imports, names)` |
-| Query by name | `android_symbol_library(syms, name)` and friends in `catalog.inc` |
-
-See `NOTICE.md` for the data source and license, and `catalog/manifest.json` for
-the counts, the scanned API range and the digest of the stub files used.
+See [NOTICE.md](NOTICE.md) for the source and license, and [the Android guide](../../../document/android.md) for APK construction.

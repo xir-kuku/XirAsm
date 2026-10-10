@@ -3,7 +3,7 @@ const std = @import("std");
 const module_mod = @import("module.zig");
 const types = @import("types.zig");
 
-pub fn resolveNamedOrFixedInteger(
+pub fn resolveNamedOrScalar(
     module: *module_mod.Module,
     name: []const u8,
 ) !?types.TypeId {
@@ -16,5 +16,7 @@ pub fn resolveNamedOrFixedInteger(
     if (std.mem.eql(u8, name, "i16")) return try module.getOrAddIntType("i16", 16, .signed);
     if (std.mem.eql(u8, name, "i32")) return try module.getOrAddIntType("i32", 32, .signed);
     if (std.mem.eql(u8, name, "i64")) return try module.getOrAddIntType("i64", 64, .signed);
+    if (std.mem.eql(u8, name, "f32")) return try module.getOrAddFloatType("f32", .f32);
+    if (std.mem.eql(u8, name, "f64")) return try module.getOrAddFloatType("f64", .f64);
     return null;
 }

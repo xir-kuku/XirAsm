@@ -1,0 +1,79 @@
+import("format/format.inc")
+import("os/android/defs/native_activity.inc")
+import("os/android/structs/native_activity.inc")
+import("os/android/imports/libandroid.inc")
+
+// 文件类型是共享库，两个装载段分别放代码与可写数据。
+let image: map = format_elf64_so(
+    "libmain.so",
+    list.of(
+        format_segment(".text", format_load | format_readable | format_executable),
+        format_segment(".data", format_load | format_readable | format_writeable)
+    )
+)
+
+// 只导出框架要解析的那一个符号。第三个参数是符号大小，桩函数用跳转实现，给 16 字节即可。
+let exports: list = format_elfso_export_new()
+format_elfso_export_many_mut(exports, list.of("ANativeActivity_onCreate"), ".text", 16)
+
+// 导入只写符号名，库名由生成的目录补齐，不在这里手写。
+let imports: list = format_elfso_import_new()
+android_import_android_add_checked_mut(imports, image, list.of(
+    android_import_android_ANativeWindow_getWidth,
+    android_import_android_ANativeWindow_getHeight), 26, 16)
+format_elfso_tables_mut(image, exports, imports)
+
+// 上面的严格入口逐个检查符号能否用于 API 26、x86-64 的映像。
+
+format_begin(image)
+format_segment_begin(image, ".text")
+
+// 框架解析的入口。它只负责登记回调，真正的初始化留给窗口创建回调。
+ANativeActivity_onCreate:
+    jmp demo_install_callbacks
+
+// 第一个参数是 ANativeActivity，它的首字段是回调表指针。
+demo_install_callbacks:
+    mov rax, [rdi + offset_of(ANativeActivity, callbacks)]
+    lea rdx, [rel demo_on_window_created]
+    mov [rax + offset_of(ANativeActivityCallbacks, onNativeWindowCreated)], rdx
+    lea rdx, [rel demo_on_window_destroyed]
+    mov [rax + offset_of(ANativeActivityCallbacks, onNativeWindowDestroyed)], rdx
+    lea rdx, [rel demo_on_destroy]
+    mov [rax + offset_of(ANativeActivityCallbacks, onDestroy)], rdx
+    ret
+
+// 窗口创建时框架传来第二个参数 ANativeWindow，宽高要从它身上问。
+demo_on_window_created:
+    push rbx
+    mov rbx, rsi
+    mov rdi, rbx
+    call ANativeWindow_getWidth_plt
+    mov [rel demo_width], eax
+    mov rdi, rbx
+    call ANativeWindow_getHeight_plt
+    mov [rel demo_height], eax
+    pop rbx
+    ret
+
+// 窗口没了，存下来的尺寸随即失效，清零避免下一次重绘读到旧值。
+demo_on_window_destroyed:
+    mov dword [rel demo_width], 0
+    mov dword [rel demo_height], 0
+    ret
+
+// 没有要释放的资源，也没有退出的调用可做，框架自己结束 activity 并卸载库。
+demo_on_destroy:
+    ret
+
+format_segment_end(image, ".text")
+
+// 回调之间共享的状态放数据段。未初始化的槽位必须在文件里有值，否则是未定义内容。
+format_segment_begin(image, ".data")
+demo_width:
+    dd(0)
+demo_height:
+    dd(0)
+format_segment_end(image, ".data")
+
+format_finish(image)

@@ -440,6 +440,18 @@ pub const Module = struct {
         return self.types.addStruct(self.allocator, name, fields, policy);
     }
 
+    pub fn getOrAddFloatType(
+        self: *Module,
+        name: []const u8,
+        width: types.FloatWidth,
+    ) !types.TypeId {
+        if (self.lookupTypeName(name)) |id| return id;
+        const id = try self.types.addFloat(self.allocator, width);
+        errdefer removeLastType(&self.types, self.allocator);
+        try self.registerTypeName(name, id);
+        return id;
+    }
+
     pub fn addUnionType(
         self: *Module,
         name: []const u8,

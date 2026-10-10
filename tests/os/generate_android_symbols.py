@@ -4,9 +4,9 @@
 The catalog answers four questions about the Android platform libraries:
 
   * which library provides a symbol,
-  * the first API level in which that (symbol, library) pair appears,
+  * the first API level for each (symbol, library, ABI),
   * which ABIs provide it,
-  * and the GNU version tag the stub library declares for it.
+  * and the symbol type and GNU version tag for each provider and ABI.
 
 Everything comes from the NDK's stub libraries, one directory per ABI and API
 level. Symbol tables are parsed directly out of the ELF images, so the whole NDK
@@ -22,9 +22,9 @@ usage:
   python tests/os/generate_android_symbols.py --ndk <ndk root>
   python tests/os/generate_android_symbols.py --ndk <ndk root> --check
 
---check regenerates into a temporary directory and compares against what is
-checked in, which is what a release gate wants: the catalog must be exactly what
-the recorded NDK produces. It never writes into the repository.
+--check regenerates in memory and compares against the checked-in files without
+writing. Objects are included by default; --reference-catalog additionally
+compares every per-ABI record with a schema-2 native-symbols.json baseline.
 """
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ import tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
 
-SCHEMA = 1
+SCHEMA = 2
 GENERATOR = "generate_android_symbols.py"
 
 # ABI order is part of the format: the bit position of each ABI in the mask is
@@ -51,6 +51,7 @@ ABI_ORDER = (
     "x86_64-linux-android",
 )
 PRIMARY_ABI = "aarch64-linux-android"
+ABI_KEYS = ("a64", "arm", "x86", "riscv64", "x64")
 
 DEFAULT_API_MIN = 21
 DEFAULT_API_MAX = 35
@@ -183,12 +184,14 @@ def kind_of(st_type: int) -> str:
         return "ifunc"
     if st_type == STT_OBJECT:
         return "object"
-    return "func"
+    if st_type == STT_FUNC:
+        return "func"
+    raise ElfError(f"unsupported Android dynamic symbol type {st_type}")
 
 
 def scan(ndk: Path, abis: tuple[str, ...], api_min: int, api_max: int,
-         include_objects: bool) -> tuple[dict, dict]:
-    """Walk the NDK stub tree and collect one row per (symbol, library)."""
+         include_objects: bool = True) -> tuple[dict, dict]:
+    """Keep first API, type and version separately for every library and ABI."""
     lib_root = ndk / "toolchains" / "llvm" / "prebuilt" / "windows-x86_64" / "sysroot" / "usr" / "lib"
     if not lib_root.is_dir():
         raise SystemExit(f"missing NDK sysroot library root: {lib_root}")
@@ -203,6 +206,7 @@ def scan(ndk: Path, abis: tuple[str, ...], api_min: int, api_max: int,
         "per_abi": {},
         "digest": hashlib.sha256(),
         "libraries_per_api": {},
+        "stub_hashes": {},
     }
 
     for abi in abis:
@@ -224,6 +228,7 @@ def scan(ndk: Path, abis: tuple[str, ...], api_min: int, api_max: int,
                 stats["stub_files"] += 1
                 stats["digest"].update(f"{abi}/{api}/{library}/{stub.stat().st_size}\n".encode())
                 stats["digest"].update(hashlib.sha256(stub.read_bytes()).digest())
+                stats["stub_hashes"][f"{abi}/{api}/{library}"] = hashlib.sha256(stub.read_bytes()).hexdigest()
                 try:
                     symbols, _types = parse_dynamic_symbols(stub)
                 except (ElfError, struct.error, IndexError, ValueError) as error:
@@ -247,15 +252,41 @@ def scan(ndk: Path, abis: tuple[str, ...], api_min: int, api_max: int,
                             "version": version,
                             "abis": bit,
                             "kind": kind,
+                            "by_abi": {str(bit): {"min_api": api, "kind": kind, "version": version}},
                         }
                         continue
+                    selected = row["by_abi"].get(str(bit))
+                    if selected is None:
+                        row["by_abi"][str(bit)] = {"min_api": api, "kind": kind, "version": version}
+                    elif selected["kind"] != kind:
+                        raise ElfError(f"symbol changes type: {abi}/{api}/{library}: {name}")
                     row["abis"] |= bit
                     if api < row["min_api"]:
                         row["min_api"] = api
                     if not row["version"] and version:
                         row["version"] = version
-        stats["per_abi"][abi] = {"stub_files": abi_files, "libraries": len(abi_libraries)}
+        selected_rows = [row["by_abi"][str(bit)] for row in rows.values() if str(bit) in row["by_abi"]]
+        stats["per_abi"][abi] = {"stub_files": abi_files, "libraries": len(abi_libraries),
+                                "symbol_library_pairs": len(selected_rows),
+                                "kinds": dict(sorted(Counter(row["kind"] for row in selected_rows).items()))}
     return rows, stats
+
+
+def check_reference(rows: dict, reference: Path) -> dict:
+    """Compare every available reference ABI; no aggregate field is trusted."""
+    catalog = json.loads(reference.read_text(encoding="utf-8"))
+    if catalog.get("schema") != 2:
+        raise SystemExit("reference native catalog must use schema 2")
+    expected = {(record["name"], record["library"], bit): value
+                for record in catalog["records"] for bit, value in record["by_abi"].items()}
+    bits = set(catalog["source_metadata"]["abis"])
+    actual = {(name, library, bit): value for (name, library), row in rows.items()
+              for bit, value in row["by_abi"].items() if bit in bits}
+    differences = sorted(key for key in expected.keys() | actual.keys() if expected.get(key) != actual.get(key))
+    if differences:
+        raise SystemExit(f"per-ABI native reference mismatch ({len(differences)}): {differences[:12]}")
+    return {"sha256": hashlib.sha256(reference.read_bytes()).hexdigest(),
+            "rows_per_abi": {bit: sum(key[2] == bit for key in expected) for bit in sorted(bits, key=int)}}
 
 
 INCLUDE_HEADER = (
@@ -295,6 +326,13 @@ def library_file(library: str) -> str:
     return re.sub(r"[^A-Za-z0-9_]", "_", name) + ".inc"
 
 
+def provider_key(library: str) -> str:
+    """Avoid quoted dotted keys, which the release TOML parser splits at dots."""
+    key = library.replace(".", "_").replace("+", "_")
+    assert BARE_KEY.fullmatch(key), library
+    return key
+
+
 def resolve_aliases(libraries: list[str]) -> dict[str, str]:
     aliases: dict[str, str] = {}
     taken: dict[str, str] = {}
@@ -310,23 +348,42 @@ def resolve_aliases(libraries: list[str]) -> dict[str, str]:
 def render_library_include(library: str, alias: str, entries: list[tuple[str, int, str, int, str]],
                            meta: dict) -> str:
     lines = [*INCLUDE_HEADER, ""]
-    lines.append('import("format/format.inc")')
+    lines.append('import("os/android/import_helpers.inc")')
     lines.append("")
     lines.append(f'const android_import_{alias}_so: string = "{library}"')
     first_api = min(api for _symbol, api, _version, _mask, _kind in entries)
     lines.append(f"const android_import_{alias}_min_api: u64 = {first_api}")
     lines.append("")
-    lines.append(f"// Attach {library} symbols to an ELF shared-object import list.")
-    lines.append("// x86-64 calls through a PLT and .got.plt; AArch64 loads the slot and branches")
-    lines.append("// to it, so the target picks the helper.")
+    objects = [symbol for symbol, _api, _version, _mask, kind in entries if kind == "object"]
+    ifuncs = [symbol for symbol, _api, _version, _mask, kind in entries if kind == "ifunc"]
+    lines.append(f"const android_import_{alias}_all_names: list = list.of(" + ", ".join(toml_value(entry[0]) for entry in entries) + ")")
+    lines.append(f"const android_import_{alias}_object_names: list = list.of(" + ", ".join(toml_value(n) for n in objects) + ")")
+    lines.append(f"const android_import_{alias}_ifunc_names: list = list.of(" + ", ".join(toml_value(n) for n in ifuncs) + ")")
+    lines.append("")
+    lines.append("// Compatibility helpers do not select a minimum API or ABI.")
+    lines.append("// Use the checked helpers below for platform availability checks.")
     lines.append(f"fn android_import_{alias}_add_mut(let imports: list, names: list) {{")
-    lines.append(f"    format_elfso_import_many_mut(imports, android_import_{alias}_so, names)")
+    lines.append(f"    android_import_legacy_mut(imports, android_import_{alias}_so, names, android_import_{alias}_all_names, android_import_{alias}_object_names, android_import_{alias}_ifunc_names, true)")
     lines.append("}")
     lines.append("")
     lines.append(f"fn android_import_{alias}_add_slots_mut(let imports: list, names: list) {{")
-    lines.append(f"    format_elfso_import_slots_mut(imports, android_import_{alias}_so, names)")
+    lines.append(f"    android_import_legacy_mut(imports, android_import_{alias}_so, names, android_import_{alias}_all_names, android_import_{alias}_object_names, android_import_{alias}_ifunc_names, false)")
     lines.append("}")
     lines.append("")
+    lines.extend([
+        f"fn android_import_{alias}_import_mut(let imports: list, image: map, local_name: string, name: string, minimum_api: u64, abi_bit: u64, plt: bool) {{",
+        f"    android_import_one_checked_mut(imports, image, android_import_{alias}_so, local_name, name, minimum_api, abi_bit, plt)",
+        "}", "",
+        f"fn android_import_{alias}_add_checked_mut(let imports: list, image: map, names: list, minimum_api: u64, abi_bit: u64) {{",
+        f"    android_import_names_checked_mut(imports, image, android_import_{alias}_so, names, minimum_api, abi_bit, true)",
+        "}", "",
+        f"fn android_import_{alias}_add_slots_checked_mut(let imports: list, image: map, names: list, minimum_api: u64, abi_bit: u64) {{",
+        f"    android_import_names_checked_mut(imports, image, android_import_{alias}_so, names, minimum_api, abi_bit, false)",
+        "}", "",
+        f"fn android_import_{alias}_add_pairs_checked_mut(let imports: list, image: map, pairs: list, minimum_api: u64, abi_bit: u64, plt: bool) {{",
+        f"    android_import_pairs_checked_mut(imports, image, android_import_{alias}_so, pairs, minimum_api, abi_bit, plt)",
+        "}", "",
+    ])
     for symbol, api, version, mask, kind in entries:
         note = f"API {api}"
         if version:
@@ -367,9 +424,11 @@ def build_includes(rows: dict[tuple[str, str], dict], meta: dict) -> tuple[dict[
          f"the full set below is {len(libraries)} files and "
          f"{len(rows)} constants."))
     root = render_entry_include(
-        aliases, CURATED_LIBRARIES, "The platform libraries most native projects start with.",
+        aliases, CURATED_LIBRARIES, "Platform declarations and the libraries most native projects start with.",
         ("Import os/android/imports.inc for every library, or",
          "os/android/catalog.inc when you need to look a symbol up by name."))
+    root = root.replace('import("os/android/imports/libandroid.inc")',
+                        'import("os/android/sdk.inc")\nimport("os/android/imports/libandroid.inc")', 1)
     return files, root
 
 
@@ -378,16 +437,17 @@ def render_symbols_toml(rows: dict[tuple[str, str], dict], meta: dict) -> str:
     by_symbol: dict[str, list[tuple[str, dict]]] = defaultdict(list)
     for (name, library), row in rows.items():
         by_symbol[name].append((library, row))
+    libraries = {library for _name, library in rows}
+    assert len({provider_key(library) for library in libraries}) == len(libraries), "provider key collision"
 
     lines = [*TOML_HEADER, ""]
     lines.append("[meta]")
     for key in ("schema", "ndk_revision", "ndk_release", "api_min", "api_max", "abi_order"):
         lines.append(f"{key} = {toml_value(meta[key])}")
     lines.append("")
-    lines.append("# One table per symbol. lib carries each library with that library's own")
-    lines.append("# first API level, api is the earliest of them, abis is a bit mask over the")
-    lines.append("# abi_order list above, and ver is the GNU version tag when the stub has one.")
-    lines.append("# Values keep their TOML types: api and abis are numbers, the rest are text.")
+    lines.append("# lib/api/abis/kind/ver are compatibility summaries across libraries and ABIs.")
+    lines.append("# providers preserves each library/ABI first API, kind and GNU version.")
+    lines.append("# Select a provider and one ABI before checking availability or import type.")
     for name in sorted(by_symbol):
         entries = sorted(by_symbol[name])
         libraries = ",".join(f"{library}:{row['min_api']}" for library, row in entries)
@@ -409,6 +469,16 @@ def render_symbols_toml(rows: dict[tuple[str, str], dict], meta: dict) -> str:
             lines.append(f'ver = "{version}"')
         lines.append(f"abis = {mask}")
         lines.append(f'kind = "{kind}"')
+        for library, row in entries:
+            key = provider_key(library)
+            lines.append(f"[symbols.{name}.providers.{key}]")
+            lines.append(f"library = {toml_value(library)}")
+            for bit, native in sorted(row["by_abi"].items(), key=lambda entry: int(entry[0])):
+                abi_key = ABI_KEYS[int(bit).bit_length() - 1]
+                lines.append(f"[symbols.{name}.providers.{key}.{abi_key}]")
+                lines.append(f"api = {native['min_api']}")
+                lines.append(f"kind = {toml_value(native['kind'])}")
+                lines.append(f"ver = {toml_value(native['version'])}")
     return "\n".join(lines) + "\n"
 
 
@@ -440,6 +510,7 @@ def build_manifest(rows: dict[tuple[str, str], dict], stats: dict, meta: dict) -
         "multi_library_symbols": sum(1 for count in per_symbol.values() if count > 1),
         "rows_with_version": sum(1 for row in rows.values() if row["version"]),
         "kind_func": sum(1 for row in rows.values() if row["kind"] == "func"),
+        "kind_object": sum(1 for row in rows.values() if row["kind"] == "object"),
         "kind_ifunc": sum(1 for row in rows.values() if row["kind"] == "ifunc"),
         "skipped_objects": stats["skipped_type"].get("object", 0),
         "skipped_files": stats["skipped_files"],
@@ -448,6 +519,7 @@ def build_manifest(rows: dict[tuple[str, str], dict], stats: dict, meta: dict) -
         "libraries_per_api": {str(api): count for api, count in sorted(stats["libraries_per_api"].items())},
         "per_abi": stats["per_abi"],
         "source_digest": stats["digest"].hexdigest(),
+        "stub_hashes": stats["stub_hashes"],
     }
 
 
@@ -456,7 +528,7 @@ def render_manifest(manifest: dict) -> str:
 
 
 def render_notice(manifest: dict) -> str:
-    return f"""# Android platform symbol catalog
+    return f"""# Android platform declarations
 
 The tables in this directory are derived from the stub libraries that ship with
 the Android NDK, release {manifest['ndk_release']}
@@ -465,8 +537,11 @@ Android Open Source Project under the Apache License, Version 2.0.
 
 What is derived: symbol names, the stub library that provides them, the first API
 level in which each appears, the GNU version tag the stub declares, and the ABIs
-that export them. The generator is `{GENERATOR}` in the XIRASM repository, and
-`manifest.json` records the counts and a digest of the exact stub files used.
+that export them. Constants and native record layouts are derived from the
+matching NDK headers, with layouts checked by NDK Clang. The generators are
+`generate_android_symbols.py`, `generate_android_constants.py` and
+`generate_android_structures.py` in the XIRASM repository. The manifests under
+`catalog/` record counts and source hashes.
 
 The stub libraries are link-time descriptions of the platform surface. They do
 not enumerate everything a device may resolve at run time, so a symbol that is
@@ -517,8 +592,14 @@ def main() -> int:
                         help=f"comma separated ABI list, aarch64 first by default ({PRIMARY_ABI} is primary)")
     parser.add_argument("--api-min", type=int, default=DEFAULT_API_MIN)
     parser.add_argument("--api-max", type=int, default=DEFAULT_API_MAX)
-    parser.add_argument("--include-objects", action="store_true",
-                        help="also catalog STT_OBJECT data symbols (functions only by default)")
+    parser.add_argument("--include-objects", action="store_true", default=True,
+                        help="catalog STT_OBJECT data symbols (the default; retained for compatibility)")
+    parser.add_argument("--functions-only", action="store_false", dest="include_objects",
+                        help="generate a deliberately restricted catalog without STT_OBJECT symbols")
+    parser.add_argument("--reference-catalog", type=Path,
+                        help="independently generated schema-2 native-symbols.json for exact per-ABI comparison")
+    parser.add_argument("--runtime-only", action="store_true",
+                        help="only generate catalog data and library includes, preserving entry and NOTICE files")
     parser.add_argument("--emit", choices=("all", "data", "includes"), default="all",
                         help="which parts to generate (default: everything)")
     parser.add_argument("--check", action="store_true",
@@ -529,6 +610,10 @@ def main() -> int:
     unknown = [abi for abi in abis if abi not in ABI_ORDER]
     if unknown:
         raise SystemExit(f"unknown ABI(s): {', '.join(unknown)}")
+    if len(set(abis)) != len(abis) or not abis:
+        raise SystemExit("ABI selection must be nonempty and contain no duplicates")
+    if not 1 <= args.api_min <= args.api_max:
+        raise SystemExit("invalid API scan range")
 
     revision, release = read_ndk_revision(args.ndk)
     rows, stats = scan(args.ndk, abis, args.api_min, args.api_max, args.include_objects)
@@ -542,15 +627,21 @@ def main() -> int:
         "abi_order": ",".join(abis),
     }
     manifest = build_manifest(rows, stats, meta)
+    if args.reference_catalog:
+        reference = check_reference(rows, args.reference_catalog)
+        print(f"native reference matches per ABI: {reference['rows_per_abi']} ({reference['sha256']})")
     generated: dict[str, str] = {}
     root_entry: str | None = None
     if args.emit in ("all", "data"):
         generated["catalog/symbols.toml"] = render_symbols_toml(rows, meta)
         generated["catalog/manifest.json"] = render_manifest(manifest)
-        generated["NOTICE.md"] = render_notice(manifest)
+        if not args.runtime_only:
+            generated["NOTICE.md"] = render_notice(manifest)
     if args.emit in ("all", "includes"):
         include_files, root_entry = build_includes(rows, meta)
         generated.update(include_files)
+    if args.runtime_only:
+        root_entry = None
 
     if args.check:
         differences = compare_trees(args.out, generated)

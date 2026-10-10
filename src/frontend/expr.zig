@@ -1458,7 +1458,7 @@ fn builtinLabelNameArg(allocator: Allocator, call: BuiltinCall, index: usize, ct
 }
 
 fn sizeofType(ctx: *EvalContext, name: []const u8) ExpressionError!u64 {
-    const id = (@import("type_name.zig").resolveNamedOrFixedInteger(ctx.module, name) catch |err| return switch (err) {
+    const id = (@import("type_name.zig").resolveNamedOrScalar(ctx.module, name) catch |err| return switch (err) {
         error.OutOfMemory => error.OutOfMemory,
         error.InvalidIntegerBits => error.InvalidIntegerBits,
         error.DuplicateTypeName, error.TooManyTypes => error.InvalidType,
@@ -1490,7 +1490,7 @@ fn offsetOf(ctx: *EvalContext, type_name: []const u8, field_name: []const u8) Ex
         const field_type = ctx.module.types.get(field.ty) catch return error.InvalidOperand;
         switch (field_type.*) {
             .@"struct", .@"union" => current_id = field.ty,
-            .void, .int, .array, .pointer => return error.InvalidOperand,
+            .void, .int, .float, .array, .pointer => return error.InvalidOperand,
         }
         rest = rest[next_dot + 1 ..];
     }

@@ -142,8 +142,12 @@ fn checkCommon(
     failed = (try expectEqual(stderr, "Type", @as(u16, 2), try readU16Le(bytes, 16))) or failed;
     failed = (try expectEqual(stderr, "Machine", @as(u16, 62), try readU16Le(bytes, 18))) or failed;
     failed = (try expectEqual(stderr, "Entry", expected_entry, try readU64Le(bytes, 24))) or failed;
+    failed = (try expectEqual(stderr, "ProgramHeaderOffset", @as(u64, 64), try readU64Le(bytes, 32))) or failed;
+    failed = (try expectEqual(stderr, "ProgramHeaderEntrySize", @as(u16, 56), try readU16Le(bytes, 54))) or failed;
     const program_header_count = try readU16Le(bytes, 56);
-    failed = (try expectEqual(stderr, "TextLoadType", @as(u32, 1), try readU32Le(bytes, 64))) or failed;
+    try checkProgramHeaderBounds(bytes, program_header_count);
+    const text_header_offset: usize = if (program_header_count == 6) 176 else 64;
+    failed = (try expectEqual(stderr, "TextLoadType", @as(u32, 1), try readU32Le(bytes, text_header_offset))) or failed;
 
     if (program_header_count == 4) {
         failed = (try expectEqual(stderr, "DataLoadType", @as(u32, 1), try readU32Le(bytes, 120))) or failed;
@@ -165,18 +169,50 @@ fn checkCommon(
         failed = (try expectEqual(stderr, "DynamicOffset", expected_dynamic_foa, try readU64Le(bytes, 296))) or failed;
         failed = (try expectEqual(stderr, "DynamicVaddr", expected_dynamic_vaddr, try readU64Le(bytes, 304))) or failed;
         failed = (try expectEqual(stderr, "DynamicFilesz", expected_dynamic_size, try readU64Le(bytes, 320))) or failed;
+    } else if (program_header_count == 6) {
+        failed = (try expectEqual(stderr, "PhdrType", @as(u32, 6), try readU32Le(bytes, 64))) or failed;
+        failed = (try expectEqual(stderr, "PhdrFlags", @as(u32, 4), try readU32Le(bytes, 68))) or failed;
+        failed = (try expectEqual(stderr, "PhdrOffset", @as(u64, 64), try readU64Le(bytes, 72))) or failed;
+        const header_table_size = try checkedMul(u64, program_header_count, 56);
+        failed = (try expectEqual(stderr, "PhdrFilesz", header_table_size, try readU64Le(bytes, 96))) or failed;
+        failed = (try expectEqual(stderr, "InterpType", @as(u32, 3), try readU32Le(bytes, 120))) or failed;
+        failed = (try expectEqual(stderr, "InterpOffset", expected_interp_foa, try readU64Le(bytes, 128))) or failed;
+        failed = (try expectEqual(stderr, "TextLoadFlags", @as(u32, 5), try readU32Le(bytes, 180))) or failed;
+        failed = (try expectEqual(stderr, "TextLoadOffset", @as(u64, 0), try readU64Le(bytes, 184))) or failed;
+        if (try readU64Le(bytes, 208) < try checkedAdd(u64, 64, header_table_size)) {
+            try stderr.print("TextLoadHeaderMapping mismatch: ELF and program headers must be mapped\n", .{});
+            failed = true;
+        }
+        failed = (try expectEqual(stderr, "PltLoadType", @as(u32, 1), try readU32Le(bytes, 232))) or failed;
+        failed = (try expectEqual(stderr, "PltLoadFlags", @as(u32, 5), try readU32Le(bytes, 236))) or failed;
+        failed = (try expectEqual(stderr, "MetadataLoadType", @as(u32, 1), try readU32Le(bytes, 288))) or failed;
+        failed = (try expectEqual(stderr, "MetadataLoadFlags", @as(u32, 6), try readU32Le(bytes, 292))) or failed;
+        failed = (try expectEqual(stderr, "DynamicType", @as(u32, 2), try readU32Le(bytes, 344))) or failed;
+        failed = (try expectEqual(stderr, "DynamicOffset", expected_dynamic_foa, try readU64Le(bytes, 352))) or failed;
+        failed = (try expectEqual(stderr, "DynamicVaddr", expected_dynamic_vaddr, try readU64Le(bytes, 360))) or failed;
+        failed = (try expectEqual(stderr, "DynamicFilesz", expected_dynamic_size, try readU64Le(bytes, 376))) or failed;
     } else {
-        failed = (try expectEqual(stderr, "ProgramHeaderCount", @as(u16, 4), program_header_count)) or failed;
+        try stderr.print("ProgramHeaderCount mismatch: expected 4, 5, or 6, actual {d}\n", .{program_header_count});
+        failed = true;
     }
 
     const expected_symbol_len = std.math.cast(u64, expected_symbol.len) orelse return CheckError.InvalidElfExeImport;
-    const expected_needed_offset = try checkedAdd(u64, try checkedAdd(u64, expected_symbol_len, 1), 1);
+    const symbol_name_end = try checkedAdd(u64, try checkedAdd(u64, expected_symbol_len, 1), 1);
+    if (symbol_name_end > expected_dynstr_size) return CheckError.InvalidElfExeImport;
+    if (try checkedAdd(u64, expected_dynstr_foa, expected_dynstr_size) > bytes.len) return CheckError.InvalidElfExeImport;
+    const needed_name_offset = try dynamicValue(bytes, expected_dynamic_foa, expected_dynamic_size, 1);
+    const needed_name_size = try checkedAdd(u64, std.math.cast(u64, expected_library.len) orelse return CheckError.InvalidElfExeImport, 1);
+    if (needed_name_offset > expected_dynstr_size or needed_name_size > expected_dynstr_size - needed_name_offset) return CheckError.InvalidElfExeImport;
+    const needed_name_foa = try checkedAdd(u64, expected_dynstr_foa, needed_name_offset);
+    failed = (try expectEqual(stderr, "DynstrSize", expected_dynstr_size, try dynamicValue(bytes, expected_dynamic_foa, expected_dynamic_size, 10))) or failed;
     failed = (try expectBytes(stderr, "Interpreter", "/lib64/ld-linux-x86-64.so.2", bytes, try toUsize(expected_interp_foa))) or failed;
     failed = (try expectEqual(stderr, "ImportSymbolNameOffset", @as(u32, 1), try readU32Le(bytes, try checkedAdd(usize, try toUsize(expected_dynsym_foa), 24)))) or failed;
     failed = (try expectEqual(stderr, "ImportSymbolInfo", @as(u8, 0x12), try readU8(bytes, try checkedAdd(usize, try toUsize(expected_dynsym_foa), 28)))) or failed;
     failed = (try expectEqual(stderr, "ImportSymbolSection", @as(u16, 0), try readU16Le(bytes, try checkedAdd(usize, try toUsize(expected_dynsym_foa), 30)))) or failed;
     failed = (try expectBytes(stderr, "ImportSymbolName", expected_symbol, bytes, try checkedAdd(usize, try toUsize(expected_dynstr_foa), 1))) or failed;
-    failed = (try expectBytes(stderr, "NeededLibrary", expected_library, bytes, try checkedAdd(usize, try toUsize(expected_dynstr_foa), try toUsize(expected_needed_offset)))) or failed;
+    failed = (try expectEqual(stderr, "ImportSymbolNameTerminator", @as(u8, 0), try readU8(bytes, try toUsize(try checkedAdd(u64, expected_dynstr_foa, symbol_name_end - 1))))) or failed;
+    failed = (try expectBytes(stderr, "NeededLibrary", expected_library, bytes, try toUsize(needed_name_foa))) or failed;
+    failed = (try expectEqual(stderr, "NeededLibraryTerminator", @as(u8, 0), try readU8(bytes, try toUsize(try checkedAdd(u64, needed_name_foa, needed_name_size - 1))))) or failed;
 
     failed = (try expectEqual(stderr, "HashBucketCount", @as(u32, 1), try readU32Le(bytes, try toUsize(expected_hash_foa)))) or failed;
     failed = (try expectEqual(stderr, "HashChainCount", @as(u32, 2), try readU32Le(bytes, try checkedAdd(usize, try toUsize(expected_hash_foa), 4)))) or failed;
@@ -286,6 +322,31 @@ fn expectDynamic(stderr: *Io.Writer, bytes: []const u8, dynamic_offset: u64, ind
     failed = (try expectEqual(stderr, "DynamicTag", expected_tag, try readU64Le(bytes, entry_offset))) or failed;
     failed = (try expectEqual(stderr, "DynamicValue", expected_value, try readU64Le(bytes, try checkedAdd(usize, entry_offset, 8)))) or failed;
     return failed;
+}
+
+fn checkProgramHeaderBounds(bytes: []const u8, count: u16) !void {
+    const table_end = try checkedAdd(usize, 64, try checkedMul(usize, count, 56));
+    if (table_end > bytes.len) return CheckError.InvalidElfExeImport;
+    for (0..count) |index| {
+        const header_offset = try checkedAdd(usize, 64, try checkedMul(usize, index, 56));
+        const file_offset = try readU64Le(bytes, try checkedAdd(usize, header_offset, 8));
+        const file_size = try readU64Le(bytes, try checkedAdd(usize, header_offset, 32));
+        const memory_size = try readU64Le(bytes, try checkedAdd(usize, header_offset, 40));
+        if (file_size > memory_size or try checkedAdd(u64, file_offset, file_size) > bytes.len) return CheckError.InvalidElfExeImport;
+    }
+}
+
+fn dynamicValue(bytes: []const u8, offset: u64, size: u64, requested_tag: u64) !u64 {
+    if (size % 16 != 0) return CheckError.InvalidElfExeImport;
+    const end = try checkedAdd(u64, offset, size);
+    if (end > bytes.len) return CheckError.InvalidElfExeImport;
+    var entry_offset = offset;
+    while (entry_offset < end) : (entry_offset = try checkedAdd(u64, entry_offset, 16)) {
+        const tag = try readU64Le(bytes, try toUsize(entry_offset));
+        if (tag == 0) break;
+        if (tag == requested_tag) return readU64Le(bytes, try toUsize(try checkedAdd(u64, entry_offset, 8)));
+    }
+    return CheckError.InvalidElfExeImport;
 }
 
 fn expectEqual(stderr: *Io.Writer, name: []const u8, expected: anytype, actual: @TypeOf(expected)) !bool {

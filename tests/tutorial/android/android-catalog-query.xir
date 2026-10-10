@@ -1,0 +1,11 @@
+import("os/android/catalog.inc")
+
+const syms: map = android_symbols()
+const library: string = android_symbol_library(syms, "__android_log_write")
+const api: u64 = android_symbol_min_api_for(syms, "__android_log_write", "liblog.so", android_abi_aarch64)
+const now: bool = android_symbol_available_for(syms, "dlvsym", "libdl.so", 24, android_abi_aarch64)
+const early: bool = android_symbol_available_for(syms, "dlvsym", "libdl.so", 21, android_abi_aarch64)
+assert(library == "liblog.so", "liblog provides __android_log_write")
+assert(api == 21, "__android_log_write appears in API 21")
+assert(now, "dlvsym appears in API 24")
+assert(!early, "dlvsym is not available in API 21")

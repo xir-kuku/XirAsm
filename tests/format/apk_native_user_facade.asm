@@ -3,9 +3,8 @@
 // one compile-time document. The icon payload is an inline 1x1 PNG, so the
 // fixture needs no external files and assembles anywhere.
 //
-// No native library is included: the archive this fixture produces is
-// structurally complete but has no code to launch. A runnable application adds
-// apk_native_lib(app, abi, name, path) per ABI.
+// The checker builds apk_native_fixture.asm to apk-native-fixture.so first,
+// supplying the main NativeActivity library for this ABI.
 //
 // This include is a DSL-layer format helper and is deliberately outside the
 // Zig build: it is not listed in build.zig and carries no api-matrix markers.
@@ -23,4 +22,5 @@ app = apk_label_string(app, "app_name", "XIRASM Facade")
 app = apk_icon_bytes(app, "mdpi", "res/mipmap-mdpi-v4/ic_launcher.png", icon_mdpi)
 app = apk_icon_bytes(app, "hdpi", "res/mipmap-hdpi-v4/ic_launcher.png", icon_hdpi)
 app = apk_asset_bytes(app, "assets/facade.txt", b"assembled by xirasm\n")
+app = apk_native_lib(app, "x86_64", "libmain.so", "apk-native-fixture.so")
 apk_emit(app);

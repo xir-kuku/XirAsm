@@ -42,6 +42,10 @@ pub fn annotationFromName(module: ?*module_mod.Module, type_name: ?[]const u8) T
     const stored_type = active_module.types.get(id) catch return error.InvalidValueDeclaration;
     return switch (stored_type.*) {
         .int => .{ .layout_integer = id },
+        .float => |width| .{ .value = switch (width) {
+            .f32 => .f32,
+            .f64 => .f64,
+        } },
         .@"struct", .@"union" => .{ .layout_aggregate = id },
         .void, .array, .pointer => null,
     };
@@ -61,7 +65,7 @@ pub fn coerceValueToAnnotation(module: *module_mod.Module, value: *value_mod.Val
             const layout_type = module.types.get(type_id) catch return error.InvalidValueDeclaration;
             switch (layout_type.*) {
                 .int => |int_type| try validateIntegerFitsType(integer_value.value, int_type),
-                .void, .array, .pointer, .@"struct", .@"union" => return error.InvalidValueDeclaration,
+                .void, .float, .array, .pointer, .@"struct", .@"union" => return error.InvalidValueDeclaration,
             }
             integer_value.type_id = type_id;
             value.* = .{ .integer = integer_value };
@@ -77,7 +81,7 @@ pub fn coerceValueToAnnotation(module: *module_mod.Module, value: *value_mod.Val
 }
 
 fn lowerLayoutTypeName(module: *module_mod.Module, name: []const u8) TypeCheckError!types.TypeId {
-    if (try type_name_mod.resolveNamedOrFixedInteger(module, name)) |id| return id;
+    if (try type_name_mod.resolveNamedOrScalar(module, name)) |id| return id;
     if (std.mem.eql(u8, name, "usize")) return module.getOrAddIntType("usize", @bitSizeOf(usize), .unsigned);
     return error.UnknownTypeName;
 }
@@ -105,7 +109,7 @@ test "typecheck keeps layout integer annotations out of ValueType" {
                     try std.testing.expectEqual(@as(u16, 8), int_type.bits);
                     try std.testing.expectEqual(types.IntSignedness.unsigned, int_type.signedness);
                 },
-                .void, .array, .pointer, .@"struct", .@"union" => return error.UnexpectedType,
+                .void, .float, .array, .pointer, .@"struct", .@"union" => return error.UnexpectedType,
             }
         },
         .value, .layout_aggregate => return error.UnexpectedAnnotation,

@@ -735,7 +735,7 @@ fn packAggregateInto(
             const active_field = union_type.fieldByName(active_value.name) orelse return error.InvalidApiArgument;
             try writeFieldValue(store, bytes, base_offset, active_field.*, active_value.value);
         },
-        .void, .int, .array, .pointer => return error.ExpectedStruct,
+        .void, .int, .float, .array, .pointer => return error.ExpectedStruct,
     }
 }
 
@@ -754,6 +754,17 @@ fn writeFieldValue(
                 .operand, .void, .float32, .float64, .boolean, .string, .bytes, .type, .@"struct", .list, .map => return error.InvalidApiArgument,
             };
             try writeIntegerField(bytes, base_offset, field, integer, int_type);
+        },
+        .float => |width| {
+            const bits: u64 = switch (width) {
+                .f32 => @as(u32, @bitCast(value.expectFloat32() catch return error.InvalidApiArgument)),
+                .f64 => @as(u64, @bitCast(value.expectFloat64() catch return error.InvalidApiArgument)),
+            };
+            const bit_count: u16 = switch (width) {
+                .f32 => 32,
+                .f64 => 64,
+            };
+            try writeIntegerField(bytes, base_offset, field, bits, .{ .bits = bit_count });
         },
         .@"struct", .@"union" => {
             const nested = switch (value) {

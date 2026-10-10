@@ -856,6 +856,12 @@ pub const fixtures = [_]Fixture{
         .expected = "ok",
     },
     .{
+        .id = "float-fields",
+        .source = "tests/tutorial/language/float-fields.xir",
+        .target = "x86-64",
+        .expected = "bytes:0000c03f00000000000000c0",
+    },
+    .{
         .id = "en-struct-2",
         .source = "tests/tutorial/language/en-struct-2.xir",
         .target = "x86-64",
@@ -2098,6 +2104,12 @@ pub const fixtures = [_]Fixture{
         .expected = "ok",
     },
     .{
+        .id = "float-fields",
+        .source = "tests/tutorial/zh/language/09-data-and-binary-layout/float-fields.xir",
+        .target = "x86-64",
+        .expected = "bytes:0000c03f00000000000000c0",
+    },
+    .{
         .id = "09-struct",
         .source = "tests/tutorial/zh/language/09-data-and-binary-layout/09-struct.xir",
         .target = "x86-64",
@@ -2437,6 +2449,48 @@ pub const fixtures = [_]Fixture{
         .id = "15-import",
         .source = "tests/tutorial/zh/language/15-diagnostics-and-practical-conventions/15-import.xir",
         .target = "x86-64",
+        .expected = "ok",
+    },
+    .{
+        .id = "apk-native-so-callbacks",
+        .source = "tests/tutorial/android/apk-native-so-callbacks.xir",
+        .target = "x86-64",
+        .expected = "ok",
+    },
+    .{
+        .id = "android-import-slots-aarch64",
+        .source = "tests/tutorial/android/android-import-slots-aarch64.xir",
+        .target = "aarch64",
+        .expected = "ok",
+    },
+    .{
+        .id = "android-layout-constants",
+        .source = "tests/tutorial/android/android-layout-constants.xir",
+        .target = "aarch64",
+        .expected = "ok",
+    },
+    .{
+        .id = "android-catalog-query",
+        .source = "tests/tutorial/android/android-catalog-query.xir",
+        .target = "x86-64",
+        .expected = "ok",
+    },
+    .{
+        .id = "android-min-api-guard",
+        .source = "tests/tutorial/android/android-min-api-guard.xir",
+        .target = "x86-64",
+        .expected = "ok",
+    },
+    .{
+        .id = "android-struct-offsets",
+        .source = "tests/tutorial/android/android-struct-offsets.xir",
+        .target = "aarch64",
+        .expected = "ok",
+    },
+    .{
+        .id = "android-struct-size",
+        .source = "tests/tutorial/android/android-struct-size.xir",
+        .target = "aarch64",
         .expected = "ok",
     },
 };

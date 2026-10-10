@@ -2917,6 +2917,21 @@ values of the wrong type are source errors.
 Union fields cannot declare defaults. A union value must always select exactly
 one active field explicitly.
 
+Binary fields also support `f32` and `f64`, with four- and eight-byte natural
+alignment. Values and defaults must match the field width; use `f32(...)` to
+narrow explicitly. Packing preserves the little-endian IEEE-754 bits.
+
+```asm id=float-fields bytes=0000c03f00000000000000c0
+packed struct FloatingPair {
+    x: f32 = f32(1.5)
+    y: f64 = -2.0
+}
+const pair: FloatingPair = FloatingPair { }
+assert(sizeof(FloatingPair) == 12)
+assert(offset_of(FloatingPair, y) == 4)
+emit.struct(pair)
+```
+
 Field access reads a field of a value, so the value has to exist first. Bind the
 literal, then read the field:
 

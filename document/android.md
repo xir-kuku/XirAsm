@@ -2,7 +2,7 @@
 
 XIRASM 把一份汇编源码变成可安装的 Android APK：二进制清单、资源表、图标与资源条目、ZIP 容器、native 共享库都在汇编期生成，构造阶段不需要资源编译器。签名是唯一的外部步骤，交给 Android SDK 自带的签名工具。
 
-配套的生成目录在 `include/os/android/`：`imports/` 按名字给出平台符号所在的库，`defs/` 给出头文件常量与结构体字段偏移。平台库名、API 级别、字段偏移这三件事源码里都不必手写。
+配套的 SDK 在 `include/os/android/`：`imports/` 给出平台符号及逐 ABI 的 API 门槛，`defs/` 提供头文件常量，`structs/` 提供可实例化的原生结构体与 union。完整声明入口是 `os/android/sdk.inc`，平台库仍按需导入。平台库名、API 级别和结构体布局由这些声明提供。
 
 两部分合起来覆盖 NativeActivity 类纯原生应用：没有 Java/Kotlin 业务代码，界面与逻辑都在 native 层。工具、图形程序、示例，以及需要精确控制加载内容、不愿引入重量级构建链的项目适合这条路。
 
@@ -50,6 +50,7 @@ XIRASM 把一份汇编源码变成可安装的 Android APK：二进制清单、�
 ```asm id=apk-native-so-callbacks
 import("format/format.inc")
 import("os/android/defs/native_activity.inc")
+import("os/android/structs/native_activity.inc")
 import("os/android/imports/libandroid.inc")
 
 // 文件类型是共享库，两个装载段分别放代码与可写数据。
@@ -67,13 +68,12 @@ format_elfso_export_many_mut(exports, list.of("ANativeActivity_onCreate"), ".tex
 
 // 导入只写符号名，库名由生成的目录补齐，不在这里手写。
 let imports: list = format_elfso_import_new()
-android_import_android_add_mut(imports, list.of(
+android_import_android_add_checked_mut(imports, image, list.of(
     android_import_android_ANativeWindow_getWidth,
-    android_import_android_ANativeWindow_getHeight))
+    android_import_android_ANativeWindow_getHeight), 26, 16)
 format_elfso_tables_mut(image, exports, imports)
 
-// 目录记录了每个库首次可用的 API 级别，与工程的 minSdk 比一次，比设备上崩掉更早发现问题。
-assert(android_import_android_min_api <= 26, "libandroid is newer than the project's minimum SDK");
+// 上面的严格入口逐个检查符号能否用于 API 26、x86-64 的映像。
 
 format_begin(image)
 format_segment_begin(image, ".text")
@@ -84,13 +84,13 @@ ANativeActivity_onCreate:
 
 // 第一个参数是 ANativeActivity，它的首字段是回调表指针。
 demo_install_callbacks:
-    mov rax, [rdi]
+    mov rax, [rdi + offset_of(ANativeActivity, callbacks)]
     lea rdx, [rel demo_on_window_created]
-    mov [rax + android_layout_ANativeActivityCallbacks_onNativeWindowCreated_offset64], rdx
+    mov [rax + offset_of(ANativeActivityCallbacks, onNativeWindowCreated)], rdx
     lea rdx, [rel demo_on_window_destroyed]
-    mov [rax + android_layout_ANativeActivityCallbacks_onNativeWindowDestroyed_offset64], rdx
+    mov [rax + offset_of(ANativeActivityCallbacks, onNativeWindowDestroyed)], rdx
     lea rdx, [rel demo_on_destroy]
-    mov [rax + android_layout_ANativeActivityCallbacks_onDestroy_offset64], rdx
+    mov [rax + offset_of(ANativeActivityCallbacks, onDestroy)], rdx
     ret
 
 // 窗口创建时框架传来第二个参数 ANativeWindow，宽高要从它身上问。
@@ -132,7 +132,7 @@ format_finish(image)
 要点：
 
 - **x86-64 共享库的导入函数在调用点加 `_plt`**，直接 `call ANativeWindow_getWidth_plt` 就完成了一次 PLT 跳转，不需要自己写 GOT 槽位的取值。
-- **回调表偏移来自生成的头文件常量**，不是数出来的。`android_layout_ANativeActivityCallbacks_<字段>_offset64` 的数值由 `tests/os/validate_android_constants.py` 改写成 `_Static_assert` 交给 NDK 的 clang 编译核对，所以源码里写名字就不会配错。
+- **回调表使用真实结构体**：`offset_of(ANativeActivityCallbacks, 字段)` 从类型声明取成员位置。声明的大小与字段位置由 NDK Clang 和汇编产物分别核对。
 - **导出符号的大小不影响框架**，它只按名字解析地址。桩函数写小一点，符号表里这个大小就只是桩的大小，不会随实现增长。
 - **库名来自目录**：产物里的 `DT_NEEDED` 是 `libandroid.so`（用了 EGL 就是 `libEGL.so`、`libGLESv2.so`），全部由 `android_import_<别名>_add_mut` 推出，源码里一个库名都没写。
 - **不写 `libmain.so` 的依赖**：共享库不链接 libc，它只用平台库与自己的段。
@@ -163,7 +163,7 @@ llvm-objdump -d libmain.so
 
 打包脚本用一份编译期文档描述整个应用，`apk_emit` 一次写出清单、资源表、图标、assets、启动 DEX 与各个 ABI 的 native 库：
 
-```asm id=apk-facade-all-in-one
+```asm id=apk-facade-all-in-one skip
 // 需要输入文件：本块不单独汇编，配套文件见正文说明（needs input files）。
 import("format/apk.inc")
 
@@ -184,7 +184,7 @@ apk_emit(app)
 
 同样的应用，让资源目录自己声明资源，再把主库加入归档：
 
-```asm id=apk-facade-res-dir
+```asm id=apk-facade-res-dir skip
 // 需要输入文件：本块不单独汇编，配套文件见正文说明（needs input files）。
 import("format/apk.inc")
 
@@ -205,7 +205,7 @@ apk_emit(app)
 - `apk_label` 是字面量应用名，不建资源表；`apk_label_string` 建字符串资源并让清单引用它，两者同时给出时后者优先。
 - 字符串资源的值可以是任何文字（中文、emoji 都可以）；资源名、类型名和包名保持 ASCII，这也是 Android 对它们的要求。XIRASM 源码本身按 ASCII 读取，所以非 ASCII 文本从数据文件读入：
 
-  ```asm id=apk-non-ascii-strings
+  ```asm id=apk-non-ascii-strings skip
   // 需要输入文件：本块不单独汇编，配套文件见正文说明。
   import("format/apk.inc")
 
@@ -291,7 +291,7 @@ assets 与普通条目：
 
 资源表也可以不用 facade，直接用 `format/arsc.inc` 的值风格 builder 逐条组装。声明一条资源就是加一条 `(类型, 名字, 配置) → 值` 的记录：
 
-```asm id=apk-arsc-tables
+```asm id=apk-arsc-tables skip
 // 需要输入文件：本块不单独汇编，配套文件见正文说明（needs input files）。
 import("format/apk.inc")
 
@@ -354,7 +354,7 @@ apk_res_file_entry("res/mipmap-hdpi/ic_launcher.png", "icons/hdpi.png")
 
 归档条目可以按 DEFLATE（ZIP method 8）写入，压缩由引擎的原生实现完成：
 
-```asm id=apk-compressed-entries
+```asm id=apk-compressed-entries skip
 // 需要输入文件：本块不单独汇编，配套文件见正文说明（needs input files）。
 import("format/apk.inc")
 
@@ -383,7 +383,7 @@ apk_emit(app)
 
 资源数量增加之后，逐条声明不如让目录结构承担这项工作：`res/` 树的形状本身就是资源的坐标，`apk_res_dir` 把整棵树读进来。
 
-```asm id=apk-res-dir-scan
+```asm id=apk-res-dir-scan skip
 // 需要输入文件：本块不单独汇编，配套文件见正文说明（needs input files）。
 import("format/apk.inc")
 
@@ -425,8 +425,8 @@ apk_emit(app)
 
 清单或资源值里引用 `@android:...` 时，要带上平台给这个资源的 ID，形式是 `0x01 <类型> <条目>`。仓库里带一份从平台 jar 生成的目录：
 
-```asm id=apk-framework-theme
-// 需要输入文件：先汇编 build/arm64-v8a/libdemo.so。
+```asm id=apk-framework-theme skip
+// 需要输入文件：先汇编 build/arm64-v8a/libdemo.so（needs input files）。
 import("format/apk.inc")
 import("format/android/generated/framework_ids.inc")
 
@@ -454,7 +454,7 @@ apk_emit(app)
 
 需要逐步控制时，facade 下面的入口都可以直接用：
 
-```asm id=apk-low-level-entries
+```asm id=apk-low-level-entries skip
 // 需要输入文件：本块不单独汇编，配套文件见正文说明（needs input files）。
 import("format/apk.inc")
 
@@ -553,12 +553,13 @@ adb logcat | findstr /i "PackageManager linker AndroidRuntime DEBUG"
 
 ## 平台符号目录
 
-写安卓原生代码时，最琐碎也最容易出错的三件事是：**平台库名要手打**（写错就让 `DT_NEEDED` 指向不存在的库，装到设备上才崩）、**API 级别要记**（编译能过、装到低版本设备才崩）、**结构体字段要自己数**（`ANativeActivity` 的回调表在第几个指针上）。这三件事都由生成物负责：`include/os/android/` 下的目录与 `defs/` 下的常量。
+`include/os/android/` 提供平台符号目录、头文件常量和可分配的原生结构体。导入辅助函数核对每个符号的提供库、目标 ABI 和首次可用 API；结构体通过 `sizeof`、`offset_of`、字面量与 `emit.struct` 使用。
 
 | 数据 | 规模 | 来源 |
 | --- | --- | --- |
-| 符号 → 库、首次可用 API、ABI 掩码、版本标签 | **25 个库 / 4,137 个符号 / 4,416 条组合**，API 21–35 × 5 个 ABI | NDK r27d（`Pkg.Revision = 27.3.13750724`）的 stub 库 |
-| 头文件常量与结构体布局 | **1,168 个常量 / 25 个结构体 / 161 个字段偏移**，来自 33 个 C 头文件 | 同一份 NDK 的 `sysroot/usr/include/android/*.h` |
+| 符号 → 库、首次可用 API、ABI、类型、版本标签 | **25 个库 / 4,405 个符号 / 4,684 条符号与库组合 / 22,956 条 ABI 记录**，API 21–35 × 5 个 ABI | NDK r27d（`Pkg.Revision = 27.3.13750724`）的 stub 库 |
+| 头文件常量 | **1,168 个常量**，33 个头文件分区；保留原有大小与偏移常量 | 同一份 NDK 头文件 |
+| 原生结构体 | **25 个 LP64 类型 + 25 个显式 ARM32 类型**，包含嵌套记录、union、固定数组与回调地址 | fasmg Android SDK 的结构模型，以同一份 NDK Clang 核对 |
 
 两条使用路径，日常只用第一条：
 
@@ -571,8 +572,8 @@ adb logcat | findstr /i "PackageManager linker AndroidRuntime DEBUG"
 
 | 目标 | 辅助函数 | 调用写法 |
 | --- | --- | --- |
-| x86-64 | `android_import_<别名>_add_mut(imports, names)` | `call <符号>_plt` |
-| AArch64 | `android_import_<别名>_add_slots_mut(imports, names)` | `ldr x8, <符号>` 然后 `blr x8` |
+| x86-64 | `android_import_<别名>_add_checked_mut(imports, image, names, minimum_api, android_abi_x86_64)` | `call <符号>_plt` |
+| AArch64 | `android_import_<别名>_add_slots_checked_mut(imports, image, names, minimum_api, android_abi_aarch64)` | `ldr x8, <符号>` 然后 `blr x8`，调用者须保存返回地址 |
 
 下面是一份完整可汇编的 AArch64 共享库，库名一个都没有手写：
 
@@ -586,19 +587,18 @@ let image: map = format_elf64_so_aarch64(
     list.of(format_segment(".text", format_load | format_readable | format_executable))
 )
 let exports: list = format_elfso_export_new()
-format_elfso_export_many_mut(exports, list.of("ANativeActivity_onCreate"), ".text", 12)
+format_elfso_export_many_mut(exports, list.of("clear_color"), ".text", 8)
 let imports: list = format_elfso_import_new()
-android_import_glesv2_add_slots_mut(imports, list.of(
+android_import_glesv2_add_slots_checked_mut(imports, image, list.of(
     android_import_glesv2_glClearColor,
-    android_import_glesv2_glClear))
+    android_import_glesv2_glClear), 26, android_abi_aarch64)
 format_elfso_tables_mut(image, exports, imports)
 format_begin(image)
 format_segment_begin(image, ".text")
-ANativeActivity_onCreate:
-    // 槽位间接调用：先取槽里的地址，再跳过去。
+clear_color:
+    // 转发调用者的 s0..s3 与返回地址。
     ldr x8, glClearColor
-    blr x8
-    ret
+    br x8
 format_segment_end(image, ".text")
 format_finish(image)
 ```
@@ -607,7 +607,7 @@ format_finish(image)
 
 导入槽用符号名做标签，所以调用点就是"取该槽、跳过去"。两个辅助函数都往同一个导入列表里追加，因此不同库的导入可以共用一个列表。
 
-## 常量与结构体偏移
+## 常量与结构体
 
 同一批头文件还声明了要传给平台的枚举（窗口格式、事件动作、键码）和平台回传的结构体。`defs/<头文件>.inc` 把两者都收编，命名规则是：
 
@@ -617,82 +617,87 @@ format_finish(image)
 | 结构体大小 | `android_layout_<Struct>_size64` / `_size32` |
 | 字段偏移 | `android_layout_<Struct>_<字段>_offset64` / `_offset32` |
 
-`64` 与 `32` 后缀是安卓的两种数据模型：arm64 与 x86-64 是 LP64，armv7 与 i686 是 ILP32。成员里有指针或 `size_t` 的结构体，两者大小不同，所以偏移分两套给出。匿名 `struct` 与 `union` 的成员按 C11 规则报在**外层**结构体上。
+`defs/` 保留历史布局常量。新源码导入 `structs/<头文件>.inc`，直接使用类型名。默认类型对应 AArch64 与 x86-64 的 LP64 布局；`_arm32` 对应 ARM32，不能当作 i686 类型。匿名 C 成员在类型中使用命名的嵌套容器。
 
 ```asm id=android-layout-constants target=aarch64
-import("os/android/defs/native_activity.inc")
+import("os/android/structs/native_activity.inc")
 import("os/android/defs/native_window.inc")
+import("os/android/structs/native_window.inc")
 import("arm/a64-macros.inc")
 
 // ANativeActivityCallbacks：十六个函数指针，按声明顺序排布。
-str x2, [x1, #android_layout_ANativeActivityCallbacks_onDestroy_offset64]
+str x2, [x1, #offset_of(ANativeActivityCallbacks, onDestroy)]
 
 // ANativeWindow_lock 填好的缓冲区，逐字段读回。
-ldr w3, [x0, #android_layout_ANativeWindow_Buffer_width_offset64]
-ldr w4, [x0, #android_layout_ANativeWindow_Buffer_height_offset64]
-ldr w5, [x0, #android_layout_ANativeWindow_Buffer_format_offset64]
+ldr w3, [x0, #offset_of(ANativeWindow_Buffer, width)]
+ldr w4, [x0, #offset_of(ANativeWindow_Buffer, height)]
+ldr w5, [x0, #offset_of(ANativeWindow_Buffer, format)]
 
 assert(android_native_window_WINDOW_FORMAT_RGBA_8888 == 1, "the legacy RGBA format")
 ```
 
 `import("os/android/defs.inc")` 一次导入全部 33 个分区；日常源码只导入自己用到的头文件。
 
-目录给的是**布局常量**，不是 XIRASM `struct` 类型声明：结构体大小加每字段的偏移，直接用 `[base + 偏移]` 寻址。为什么这样、以及信息是否完整，见下文「平台结构体的字段偏移」一节；把平台结构体规范成真实结构体类型属于后续工作。
+`import("os/android/structs.inc")` 导入全部原生类型；`os/android/sdk.inc` 同时导入常量、类型与目录查询。声明本身不输出字节，也不会登记动态依赖。
 
 ## 按名字查目录
 
-工具、诊断与编辑器补全走查询路径。数据表**第一次查询时才解析**，一次解析回答任意多次查询：
+工具、诊断与编辑器补全走查询路径。调用一次 `android_symbols()` 解析表，并复用返回的 map 回答多次查询：
 
 ```asm id=android-catalog-query
 import("os/android/catalog.inc")
 
 const syms: map = android_symbols()
 const library: string = android_symbol_library(syms, "__android_log_write")
-const api: u64 = android_symbol_min_api(syms, "__android_log_write")
-const now: bool = android_symbol_available_at(syms, "dlvsym", 24)
-const early: bool = android_symbol_available_at(syms, "dlvsym", 21)
+const api: u64 = android_symbol_min_api_for(syms, "__android_log_write", "liblog.so", android_abi_aarch64)
+const now: bool = android_symbol_available_for(syms, "dlvsym", "libdl.so", 24, android_abi_aarch64)
+const early: bool = android_symbol_available_for(syms, "dlvsym", "libdl.so", 21, android_abi_aarch64)
 assert(library == "liblog.so", "liblog provides __android_log_write")
 assert(api == 21, "__android_log_write appears in API 21")
 assert(now, "dlvsym appears in API 24")
 assert(!early, "dlvsym is not available in API 21")
 ```
 
-可用的查询：`android_symbol_library`、`android_symbol_libraries`、`android_symbol_min_api`、`android_symbol_library_api`、`android_symbol_available_at`、`android_symbol_abis`、`android_symbol_version`、`android_symbol_kind`；`android_catalog_meta()` 返回 `[meta]` 表。
+`android_symbol_provider(syms, name, library, abi_bit)` 返回精确的 `api`、`kind` 和 `ver`。对应快捷查询为 `android_symbol_min_api_for`、`android_symbol_available_for`、`android_symbol_kind_for`、`android_symbol_version_for`。历史聚合查询仍可检索名称与提供库；跨 ABI 的最早 API 或版本不能用于验证目标导入。
 
 ## API 级别怎么用
 
-每个符号记录**首次可用**的 API 级别，每个库也有自己的级别。工程通常这样守住 minSdk：
+每个符号在每个提供库与 ABI 下分别记录首次可用 API。只检查库首次出现的 API 会漏掉后来新增的符号；实际导入应使用上面的 checked 辅助函数。查询时也指定库和 ABI：
 
 ```asm id=android-min-api-guard
-import("os/android/imports/libGLESv2.inc")
-
-assert(android_import_glesv2_min_api <= 26, "libGLESv2 is newer than the project's minimum SDK")
+import("os/android/catalog.inc")
+const syms: map = android_symbols()
+assert(android_symbol_available_for(syms, "glClearColor", "libGLESv2.so", 26, android_abi_aarch64))
+assert(android_symbol_min_api_for(syms, "__tls_get_addr", "libc.so", android_abi_aarch64) == 30)
+assert(android_symbol_min_api_for(syms, "__tls_get_addr", "libc.so", android_abi_x86_64) == 29)
 ```
 
-单个符号用 `android_symbol_min_api(syms, name)` 或 `android_symbol_available_at(syms, name, min_sdk)`。
+旧的双参数 `add_mut` 与 `add_slots_mut` 保留兼容，只核对库所属和对象不能走 PLT；它们无法核对调用者的 minSdk 或 ELF machine。对象导入使用 GOT，槽内是对象地址；OpenSL 的 `SL_IID_*` 对象本身还保存接口 ID 指针，读取接口 ID 时需要再解引用一次。
 
 ## 平台侧的完整链路
 
-`tests/format/android_gl_demo/` 是一个只用 XIRASM 写成的 GLES2 渲染器：EGL 初始化、shader 编译、汇编期生成的纹理、九参数 `glTexImage2D`、`glDrawArrays` 全在里面，x86-64 与 AArch64 两份源码都由目录取库名、由 `defs` 取回调偏移。三个归档变体（x86-64、arm64-v8a、两个 ABI 的通用包）由 `tests/format/check_apk.py` 独立验收，通用包在设备上按 ABI 取对应库。
+`tests/format/android_gl_demo/` 是一个只用 XIRASM 写成的 GLES2 渲染器：EGL 初始化、shader 编译、汇编期生成的纹理、九参数 `glTexImage2D`、`glDrawArrays` 全在里面。x86-64 与 AArch64 源码按每个符号核对 API 26 和 ABI，并用原生回调类型的 `offset_of` 访问字段。三个归档变体由 `tests/format/check_apk.py` 验收，通用包在设备上按 ABI 取对应库。
 
 ## 生成物是怎么保证正确的
 
 | 手段 | 做什么 |
 | --- | --- |
 | 生成器 `tests/os/generate_android_symbols.py` | 纯 Python 解析 stub 的动态符号表与版本表；`--check` 逐字节比对，产物可复现 |
-| 校验器 `tests/os/validate_android_symbols.py` | 用 `llvm-nm` **批量重算**全部事实并与产物比对（六项差异全 0） |
+| 校验器 `tests/os/validate_android_symbols.py` | 用 LLVM 读回动态符号与版本表，逐 ABI 核对 API、符号类型与版本 |
 | 生成器 `tests/os/generate_android_constants.py` | 纯 Python 解析头文件（含 `#define`、枚举、结构体布局），`--check` 可复现 |
 | 校验器 `tests/os/validate_android_constants.py` | 把每个常量与偏移改写成 `_Static_assert`，交给 NDK 的 clang 按 **LP64 与 ILP32** 两模型编译 |
-| 检查器 `tests/os/check_android_symbols.py` | 编译期覆盖：4,416 个常量全部引用、25 个库辅助函数、查询 API、`defs` 分区全量加载 |
+| 结构生成器与检查器 `tests/os/generate_android_structures.py`、`check_android_structures.py` | 从结构模型生成实际类型；核对 Clang 布局、全部字段路径和实际实例字节 |
+| 检查器 `tests/os/check_android_symbols.py`、`check_android_import_reference.py` | 引用全部 4,684 个符号与库组合；在真实汇编器中核对精确查询、对象与函数重定位，以及无效 API/ABI 导入诊断 |
 | 检查器 `tests/os/check_android_docs.py` | 本文与目录 README 里的**每个示例都汇编一遍**，文档不能与语言脱节 |
 | 设备侧 `tests/os/check_catalog_vs_device.py` | 把目标设备自己的 `.so` 取出来，与其真实导出比对 |
 | 设备侧 `tests/os/make_android_smoke.py` | 生成"每个库抽样导入"的冒烟 `.so`：装载即验证几百条映射 |
 
 ## 这套目录的限度
 
-- **来源是 NDK stub（链接期语义）**，不是设备全量：Android 15 上 liblog 实际导出 63 个符号，目录里 18 个；libGLESv2 实际 846，目录 204。**目录里没有不等于设备没有**。
-- **个别条目真机不导出**：libz 的 8 个内部符号（`_dist_code`、`_length_code`、`_tr_*`）、`vkGetImageSubresourceLayout2EXT`、`eglCreateNativeClientBufferANDROID`。安卓的加载器在**两个 ABI 上都是装载时急切重定位**，所以导入其中任何一个会让**整个库装载失败**——这条已经实测：导入但从不调用的符号，依然让 `dlopen` 报 `cannot locate symbol`。在开发所用的 Android 15 镜像上，x86_64 与 arm64 的命中率都是 **3,906/3,916 = 99.74%**，缺口就是上面那 10 个。
-- **一个符号可能属于多个库**（212 个如此，`glClearColor` 在 GLESv1/2/3 都有）。导入槽按符号名唯一，所以一个导入列表里只能选一个提供者，目录把全部提供者列出。
+- **来源是 NDK stub 的链接期接口**。具体设备可能导出更多或更少的名称；目录查询通过不等于已经在设备上运行过。使用设备检查器核对所部署的系统。
+- **GOT 导入在装载时解析**。即使不调用，设备缺少一个已登记的符号也会使库无法装载。
+- **同名符号可以属于多个库**。精确查询指定提供库；需要不同本地槽名时，使用 `import_mut` 或 `add_pairs_checked_mut` 显式取别名。
+- **GNU 版本标签是目录元数据**。当前 ELF 导入按未版本化名称解析；TLS 重定位与 IFUNC resolver 不由这套辅助函数声明。
 - **C++ 头未收编**：9 个 binder/aidl 头只有 C++ 侧能用，不在 `defs/` 里。
 - **常量未带 `__INTRODUCED_IN` 可用性**：目前只有符号轴有 min API；常量轴以后可以加。
 
@@ -702,102 +707,62 @@ assert(android_import_glesv2_min_api <= 26, "libGLESv2 is newer than the project
 $ndk = "<android-ndk-r27d>"
 python tests/os/generate_android_symbols.py  --ndk $ndk --check
 python tests/os/generate_android_constants.py --ndk $ndk --check
+python tests/os/generate_android_structures.py --check
 python tests/os/validate_android_symbols.py  --ndk $ndk
 python tests/os/validate_android_constants.py --ndk $ndk
 python tests/os/check_android_symbols.py --assembler zig-out/bin/xirasm.exe
+python tests/os/check_android_structures.py --assembler zig-out/bin/xirasm.exe --ndk $ndk
+python tests/os/check_android_import_reference.py --assembler zig-out/bin/xirasm.exe
 python tests/os/check_android_docs.py    --xirasm zig-out/bin/xirasm.exe
 ```
 
 升级 NDK 时先跑 `--check` 看差异，再重新生成并跑两遍校验器；`manifest.json` 与 `defs-manifest.json` 记录版本、计数与所用文件的摘要。
 
-## 平台结构体的字段偏移
+## 使用原生结构体
 
-平台回传的结构体（`ANativeActivity`、`ANativeWindow_Buffer`、`ASensorEvent` 等）在目录里**没有**对应的 XIRASM `struct` 类型声明；`os/android/defs/*.inc` 给出的是**布局常量**：结构体大小，以及每个字段的偏移。
-
-| 表面 | 形式 |
-| --- | --- |
-| 结构体大小 | `android_layout_<Struct>_size64` / `_size32` |
-| 字段偏移 | `android_layout_<Struct>_<字段>_offset64` / `_offset32` |
-
-用法是把偏移直接放进寻址，不需要任何类型声明：
+平台回传的结构体通过真实类型访问，字段偏移由类型计算：
 
 ```asm id=android-struct-offsets target=aarch64
-import("os/android/defs/native_window.inc")
+import("os/android/structs/native_window.inc")
 import("arm/a64-macros.inc")
 
 // ANativeWindow_lock 填好的缓冲区：宽、高、行距、像素格式、像素指针
-ldr w3, [x0, #android_layout_ANativeWindow_Buffer_width_offset64]
-ldr w4, [x0, #android_layout_ANativeWindow_Buffer_height_offset64]
-ldr w5, [x0, #android_layout_ANativeWindow_Buffer_stride_offset64]
-ldr w6, [x0, #android_layout_ANativeWindow_Buffer_format_offset64]
-ldr x7, [x0, #android_layout_ANativeWindow_Buffer_bits_offset64]
+ldr w3, [x0, #offset_of(ANativeWindow_Buffer, width)]
+ldr w4, [x0, #offset_of(ANativeWindow_Buffer, height)]
+ldr w5, [x0, #offset_of(ANativeWindow_Buffer, stride)]
+ldr w6, [x0, #offset_of(ANativeWindow_Buffer, format)]
+ldr x7, [x0, #offset_of(ANativeWindow_Buffer, bits)]
 ```
 
-三点要知道：
+指针与回调是 LP64 下的 `u64`、ARM32 下的 `u32` 地址。C `float` 使用 `f32`。固定数组使用包含 `element0`、`element1` 等成员的辅助结构；匿名 union 使用命名容器，例如 `ASensorEvent.payload.values.acceleration.components.cartesian.x`。嵌套偏移使用声明中的完整路径。
 
-- **两种数据模型**：`_offset64` 对应 arm64 与 x86-64（LP64），`_offset32` 对应 armv7 与 i686（ILP32）。成员里有指针或 `size_t` 的结构体，两者大小不同，所以两套都给出。
-- **匿名成员已展平**：C11 里可以直接写成 `event->x_uncalib` 的成员，常量名同样使用该字段名。
-- 信息是完整的：目前共 **25 个结构体、161 个字段偏移**，两种模型齐全，`tests/os/validate_android_constants.py` 会把每个数字改写成 `_Static_assert` 交给 clang 编译核对。**没有 `struct` 类型声明不等于没有结构体信息。**
+### 分配与初始化
 
-### 结构体大小的用法
-
-两个常见需求都靠**同一个常量**：把 `sizeof(结构体)` 填进版本字段，以及在栈上开一块结构体。
+结构体字面量能实际初始化数据；`sizeof` 包含 C 记录的内部与尾部填充。写入地址的对齐仍由调用者安排，64 位调用保持 16 字节栈对齐。
 
 ```asm id=android-struct-size target=aarch64
-import("format/format.inc")
-import("os/android/defs/log.inc")
-import("os/android/defs/native_window.inc")
-import("os/android/imports/liblog.inc")
-import("arm/a64-macros.inc")
-
-let image: map = format_elf64_so_aarch64(
-    "libsize.so",
-    list.of(format_segment(".text", format_load | format_readable | format_executable))
-)
-let exports: list = format_elfso_export_new()
-format_elfso_export_many_mut(exports, list.of("ANativeActivity_onCreate"), ".text", 76)
-let imports: list = format_elfso_import_new()
-android_import_log_add_slots_mut(imports, list.of(android_import_log___android_log_write))
-format_elfso_tables_mut(image, exports, imports)
-format_begin(image)
-format_segment_begin(image, ".text")
-ANativeActivity_onCreate:
-    // 栈帧大小来自生成常量，不是数出来的数字。
-    sub sp, sp, #android_layout___android_log_message_size64
-
-    // struct_size 约定要填 sizeof(__android_log_message)：同一个常量。
-    mov w9, #android_layout___android_log_message_size64
-    str w9, [sp, #android_layout___android_log_message_struct_size_offset64]
-
-    mov w9, #4
-    str w9, [sp, #android_layout___android_log_message_priority_offset64]
-
-    adrp x9, size_probe_tag
-    add x9, x9, :lo12:size_probe_tag
-    str x9, [sp, #android_layout___android_log_message_tag_offset64]
-
-    mov x0, sp
-    ldr x8, __android_log_write
-    blr x8
-
-    // 同一个常量还能用来开别的结构体：ANativeWindow_lock 的缓冲区。
-    sub sp, sp, #android_layout_ANativeWindow_Buffer_size64
-    mov x0, sp
-    add sp, sp, #android_layout_ANativeWindow_Buffer_size64
-
-    add sp, sp, #android_layout___android_log_message_size64
-    ret
-size_probe_tag:
-    db("xirasm")
-format_segment_end(image, ".text")
-format_finish(image)
+import("os/android/structs/log.inc")
+import("os/android/structs/native_window.inc")
+const message: __android_log_message = __android_log_message {
+    struct_size: sizeof(__android_log_message),
+    priority: 4
+}
+const buffer: ANativeWindow_Buffer = ANativeWindow_Buffer {
+    width: 640,
+    height: 480,
+    stride: 640,
+    format: 1,
+    reserved: android_ANativeWindow_Buffer_reserved { }
+}
+assert(sizeof(__android_log_message) == 48)
+assert(sizeof(__android_log_message_arm32) == 28)
+assert(sizeof(ANativeWindow_Buffer) == 48)
+assert(sizeof(ANativeWindow_Buffer_arm32) == 44)
+emit.struct(message)
+emit.struct(buffer)
 ```
 
-用 `llvm-objdump` 反汇编核对，编出来是 `sub sp, sp, #0x30` 与 `mov w9, #0x30`，也就是 48，即 64 位模型下的 `sizeof(__android_log_message)`；32 位构建改用 `_size32`，得到 28。`ANativeWindow_Buffer` 同样得到 48。
-
-**后缀由目标决定**：arm64 与 x86-64 用 `_size64` 与 `_offset64`，armv7 与 i686 用 `_size32` 与 `_offset32`。两套名字都在，需要写者自己留意别配错，这是这一层唯一要留意的点。
-
-为什么不是 `struct` 类型：生成器目前只产出常量。Meta 的 `struct` 与 `packed struct` 配合 `sizeof` 与 `offset_of` 是另一种形态，而平台布局是 **ABI 相关**的——同一个结构体在 LP64 与 ILP32 下大小不同，类型化就得为两种模型各生成一套声明，或按目标条件选择。把平台结构体规范成真实结构体类型属于后续工作；在那之前，用偏移常量直接寻址是等价且零成本的做法。
+上例只演示记录初始化；其中字符串与指针仍为零，调用平台函数前须赋有效地址。标量默认值为零，嵌套结构须给出对应字面量。`pack` 可得到同样的字节，供格式容器或文件写入使用。
 
 ## 能力边界
 
@@ -815,8 +780,8 @@ format_finish(image)
 | 两级对齐 | 4 字节与 16 KiB |
 | 框架资源 ID 与主题 | `format/android/generated/framework_ids.toml`，公开资源 17 个类型、3037 条 |
 | 条目压缩 | 逐条选择 DEFLATE，确定性输出 |
-| 平台符号目录 | 25 个库、4,416 条记录，带首次可用 API 级别 |
-| 头文件常量与布局 | 1,168 个常量、25 个结构体、161 个字段偏移，双数据模型 |
+| 平台符号目录 | 25 个库、4,684 个符号与库组合，逐 ABI 存储 API、类型与版本 |
+| 头文件常量与原生类型 | 1,168 个常量、25 个 LP64 类型与 25 个 ARM32 类型，可初始化并输出记录 |
 
 清单与资源表在开发中与 Android 自带资源编译器的输出**逐字节比对过**（同输入同字节，四组夹具分别 556、1360、1172、704 字节）；19.9 MB 的演示 APK 回归同样逐字节一致。仓库内的验收脚本用 `aapt2` 与 `zipalign` 把这些产物逐项读回来复核。
 

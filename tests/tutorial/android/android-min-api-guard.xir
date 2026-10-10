@@ -1,0 +1,5 @@
+import("os/android/catalog.inc")
+const syms: map = android_symbols()
+assert(android_symbol_available_for(syms, "glClearColor", "libGLESv2.so", 26, android_abi_aarch64))
+assert(android_symbol_min_api_for(syms, "__tls_get_addr", "libc.so", android_abi_aarch64) == 30)
+assert(android_symbol_min_api_for(syms, "__tls_get_addr", "libc.so", android_abi_x86_64) == 29)

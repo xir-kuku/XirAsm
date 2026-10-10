@@ -649,9 +649,16 @@ emit.struct(header)
 A struct literal assigns fields by name. Source order inside the literal does
 not have to match declaration order.
 
-An omitted integer struct field uses its declared default. Every other omitted
+Integer and floating-point struct fields may declare defaults. An omitted
+scalar field uses its declared default. Every other omitted
 field is an error. Unknown and duplicate literal fields are also errors. Union
 fields cannot declare defaults.
+
+`f32` and `f64` fields occupy four and eight bytes, with matching natural
+alignment. Literal values and defaults must have the exact field type:
+use `f32(1.5)` for `f32`, and `1.5` for `f64`. Integers and different float
+widths are not implicitly converted. `pack` and `emit.struct` preserve the
+little-endian IEEE-754 bits, including signed zero.
 
 Aggregate literals can be passed directly to built-in expressions:
 

@@ -16,4 +16,5 @@ origin(0);
 let app: map = apk_new("com.example.xirasm.resdir", 3, "2.1", "main")
 app = apk_set_sdk(app, 26, 34)
 app = apk_res_dir_at(app, "apk_res", "res")
+app = apk_native_lib(app, "x86_64", "libmain.so", "apk-native-fixture.so")
 apk_emit(app);

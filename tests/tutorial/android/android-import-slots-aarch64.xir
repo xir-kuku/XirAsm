@@ -1,0 +1,23 @@
+import("format/format.inc")
+import("os/android/imports/libGLESv2.inc")
+import("arm/a64-macros.inc")
+
+let image: map = format_elf64_so_aarch64(
+    "libclear.so",
+    list.of(format_segment(".text", format_load | format_readable | format_executable))
+)
+let exports: list = format_elfso_export_new()
+format_elfso_export_many_mut(exports, list.of("clear_color"), ".text", 8)
+let imports: list = format_elfso_import_new()
+android_import_glesv2_add_slots_checked_mut(imports, image, list.of(
+    android_import_glesv2_glClearColor,
+    android_import_glesv2_glClear), 26, android_abi_aarch64)
+format_elfso_tables_mut(image, exports, imports)
+format_begin(image)
+format_segment_begin(image, ".text")
+clear_color:
+    // 转发调用者的 s0..s3 与返回地址。
+    ldr x8, glClearColor
+    br x8
+format_segment_end(image, ".text")
+format_finish(image)

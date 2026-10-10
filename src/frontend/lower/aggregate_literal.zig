@@ -47,7 +47,7 @@ pub fn structValueFromLiteral(
     return switch (stored_type.*) {
         .@"struct" => |*struct_type| structValueFromStructLiteral(allocator, module, context, active, type_id, struct_type, literal, callbacks),
         .@"union" => |*union_type| structValueFromUnionLiteral(allocator, module, context, active, type_id, union_type, literal, callbacks),
-        .void, .int, .array, .pointer => error.ExpectedStruct,
+        .void, .int, .float, .array, .pointer => error.ExpectedStruct,
     };
 }
 
@@ -155,6 +155,33 @@ fn valueFromLiteralField(
             } else field.default_value orelse return error.MissingStructFieldValue;
             try value_mod.validateIntegerForIntType(raw_value, int_type);
             break :blk value_mod.Value.typedInteger(raw_value, field.ty);
+        },
+        .float => |width| blk: {
+            if (literal_value) |value| {
+                var evaluated = switch (value.*) {
+                    .expression => try callbacks.eval_value_at_context(allocator, module, context, active, &value.expression),
+                    .struct_literal => return error.InvalidValueDeclaration,
+                };
+                defer evaluated.deinit(allocator);
+                switch (width) {
+                    .f32 => {
+                        const stored = evaluated.expectFloat32() catch return error.InvalidValueDeclaration;
+                        break :blk .{ .float32 = stored };
+                    },
+                    .f64 => {
+                        const stored = evaluated.expectFloat64() catch return error.InvalidValueDeclaration;
+                        break :blk .{ .float64 = stored };
+                    },
+                }
+            }
+            const bits = field.default_value orelse return error.MissingStructFieldValue;
+            break :blk switch (width) {
+                .f32 => if (bits <= std.math.maxInt(u32))
+                    .{ .float32 = @bitCast(@as(u32, @intCast(bits))) }
+                else
+                    return error.InvalidValueDeclaration,
+                .f64 => .{ .float64 = @bitCast(bits) },
+            };
         },
         .@"struct", .@"union" => blk: {
             const value = literal_value orelse return error.MissingStructFieldValue;

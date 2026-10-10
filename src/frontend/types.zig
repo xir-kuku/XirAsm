@@ -19,6 +19,19 @@ pub const IntSignedness = enum {
     signed,
 };
 
+pub const FloatWidth = enum {
+    f32,
+    f64,
+
+    pub fn layout(self: FloatWidth) Layout {
+        const size: u64 = switch (self) {
+            .f32 => 4,
+            .f64 => 8,
+        };
+        return .{ .size = size, .alignment = size };
+    }
+};
+
 pub const IntType = struct {
     bits: u16,
     signedness: IntSignedness = .unsigned,
@@ -62,6 +75,7 @@ pub const StructField = struct {
     name: []u8,
     ty: TypeId,
     offset: u64,
+    /// Integer payload, or IEEE 754 bits for a float field of the declared width.
     default_value: ?u64 = null,
 
     pub fn deinit(self: *StructField, allocator: Allocator) void {
@@ -98,6 +112,7 @@ pub const UnionType = StructType;
 pub const Type = union(enum) {
     void,
     int: IntType,
+    float: FloatWidth,
     array: ArrayType,
     pointer: PointerType,
     @"struct": StructType,
@@ -106,7 +121,7 @@ pub const Type = union(enum) {
     pub fn deinit(self: *Type, allocator: Allocator) void {
         switch (self.*) {
             .@"struct", .@"union" => |*struct_type| struct_type.deinit(allocator),
-            .void, .int, .array, .pointer => {},
+            .void, .int, .float, .array, .pointer => {},
         }
         self.* = undefined;
     }
@@ -115,6 +130,7 @@ pub const Type = union(enum) {
 pub const StructFieldSpec = struct {
     name: []const u8,
     ty: TypeId,
+    /// Integer payload, or IEEE 754 bits for a float field of the declared width.
     default_value: ?u64 = null,
 };
 
@@ -162,6 +178,10 @@ pub const TypeStore = struct {
                 .len = len,
             },
         });
+    }
+
+    pub fn addFloat(self: *TypeStore, allocator: Allocator, width: FloatWidth) !TypeId {
+        return self.append(allocator, .{ .float = width });
     }
 
     pub fn addPointer(
@@ -310,6 +330,7 @@ pub const TypeStore = struct {
         return switch (ty.*) {
             .void => .{ .size = 0, .alignment = 1 },
             .int => |int_type| intLayout(int_type),
+            .float => |width| width.layout(),
             .array => |array_type| blk: {
                 const child_layout = try self.layoutOf(array_type.child);
                 break :blk .{
@@ -330,7 +351,7 @@ pub const TypeStore = struct {
         const ty = try self.get(id);
         return switch (ty.*) {
             .@"struct" => |*struct_type| struct_type,
-            .void, .int, .array, .pointer, .@"union" => error.ExpectedStruct,
+            .void, .int, .float, .array, .pointer, .@"union" => error.ExpectedStruct,
         };
     }
 
@@ -339,7 +360,7 @@ pub const TypeStore = struct {
         return switch (ty.*) {
             .@"struct" => |*struct_type| struct_type,
             .@"union" => |*union_type| union_type,
-            .void, .int, .array, .pointer => error.ExpectedStruct,
+            .void, .int, .float, .array, .pointer => error.ExpectedStruct,
         };
     }
 

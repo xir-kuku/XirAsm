@@ -35,4 +35,5 @@ app = apk_set_sdk(app, 26, 34)
 app = apk_label(app, "XIRASM Framework")
 app = apk_use_theme_id(app, android_style_id(ids, "Theme.DeviceDefault"));
 app = apk_icon_bytes(app, "mdpi", "res/mipmap-mdpi-v4/ic_launcher.png", icon)
+app = apk_native_lib(app, "x86_64", "libmain.so", "apk-native-fixture.so")
 apk_emit(app);

@@ -281,7 +281,7 @@ assert(offset_of(Outer, tail) == 17)
 
 ## 字段默认值与结构体字面量
 
-结构体的整数字段可以提供编译期默认值：
+结构体的整数与浮点字段可以提供编译期默认值：
 
 ```asm id=09-4
 // magic 和 flags 提供默认值，size 由每个实例显式指定。
@@ -306,6 +306,19 @@ emit.u32(header.size)
 每个省略的字段都必须有默认值。未知字段、重复字段和值类型不正确的字段都会导致源码错误。
 
 联合体字段不能声明默认值；联合体值必须始终显式选择、且只选择一个当前字段。
+
+二进制字段支持 `f32` 和 `f64`，自然对齐分别为 4 与 8 字节。字段值与默认值必须匹配声明的宽度；用 `f32(...)` 显式缩窄。打包保留小端 IEEE-754 位模式。
+
+```asm id=float-fields bytes=0000c03f00000000000000c0
+packed struct FloatingPair {
+    x: f32 = f32(1.5)
+    y: f64 = -2.0
+}
+const pair: FloatingPair = FloatingPair { }
+assert(sizeof(FloatingPair) == 12)
+assert(offset_of(FloatingPair, y) == 4)
+emit.struct(pair)
+```
 
 字段用普通的字段访问语法读取，如上面两个写出调用。字段访问是从**值**上读字段，所以先把字面量写进绑定，再从绑定读字段：
 

@@ -1,4 +1,4 @@
-# Android platform symbol catalog
+# Android platform declarations
 
 The tables in this directory are derived from the stub libraries that ship with
 the Android NDK, release r27d
@@ -7,8 +7,11 @@ Android Open Source Project under the Apache License, Version 2.0.
 
 What is derived: symbol names, the stub library that provides them, the first API
 level in which each appears, the GNU version tag the stub declares, and the ABIs
-that export them. The generator is `generate_android_symbols.py` in the XIRASM repository, and
-`manifest.json` records the counts and a digest of the exact stub files used.
+that export them. Constants and native record layouts are derived from the
+matching NDK headers, with layouts checked by NDK Clang. The generators are
+`generate_android_symbols.py`, `generate_android_constants.py` and
+`generate_android_structures.py` in the XIRASM repository. The manifests under
+`catalog/` record counts and source hashes.
 
 The stub libraries are link-time descriptions of the platform surface. They do
 not enumerate everything a device may resolve at run time, so a symbol that is

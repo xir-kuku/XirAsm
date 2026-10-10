@@ -1,0 +1,14 @@
+import("os/android/structs/native_activity.inc")
+import("os/android/defs/native_window.inc")
+import("os/android/structs/native_window.inc")
+import("arm/a64-macros.inc")
+
+// ANativeActivityCallbacks：十六个函数指针，按声明顺序排布。
+str x2, [x1, #offset_of(ANativeActivityCallbacks, onDestroy)]
+
+// ANativeWindow_lock 填好的缓冲区，逐字段读回。
+ldr w3, [x0, #offset_of(ANativeWindow_Buffer, width)]
+ldr w4, [x0, #offset_of(ANativeWindow_Buffer, height)]
+ldr w5, [x0, #offset_of(ANativeWindow_Buffer, format)]
+
+assert(android_native_window_WINDOW_FORMAT_RGBA_8888 == 1, "the legacy RGBA format")

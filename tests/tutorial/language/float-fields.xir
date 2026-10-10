@@ -1,0 +1,8 @@
+packed struct FloatingPair {
+    x: f32 = f32(1.5)
+    y: f64 = -2.0
+}
+const pair: FloatingPair = FloatingPair { }
+assert(sizeof(FloatingPair) == 12)
+assert(offset_of(FloatingPair, y) == 4)
+emit.struct(pair)

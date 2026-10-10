@@ -1,254 +1,176 @@
 #!/usr/bin/env python3
-"""Validate the generated Android platform symbol catalog against the NDK.
+"""Independently validate every Android library/ABI API, type and GNU version.
 
-The generator parses ELF symbol tables directly. This validator does not trust
-that code path at all: it re-derives the same facts with ``llvm-nm`` from the
-NDK toolchain, in one batch per ABI and API level, and then compares:
-
-  * every (symbol, library) pair the catalog claims,
-  * the first API level recorded for each pair,
-  * the ABI set recorded for each symbol,
-  * the GNU version tag, where the stub declares one,
-  * and the counts and structure inside symbols.toml and manifest.json.
-
-usage:
-  python tests/os/validate_android_symbols.py --ndk <ndk root>
-  python tests/os/validate_android_symbols.py --ndk <ndk root> --catalog include/os/android
+This uses NDK llvm-readelf rather than the generator's ELF parser. Version tags
+must be compared even when empty; llvm-nm omits them on some toolchain versions.
 """
 from __future__ import annotations
 
 import argparse
+from collections import Counter
+import hashlib
 import json
+from pathlib import Path
 import re
 import subprocess
-import sys
 import tomllib
-from collections import Counter, defaultdict
-from pathlib import Path
 
-ABI_ORDER = (
-    "aarch64-linux-android",
-    "arm-linux-androideabi",
-    "i686-linux-android",
-    "riscv64-linux-android",
-    "x86_64-linux-android",
-)
-BARE_KEY = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-FUNCTION_TYPES = {"T", "W", "i", "I"}
+ROOT = Path(__file__).resolve().parents[2]
+ABI_ORDER = ("aarch64-linux-android", "arm-linux-androideabi", "i686-linux-android",
+             "riscv64-linux-android", "x86_64-linux-android")
+ABI_KEYS = ("a64", "arm", "x86", "riscv64", "x64")
+IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\Z")
+SYMBOL = re.compile(r"^\s*\d+:\s+[0-9a-fA-F]+\s+\S+\s+(\S+)\s+\S+\s+\S+\s+(\S+)\s+(\S+)")
+KINDS = {"FUNC": "func", "OBJECT": "object", "IFUNC": "ifunc"}
 
 
-def load_catalog(catalog: Path) -> dict:
-    with (catalog / "catalog" / "symbols.toml").open("rb") as stream:
-        return tomllib.load(stream)
+def sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def check_structure(catalog_root: Path, data: dict, manifest: dict) -> list[str]:
-    problems: list[str] = []
-    meta = data.get("meta", {})
-    symbols = data.get("symbols", {})
-    api_min, api_max = meta.get("api_min"), meta.get("api_max")
-    if meta.get("schema") != manifest.get("schema"):
-        problems.append("symbols.toml and manifest.json disagree on schema")
-    for name, row in symbols.items():
-        if not BARE_KEY.match(name):
-            problems.append(f"symbol key is not a bare key: {name!r}")
-        if not isinstance(row, dict):
-            problems.append(f"{name}: expected a table of fields")
-            continue
-        missing = {"lib", "api", "abis", "kind"} - set(row)
-        if missing:
-            problems.append(f"{name}: missing field(s) {sorted(missing)}")
-            continue
-        entry_apis = []
-        for entry in row["lib"].split(","):
-            if ":" not in entry:
-                problems.append(f"{name}: library entry {entry} carries no API level")
-                continue
-            library, entry_api = entry.rsplit(":", 1)
-            entry_apis.append(int(entry_api))
-            if not library.endswith(".so"):
-                problems.append(f"{name}: library {library} does not look like a shared object name")
-        if not (api_min <= row["api"] <= api_max):
-            problems.append(f"{name}: api {row['api']} outside {api_min}..{api_max}")
-        if entry_apis and row["api"] != min(entry_apis):
-            problems.append(f"{name}: api {row['api']} is not the minimum of {entry_apis}")
-        if not 0 < row["abis"] < (1 << len(ABI_ORDER)):
-            problems.append(f"{name}: abi mask {row['abis']} out of range")
-        if row["kind"] not in ("func", "ifunc"):
-            problems.append(f"{name}: unknown kind {row['kind']}")
-        if row["lib"] != ",".join(sorted(row["lib"].split(","))):
-            problems.append(f"{name}: library list is not sorted")
-    pairs = sum(len(row["lib"].split(",")) for row in symbols.values() if isinstance(row, dict))
-    recomputed = {
-        "symbols": len(symbols),
-        "symbol_library_pairs": pairs,
-        "multi_library_symbols": sum(1 for row in symbols.values()
-                                     if isinstance(row, dict) and "," in row["lib"]),
-        "libraries": len({entry.rsplit(":", 1)[0] for row in symbols.values()
-                          if isinstance(row, dict) for entry in row["lib"].split(",")}),
-    }
-    for key, value in recomputed.items():
-        if manifest.get(key) != value:
-            problems.append(f"manifest {key} is {manifest.get(key)}, catalog recomputes {value}")
-    if not (catalog_root / "catalog" / "manifest.json").is_file():
-        problems.append("manifest.json is missing")
-    return problems
+def catalog_rows(data: dict) -> dict:
+    rows = {}
+    for name, symbol in data["symbols"].items():
+        assert IDENTIFIER.fullmatch(name), name
+        for provider_key, by_abi in symbol["providers"].items():
+            library = by_abi["library"]
+            assert library.endswith(".so"), library
+            assert provider_key == library.replace(".", "_").replace("+", "_")
+            for abi_key, record in by_abi.items():
+                if abi_key == "library":
+                    continue
+                assert abi_key in ABI_KEYS, (name, library, abi_key)
+                bit = 1 << ABI_KEYS.index(abi_key)
+                key = (name, library, bit)
+                assert key not in rows and set(record) == {"api", "kind", "ver"}, key
+                assert data["meta"]["api_min"] <= record["api"] <= data["meta"]["api_max"], key
+                assert record["kind"] in KINDS.values() and isinstance(record["ver"], str), key
+                rows[key] = record
+        selected = [(provider["library"], {key: row for key, row in provider.items() if key != "library"})
+                    for provider in symbol["providers"].values()]
+        summaries = sorted(f"{library}:{min(r['api'] for r in records.values())}" for library, records in selected)
+        assert symbol["lib"] == ",".join(summaries), name
+        assert symbol["api"] == min(row["api"] for _, records in selected for row in records.values()), name
+        mask = 0
+        for _, records in selected:
+            for abi_key in records:
+                mask |= 1 << ABI_KEYS.index(abi_key)
+        assert symbol["abis"] == mask, name
+    return rows
 
 
-def is_elf(path: Path) -> bool:
-    """NDK directories also hold linker scripts (libc++.so); llvm-nm rejects them."""
-    try:
-        with path.open("rb") as stream:
-            return stream.read(4) == b"\x7fELF"
-    except OSError:
-        return False
-
-
-def run_llvm_nm(llvm_nm: Path, files: list[Path]) -> dict[str, list[tuple[str, str]]]:
-    """Return {library: [(symbol, version), ...]} for one ABI and API level."""
+def read_stubs(reader: Path, files: list[Path]) -> tuple[dict, list[str]]:
     if not files:
-        return {}
-    result = subprocess.run(
-        [str(llvm_nm), "-D", "--defined-only", "--format=posix", *[str(f) for f in files]],
-        capture_output=True, text=True, errors="replace",
-    )
-    if result.returncode != 0:
-        raise SystemExit(f"llvm-nm failed: {result.stderr.strip()[:400]}")
-    found: dict[str, list[tuple[str, str]]] = defaultdict(list)
-    current: str | None = None
+        return {}, []
+    command = [str(reader), "--dyn-syms", "--wide", *map(str, files)]
+    result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=60)
+    assert result.returncode == 0, result.stderr
+    rows, library = {}, files[0].name if len(files) == 1 else None
     for line in result.stdout.splitlines():
-        line = line.strip()
-        if not line:
+        if line.startswith("File: "):
+            library = Path(line[6:]).name
             continue
-        if line.endswith(":"):
-            current = Path(line[:-1]).name
+        match = SYMBOL.match(line)
+        if not match:
             continue
-        fields = line.split()
-        if len(fields) < 2 or current is None:
+        kind, section, spelling = match.groups()
+        if section == "UND":
             continue
-        name, kind = fields[0], fields[1]
-        if kind not in FUNCTION_TYPES:
-            continue
-        version = ""
-        if "@@" in name:
-            name, version = name.split("@@", 1)
-        found[current].append((name, version))
-    return found
+        assert kind in KINDS and library is not None, (line, library)
+        name, _, version = spelling.partition("@@")
+        if "@" in name:
+            name, _, version = name.partition("@")
+        assert IDENTIFIER.fullmatch(name), line
+        key = (name, library)
+        value = {"kind": KINDS[kind], "ver": version}
+        assert key not in rows or rows[key] == value, (key, rows.get(key), value)
+        rows[key] = value
+    return rows, command
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ndk", type=Path, required=True)
-    parser.add_argument("--catalog", type=Path, default=Path("include/os/android"))
+    parser.add_argument("--catalog", type=Path, default=ROOT / "include/os/android")
     parser.add_argument("--abis", default=",".join(ABI_ORDER))
-    parser.add_argument("--api-min", type=int, default=None)
-    parser.add_argument("--api-max", type=int, default=None)
+    parser.add_argument("--api-min", type=int)
+    parser.add_argument("--api-max", type=int)
+    parser.add_argument("--reference-catalog", type=Path, help="optional schema-2 native-symbols.json baseline")
+    parser.add_argument("--output", type=Path, default=ROOT / "tmp/android-symbol-validation/summary.json")
     args = parser.parse_args()
-
-    catalog_root = args.catalog
-    data = load_catalog(catalog_root)
-    manifest = json.loads((catalog_root / "catalog" / "manifest.json").read_text(encoding="utf-8"))
-    meta = data.get("meta", {})
-    api_min = args.api_min if args.api_min is not None else meta["api_min"]
-    api_max = args.api_max if args.api_max is not None else meta["api_max"]
-    abis = [item.strip() for item in args.abis.split(",") if item.strip()]
-
-    problems = check_structure(catalog_root, data, manifest)
-    if problems:
-        print(f"structure problems ({len(problems)}):")
-        for line in problems[:40]:
-            print(f"  {line}")
-
-    lib_root = args.ndk / "toolchains" / "llvm" / "prebuilt" / "windows-x86_64" / "sysroot" / "usr" / "lib"
-    llvm_nm = args.ndk / "toolchains" / "llvm" / "prebuilt" / "windows-x86_64" / "bin" / "llvm-nm.exe"
-    if not llvm_nm.is_file():
-        raise SystemExit(f"missing llvm-nm: {llvm_nm}")
-
-    # Independent derivation: first API and ABI set per (symbol, library).
-    derived: dict[tuple[str, str], dict] = {}
-    versions: dict[tuple[str, str], str] = {}
-    invocations = 0
+    data_path = args.catalog / "catalog/symbols.toml"
+    manifest_path = args.catalog / "catalog/manifest.json"
+    with data_path.open("rb") as stream:
+        data = tomllib.load(stream)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    assert data["meta"]["schema"] == manifest["schema"] == 2
+    all_rows = catalog_rows(data)
+    abis = args.abis.split(",")
+    assert abis and len(set(abis)) == len(abis) and set(abis) <= set(ABI_ORDER)
+    bits = {1 << ABI_ORDER.index(abi) for abi in abis}
+    expected = {key: value for key, value in all_rows.items() if key[2] in bits}
+    api_min = args.api_min if args.api_min is not None else data["meta"]["api_min"]
+    api_max = args.api_max if args.api_max is not None else data["meta"]["api_max"]
+    reader = args.ndk / "toolchains/llvm/prebuilt/windows-x86_64/bin/llvm-readelf.exe"
+    assert reader.is_file(), reader
+    lib_root = args.ndk / "toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib"
+    derived, commands = {}, []
     for abi in abis:
         bit = 1 << ABI_ORDER.index(abi)
         for api in range(api_min, api_max + 1):
-            api_dir = lib_root / abi / str(api)
-            if not api_dir.is_dir():
-                continue
-            stubs = [f for f in sorted(api_dir.glob("*.so")) if is_elf(f)]
-            invocations += 1
-            for library, entries in run_llvm_nm(llvm_nm, stubs).items():
-                for name, version in entries:
-                    key = (name, library)
-                    row = derived.get(key)
-                    if row is None:
-                        derived[key] = {"min_api": api, "abis": bit}
-                    else:
-                        row["abis"] |= bit
-                        if api < row["min_api"]:
-                            row["min_api"] = api
-                    if version and key not in versions:
-                        versions[key] = version
-
-    catalog_rows: dict[tuple[str, str], int] = {}
-    catalog_symbol_api: dict[str, int] = {}
-    catalog_mask: dict[str, int] = {}
-    catalog_version: dict[tuple[str, str], str] = {}
-    for name, row in data["symbols"].items():
-        catalog_symbol_api[name] = row["api"]
-        catalog_mask[name] = row["abis"]
-        for entry in row["lib"].split(","):
-            library, entry_api = entry.rsplit(":", 1)
-            catalog_rows[(name, library)] = int(entry_api)
-            if row.get("ver"):
-                catalog_version[(name, library)] = row["ver"]
-
-    missing = sorted(set(catalog_rows) - set(derived))
-    extra = sorted(set(derived) - set(catalog_rows))
-    api_mismatch = sorted(
-        key for key in set(catalog_rows) & set(derived)
-        if catalog_rows[key] != derived[key]["min_api"]
-    )
-    derived_symbol_api: dict[str, int] = {}
-    for (name, _library), row in derived.items():
-        current = derived_symbol_api.get(name)
-        if current is None or row["min_api"] < current:
-            derived_symbol_api[name] = row["min_api"]
-    symbol_api_mismatch = sorted(
-        key for key in set(catalog_symbol_api) | set(derived_symbol_api)
-        if catalog_symbol_api.get(key, -1) != derived_symbol_api.get(key, -1)
-    )
-    derived_mask: dict[str, int] = defaultdict(int)
-    for (name, _library), row in derived.items():
-        derived_mask[name] |= row["abis"]
-    mask_mismatch = sorted(
-        name for name in set(catalog_mask) | set(derived_mask)
-        if catalog_mask.get(name, 0) != derived_mask.get(name, 0)
-    )
-    version_mismatch = sorted(
-        key for key in set(catalog_version) & set(versions)
-        if catalog_version[key] != versions[key]
-    )
-
-    print(f"llvm-nm invocations : {invocations}")
-    print(f"derived rows        : {len(derived)}")
-    print(f"catalog rows        : {len(catalog_rows)}")
-    print(f"missing in llvm-nm  : {len(missing)}")
-    print(f"extra in llvm-nm    : {len(extra)}")
-    print(f"pair first-api diff : {len(api_mismatch)}")
-    print(f"symbol first-api    : {len(symbol_api_mismatch)}")
-    print(f"abi-mask mismatch   : {len(mask_mismatch)}")
-    print(f"version mismatch    : {len(version_mismatch)}")
-    for label, items in (("missing", missing), ("extra", extra),
-                         ("pair-api", api_mismatch), ("symbol-api", symbol_api_mismatch),
-                         ("mask", mask_mismatch), ("version", version_mismatch)):
-        for item in items[:8]:
-            print(f"  {label}: {item}")
-
-    failed = bool(problems or missing or extra or api_mismatch or symbol_api_mismatch
-                  or mask_mismatch or version_mismatch)
-    print("catalog validated against llvm-nm" if not failed else "catalog validation FAILED")
-    return 1 if failed else 0
+            files = sorted((lib_root / abi / str(api)).glob("*.so"))
+            stubs = []
+            for path in files:
+                with path.open("rb") as stream:
+                    magic = stream.read(4)
+                if magic == b"\x7fELF":
+                    stubs.append(path)
+                else:
+                    assert path.name == "libc++.so" and b"INPUT(" in path.read_bytes(), path
+            rows, command = read_stubs(reader, stubs)
+            if command:
+                commands.append(command)
+            for (name, library), row in rows.items():
+                key = (name, library, bit)
+                if key not in derived:
+                    derived[key] = {"api": api, **row}
+                else:
+                    assert derived[key]["kind"] == row["kind"], (key, "type changes with API")
+    differences = [{"key": key, "catalog": expected.get(key), "ndk": derived.get(key)}
+                   for key in sorted(expected.keys() | derived.keys()) if expected.get(key) != derived.get(key)]
+    pairs = {(name, library) for name, library, _bit in all_rows}
+    assert manifest["symbols"] == len(data["symbols"])
+    assert manifest["symbol_library_pairs"] == len(pairs)
+    assert manifest["libraries"] == len({library for _, library in pairs})
+    per_abi = {}
+    for abi in abis:
+        bit = 1 << ABI_ORDER.index(abi)
+        values = [value for key, value in derived.items() if key[2] == bit]
+        per_abi[abi] = {"symbol_library_pairs": len(values), "kinds": dict(sorted(Counter(v["kind"] for v in values).items()))}
+        for field, value in per_abi[abi].items():
+            assert manifest["per_abi"][abi][field] == value, (abi, field)
+    reference = None
+    if args.reference_catalog:
+        source = json.loads(args.reference_catalog.read_text(encoding="utf-8"))
+        assert source["schema"] == 2
+        source_rows = {(r["name"], r["library"], int(bit)): {"api": v["min_api"], "kind": v["kind"], "ver": v["version"]}
+                       for r in source["records"] for bit, v in r["by_abi"].items()}
+        source_bits = {int(bit) for bit in source["source_metadata"]["abis"]}
+        projected = {key: row for key, row in all_rows.items() if key[2] in source_bits}
+        assert projected == source_rows, "per-ABI reference disagreement"
+        reference = {"sha256": sha(args.reference_catalog), "rows": len(source_rows)}
+    receipt = {"passed": not differences, "catalog_sha256": sha(data_path), "manifest_sha256": sha(manifest_path),
+               "reader_sha256": sha(reader), "reference": reference, "commands": commands,
+               "per_abi": per_abi, "rows": len(derived), "differences": differences}
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(receipt, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    for abi, values in per_abi.items():
+        print(f"{abi}: {values['symbol_library_pairs']} rows {values['kinds']}")
+    print(f"{'PASS' if not differences else 'FAIL'}: {len(derived)} exact library/ABI records, API + type + GNU version; {len(commands)} llvm-readelf invocations")
+    for difference in differences[:12]:
+        print(difference)
+    return int(bool(differences))
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    raise SystemExit(main())

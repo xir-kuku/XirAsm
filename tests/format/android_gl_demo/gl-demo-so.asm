@@ -7,15 +7,12 @@
 // else runs, so the picture on screen comes from this file alone and the library
 // needs no runtime beyond the platform's own EGL and GLES libraries.
 //
-// Struct layouts come from the generated platform defs instead of counting fields
-// by hand: os/android/defs/native_activity.inc carries ANativeActivity's callback
-// offsets, and tests/os/validate_android_constants.py compiles them against the
-// NDK headers.
+// Native record types provide callback offsets through offset_of.
 //
 // Assemble it with the Android target, for example:
 //   xirasm gl-demo-so.asm -o libmain.so
 import("format/format.inc");
-import("os/android/defs/native_activity.inc");
+import("os/android/structs/native_activity.inc");
 import("os/android/imports/libandroid.inc");
 import("os/android/imports/libEGL.inc");
 import("os/android/imports/libGLESv2.inc");
@@ -28,17 +25,18 @@ let image: map = format_elf64_so(
     )
 )
 let exports: list = format_elfso_export_new()
+map.set_mut(image, "load_align", elf_android_page_align);
 format_elfso_export_many_mut(exports, list.of("ANativeActivity_onCreate"), ".text", 16)
 let imports: list = format_elfso_import_new()
-android_import_android_add_mut(imports, list.of(
+android_import_android_add_checked_mut(imports, image, list.of(
     android_import_android_ANativeWindow_getWidth,
-    android_import_android_ANativeWindow_getHeight))
-android_import_egl_add_mut(imports, list.of(
+    android_import_android_ANativeWindow_getHeight), 26, 16)
+android_import_egl_add_checked_mut(imports, image, list.of(
     android_import_egl_eglGetDisplay, android_import_egl_eglInitialize,
     android_import_egl_eglChooseConfig, android_import_egl_eglCreateWindowSurface,
     android_import_egl_eglCreateContext, android_import_egl_eglMakeCurrent,
-    android_import_egl_eglSwapBuffers))
-android_import_glesv2_add_mut(imports, list.of(
+    android_import_egl_eglSwapBuffers), 26, 16)
+android_import_glesv2_add_checked_mut(imports, image, list.of(
     android_import_glesv2_glViewport, android_import_glesv2_glCreateShader,
     android_import_glesv2_glShaderSource, android_import_glesv2_glCompileShader,
     android_import_glesv2_glCreateProgram, android_import_glesv2_glAttachShader,
@@ -47,16 +45,10 @@ android_import_glesv2_add_mut(imports, list.of(
     android_import_glesv2_glGenTextures, android_import_glesv2_glBindTexture,
     android_import_glesv2_glTexImage2D, android_import_glesv2_glTexParameteri,
     android_import_glesv2_glUniform1i, android_import_glesv2_glEnableVertexAttribArray,
-    android_import_glesv2_glVertexAttribPointer, android_import_glesv2_glDrawArrays))
+    android_import_glesv2_glVertexAttribPointer, android_import_glesv2_glDrawArrays), 26, 16)
 format_elfso_tables_mut(image, exports, imports)
 
-// The archive around this library targets API 26, so every platform library the
-// renderer imports has to exist there. The catalog knows each library's own first
-// API level, which turns "did I pick a symbol my minSdk cannot load?" into a build
-// failure instead of a crash on an older device.
-assert(android_import_android_min_api <= 26, "libandroid is newer than the project's minimum SDK");
-assert(android_import_egl_min_api <= 26, "libEGL is newer than the project's minimum SDK");
-assert(android_import_glesv2_min_api <= 26, "libGLESv2 is newer than the project's minimum SDK");
+// Each selected symbol was checked against API 26 and the x86-64 image above.
 format_begin(image);
 
 // ---------------------------------------------------------------------------
@@ -71,15 +63,15 @@ ANativeActivity_onCreate:
     jmp demo_install_callbacks
 
 demo_install_callbacks:
-    mov rax, [rdi]
+    mov rax, [rdi + offset_of(ANativeActivity, callbacks)]
     lea rdx, [rel demo_on_destroy]
-    mov [rax + android_layout_ANativeActivityCallbacks_onDestroy_offset64], rdx
+    mov [rax + offset_of(ANativeActivityCallbacks, onDestroy)], rdx
     lea rdx, [rel demo_on_window_created]
-    mov [rax + android_layout_ANativeActivityCallbacks_onNativeWindowCreated_offset64], rdx
+    mov [rax + offset_of(ANativeActivityCallbacks, onNativeWindowCreated)], rdx
     lea rdx, [rel demo_on_redraw]
-    mov [rax + android_layout_ANativeActivityCallbacks_onNativeWindowRedrawNeeded_offset64], rdx
+    mov [rax + offset_of(ANativeActivityCallbacks, onNativeWindowRedrawNeeded)], rdx
     lea rdx, [rel demo_on_window_destroyed]
-    mov [rax + android_layout_ANativeActivityCallbacks_onNativeWindowDestroyed_offset64], rdx
+    mov [rax + offset_of(ANativeActivityCallbacks, onNativeWindowDestroyed)], rdx
     ret
 
 // onNativeWindowCreated(activity, window): bring up EGL and draw once.

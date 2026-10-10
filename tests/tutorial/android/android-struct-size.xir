@@ -1,0 +1,19 @@
+import("os/android/structs/log.inc")
+import("os/android/structs/native_window.inc")
+const message: __android_log_message = __android_log_message {
+    struct_size: sizeof(__android_log_message),
+    priority: 4
+}
+const buffer: ANativeWindow_Buffer = ANativeWindow_Buffer {
+    width: 640,
+    height: 480,
+    stride: 640,
+    format: 1,
+    reserved: android_ANativeWindow_Buffer_reserved { }
+}
+assert(sizeof(__android_log_message) == 48)
+assert(sizeof(__android_log_message_arm32) == 28)
+assert(sizeof(ANativeWindow_Buffer) == 48)
+assert(sizeof(ANativeWindow_Buffer_arm32) == 44)
+emit.struct(message)
+emit.struct(buffer)

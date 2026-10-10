@@ -15,6 +15,7 @@ usage:
 import argparse
 import os
 from pathlib import Path
+import re
 import shutil
 import struct
 import subprocess
@@ -22,6 +23,7 @@ import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[2]
+FIXTURES = ROOT / 'tests' / 'format'
 
 RES_STRING_POOL = 0x0001
 RES_TABLE = 0x0002
@@ -194,7 +196,7 @@ def check_non_ascii(assembler, work, aapt2):
     repeated here, and it is compared in the pool's own encoding.
     """
     apk = work / "zh.apk"
-    run(assembler, ROOT / "tests/format/apk_zh_demo.xir", "-o", apk)
+    run(assembler, FIXTURES / "apk_zh_demo.xir", "-o", apk)
     data = read_data_file()
     with zipfile.ZipFile(apk) as archive:
         table = archive.read("resources.arsc")
@@ -220,7 +222,7 @@ def check_non_ascii(assembler, work, aapt2):
 
 def read_data_file():
     """The fixture's non-ASCII values, one per `|` separated field."""
-    text = (ROOT / "tests/format/apk_zh_strings.txt").read_text(encoding="utf-8")
+    text = (FIXTURES / "apk_zh_strings.txt").read_text(encoding="utf-8")
     return [field.strip() for field in text.split("|")]
 
 
@@ -232,7 +234,7 @@ def read_res_scan_strings():
     """
     values = {}
     for locale, directory in (("", "values"), ("zh", "values-zh")):
-        text = (ROOT / "tests/format/apk_res" / directory / "strings.toml").read_text(encoding="utf-8")
+        text = (FIXTURES / "apk_res" / directory / "strings.toml").read_text(encoding="utf-8")
         for line in text.splitlines():
             line = line.strip()
             if not line or line.startswith("#"):
@@ -254,7 +256,7 @@ def check_res_scan(assembler, work, aapt2, zipalign):
     apk = work / "res-scan.apk"
     if apk.exists():
         apk.unlink()
-    run(assembler, ROOT / "tests/format/apk_res_scan_user_facade.asm", "-o", apk)
+    run(assembler, FIXTURES / "apk_res_scan_user_facade.asm", "-o", apk)
 
     manifest, table, names = check_archive(apk)
     resources = {
@@ -265,7 +267,8 @@ def check_res_scan(assembler, work, aapt2, zipalign):
     }
     missing = resources - set(names)
     assert not missing, f"scanned resources are missing from the archive: {sorted(missing)}"
-    assert len(names) == len(resources) + 3, f"archive holds unexpected entries: {names}"
+    assert len(names) == len(resources) + 4, f"archive holds unexpected entries: {names}"
+    assert 'lib/x86_64/libmain.so' in names
 
     values = read_res_scan_strings()
     for locale in ("", "zh"):
@@ -318,11 +321,9 @@ def check_gl_demo(assembler, work, aapt2, zipalign):
     which is also how a reader would build it: library first, then the archive
     that packages it.
     """
-    example = ROOT / "tests" / "format" / "android_gl_demo"
+    example = FIXTURES / "android_gl_demo"
     stage = work / "gl-demo"
-    if stage.exists():
-        shutil.rmtree(stage)
-    shutil.copytree(example, stage)
+    shutil.copytree(example, stage, dirs_exist_ok=True)
 
     library = stage / "libmain.so"
     run(assembler, stage / "gl-demo-so.asm", "-o", library)
@@ -384,11 +385,9 @@ def check_gl_demo_aarch64(assembler, work, aapt2, zipalign):
     shared object that names the three platform libraries it imports, and its LOAD
     segments have to be aligned for the 16 KiB page size Android 15 introduced.
     """
-    example = ROOT / "tests" / "format" / "android_gl_demo"
+    example = FIXTURES / "android_gl_demo"
     stage = work / "gl-demo-aarch64"
-    if stage.exists():
-        shutil.rmtree(stage)
-    shutil.copytree(example, stage)
+    shutil.copytree(example, stage, dirs_exist_ok=True)
 
     library = stage / "libmain.so"
     run(assembler, stage / "gl-demo-so-aarch64.asm", "-o", library)
@@ -430,11 +429,9 @@ def check_gl_demo_universal(assembler, work, aapt2, zipalign):
     universal archive has to carry both libraries under their own ABI directory,
     each with the machine type, page alignment and entry point its own build has.
     """
-    example = ROOT / "tests" / "format" / "android_gl_demo"
+    example = FIXTURES / "android_gl_demo"
     stage = work / "gl-demo-universal"
-    if stage.exists():
-        shutil.rmtree(stage)
-    shutil.copytree(example, stage)
+    shutil.copytree(example, stage, dirs_exist_ok=True)
 
     x86_library = stage / "libmain-x86_64.so"
     arm_library = stage / "libmain-aarch64.so"
@@ -488,9 +485,9 @@ def check_deflate(assembler, work, aapt2, zipalign):
     apk = work / "deflate.apk"
     if apk.exists():
         apk.unlink()
-    run(assembler, ROOT / "tests/format/apk_deflate_user_facade.asm", "-o", apk)
+    run(assembler, FIXTURES / "apk_deflate_user_facade.asm", "-o", apk)
 
-    text_file = (ROOT / "tests/format/apk_zh_strings.txt").read_bytes()
+    text_file = (FIXTURES / "apk_zh_strings.txt").read_bytes()
     with zipfile.ZipFile(apk) as archive:
         assert archive.testzip() is None, "a deflated entry failed its CRC-32"
         methods = {info.filename: info.compress_type for info in archive.infolist()}
@@ -529,7 +526,7 @@ def check_framework_ids(assembler, work, aapt2, zipalign):
     apk = work / "framework.apk"
     if apk.exists():
         apk.unlink()
-    run(assembler, ROOT / "tests/format/android_framework_ids_user_facade.asm", "-o", apk)
+    run(assembler, FIXTURES / "android_framework_ids_user_facade.asm", "-o", apk)
 
     with zipfile.ZipFile(apk) as archive:
         names = archive.namelist()
@@ -548,9 +545,11 @@ def check_framework_ids(assembler, work, aapt2, zipalign):
 
 
 def main():
+    global FIXTURES
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--assembler", required=True, type=Path)
     parser.add_argument("--sdk-bin", type=Path)
+    parser.add_argument("--include-dir", type=Path, default=ROOT / "include" / "format")
     parser.add_argument("--work-dir", type=Path,
                         help="where to assemble the fixture (default: zig-out/apk-check)")
     args = parser.parse_args()
@@ -561,11 +560,54 @@ def main():
 
     work = (args.work_dir or (ROOT / "zig-out" / "apk-check")).resolve()
     work.mkdir(parents=True, exist_ok=True)
+    FIXTURES = work / 'fixtures'
+    FIXTURES.mkdir(parents=True, exist_ok=True)
+    source_fixtures = ROOT / 'tests' / 'format'
+    for name in ('apk_native_fixture.asm', 'apk_native_user_facade.asm', 'apk_zh_demo.xir',
+                 'apk_zh_strings.txt', 'apk_res_scan_user_facade.asm', 'apk_deflate_user_facade.asm',
+                 'android_framework_ids_user_facade.asm'):
+        shutil.copy2(source_fixtures / name, FIXTURES / name)
+    for name in ('apk_res', 'android_gl_demo'):
+        shutil.copytree(source_fixtures / name, FIXTURES / name, dirs_exist_ok=True)
+
+    import_pattern = r'(?m)^[ \t]*import\("([^\"]+)"\);?'
+    staged_catalogs = {}
+    catalog_dir = work / 'native-imports'
+    catalog_dir.mkdir(parents=True, exist_ok=True)
+
+    def import_path(match):
+        logical = match.group(1).removeprefix('../../include/')
+        if logical.startswith('format/'):
+            path = args.include_dir.resolve() / logical.removeprefix('format/')
+            if not path.exists():
+                path = ROOT / 'include' / logical
+        elif logical.startswith('os/android/'):
+            source = ROOT / 'include' / logical
+            assert source.is_file(), source
+            path = catalog_dir / logical.removeprefix('os/android/')
+            if logical not in staged_catalogs:
+                staged_catalogs[logical] = path
+                text = source.read_text(encoding='utf-8')
+                # Shared Android helpers also import the format layer. Keep
+                # every indirect import on the fixture's include snapshot.
+                text = re.sub(import_pattern, import_path, text)
+                assert 'import("format/' not in text, source
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding='utf-8')
+        else:
+            path = ROOT / 'include' / logical
+        assert path.is_file(), path
+        return f'import("{path.as_posix()}");'
+
+    for source in [*FIXTURES.rglob('*.asm'), *FIXTURES.rglob('*.xir')]:
+        text = source.read_text(encoding='utf-8')
+        source.write_text(re.sub(import_pattern, import_path, text), encoding='utf-8')
+    run(assembler, FIXTURES / 'apk_native_fixture.asm', '-o', FIXTURES / 'apk-native-fixture.so')
     apk = work / "facade.apk"
     if apk.exists():
         apk.unlink()
 
-    run(assembler, ROOT / "tests/format/apk_native_user_facade.asm", "-o", apk)
+    run(assembler, FIXTURES / "apk_native_user_facade.asm", "-o", apk)
     manifest, table, names = check_archive(apk)
     print(f"PASS: archive holds {len(names)} stored entries, CRC-32 and 4-byte alignment")
 
@@ -602,7 +644,7 @@ def main():
 
     tree = run(aapt2, "dump", "xmltree", apk, "--file", "AndroidManifest.xml")
     for expected in ("icon(0x01010002)=@0x7f010000", "label(0x01010001)=@0x7f020000",
-                     "hasCode(0x0101000c)=false", 'value(0x01010024)="main"'):
+                     "hasCode(0x0101000c)=false", "extractNativeLibs(0x010104ea)=false", 'value(0x01010024)="main"'):
         assert expected in tree, (expected, tree)
     print("PASS: aapt2 xmltree resolves both resource references and the framework ids")
 
