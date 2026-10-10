@@ -380,7 +380,7 @@ fn io_map_flush() {
     mov r11d, [rsp + 32]
     add rsp, 40
     test r11d, r11d
-    isa(sym.join("jnz ", view_failed_label));
+    isa(sym.join("jz ", view_failed_label));
     xor r12d, r12d
     isa(sym.join("jmp ", view_done_label));
 

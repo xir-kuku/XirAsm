@@ -162,6 +162,7 @@ fn io_dir_next() {
     isa(sym.join("jmp ", end_ok_label));
 
     label.define(refill_label);
+    push rsi
     push rdi
     mov rdx, [rdi + 72]
     lea rsi, [rdi + 80]
@@ -169,6 +170,7 @@ fn io_dir_next() {
     mov eax, io_dir_linux64_sys_getdents64
     syscall
     pop rdi
+    pop rsi
     io_linux64_normalize_count_result();
     cmp rax, -1
     isa(sym.join("je ", end_label));
