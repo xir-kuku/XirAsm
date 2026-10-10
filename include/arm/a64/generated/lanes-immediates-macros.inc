@@ -1,1 +1,1 @@
-import("arm/a64/generated/instructions-macros.inc")
+import("arm/a64-macros.inc")

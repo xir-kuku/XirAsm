@@ -1,1 +1,1 @@
-import("arm/a64/generated/instructions.inc")
+import("arm/a64.inc")

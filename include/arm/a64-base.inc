@@ -1,0 +1,8 @@
+import("arm/a64/operands.inc")
+import("arm/a64/memory.inc")
+import("arm/a64/scalar.inc")
+import("arm/a64/mops.inc")
+import("arm/a64/generated/profiles/base/operands.inc")
+import("arm/a64/generated/profiles/base/legacy.inc")
+import("arm/a64/generated/profiles/base/source.inc")
+import("arm/a64/generated/profiles/base/entry.inc")
